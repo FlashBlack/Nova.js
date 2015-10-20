@@ -1,0 +1,3 @@
+GCE.Start({
+	canvas: 'game'
+})
