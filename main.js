@@ -20,48 +20,6 @@ var GCE = new function() {
 		requestAnimationFrame(gameLoop);
 	}
 
-	var Class = (function(){
-		var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
-		function Class(){};
-		Class.extend = function(prop) {
-			var _super = this.prototype;
-
-			initializing = true;
-			var prototype = new this();
-			initializing = false;
-
-			for (var name in prop) {
-				prototype[name] = typeof prop[name] == "function" &&
-				typeof _super[name] == "function" && fnTest.test(prop[name]) ?
-				(function(name, fn){
-					return function() {
-						var tmp = this._super;
-
-						this._super = _super[name];
-
-						var ret = fn.apply(this, arguments);        
-						this._super = tmp;
-
-						return ret;
-					};
-				})(name, prop[name]) :
-				prop[name];
-			}
-
-			function Class() {
-				if ( !initializing && this.init )
-				this.init.apply(this, arguments);
-			}
-
-			Class.prototype = prototype;
-			Class.prototype.constructor = Class;
-			Class.extend = arguments.callee;
-
-			return Class;
-		};
-		return Class;
-	})();
-
 	this.GenerateGUID = function() {
 		function _p8(s) {
         	var p = (Math.random().toString(16)+"000000000").substr(2,8);
@@ -95,29 +53,9 @@ var GCE = new function() {
 		requestAnimationFrame(gameLoop);
 	}
 
-	var baseBlueprint = Class.extend({
-		init: function(){
-			this.components = {
-				transform: GCE.newComponent('Transform'),
-			}
-		}
-		update: function(){
-			/*
-				loop through components and run them here.
-				this way each entity could handle their own
-				components? just an idea?
-			*/
-		}
-		addComponent: function(){
-
-		}
-	});
-
 	this.CreateBlueprint = function(blueprintName, blueprint) {
-		EntityBlueprints[blueprintName] = baseBlueprint.extend(blueprint);
+		EntityBlueprints[blueprintName] = blueprint
 	}
-
-
 
 	this.CreateEntity = function(entityName, properties) {
 		if(EntityBlueprints.hasOwnProperty(entityName)) {
