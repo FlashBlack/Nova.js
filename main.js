@@ -1,6 +1,14 @@
 var GCE = new function() {
 	this.VERSION = '0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.1';
 
+	// load any required scripts
+	var requiredScripts = ['http://code.jquery.com/jquery-1.11.3.min.js']
+	for(var i in requiredScripts) {
+		var newScript = document.createElement('script');
+		newScript.src = requiredScripts[i];
+		document.getElementsByTagName('head')[0].appendChild(newScript);
+	}
+
 	// holds all the instances of entities
 	var Entities = {};
 	var zOrder = [];
@@ -14,7 +22,6 @@ var GCE = new function() {
 		this.dt = (now - lastUpdate) / 1000;
 		lastUpdate = now;
 
-		console.log(this.dt);
 		UpdateEntities();
 
 		requestAnimationFrame(gameLoop);
@@ -27,12 +34,14 @@ var GCE = new function() {
     	}
     	return _p8() + _p8(true) + _p8(true) + _p8();
 	}
+
 	
 	this.Start = function(parameters) {
 		var defaultParameters = {
 			frameRate: 60
 		};
 		parameters = SetDefaultParameters(parameters, defaultParameters);
+		this.Loader.LoadSprites(parameters.sprites)
 
 		// ensure that a canvas id was passed
 		if (!parameters.hasOwnProperty('canvas')) {
@@ -96,6 +105,54 @@ var GCE = new function() {
 		for(var i in zOrder) {
 			var currentEntity = Entities[zOrder[i]];
 			// update any components
+		}
+	}
+
+	this.Loader = new function() {
+		var loaded = 0;
+		var toLoad = 0;
+		var Images = {};
+		var Sprites = {};
+		var LoadedImages = {};
+		this.LoadObject = function() {
+			loaded++;
+			if(loaded >= toLoad) {
+				// actually start the game
+
+			}
+		}
+		this.LoadImage = function(name, file) {
+			if(!LoadedImages.hasOwnProperty(name)) {
+				toLoad++;
+				var tempImage = new Image();
+				tempImage.src = 'images/' + file;
+				tempImage.onload = function() {
+					Images[name] = this;
+					GCE.Loader.LoadObject();
+				}
+			}
+		}
+		this.LoadSprites = function(sprites) {
+			for(var i in sprites) {
+				var curSprite = sprites[i];
+				toLoad++;
+				$.getJSON('sprites/' + curSprite + '.json', function(data) {
+					console.log(data);
+					var sprite = data.image.split('.')[0];
+					GCE.Loader.LoadImage(sprite, data.image);
+					Sprites[data.spriteName] = data;
+					GCE.Loader.LoadObject();
+				})
+			}
+			
+		}
+		this.GetImage = function(image) {
+			if(Images.hasOwnProperty(image)) return Images[image];
+			return false;
+		}
+		this.GetSprite = function(sprite) {
+			if(Sprites.hasOwnProperty(sprite)) return Sprites[sprite];
+			return false;
 		}
 	}
 }

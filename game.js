@@ -1,14 +1,5 @@
 GCE.Start({
 	canvas: 'game',
-	frameRate: 1
+	frameRate: 1,
+	sprites: ['player']
 })
-
-GCE.CreateBlueprint('Player', {
-	init: function(){
-		this._super();
-		this.AddComponet('Sprite');
-	},
-	update: function(){
-
-	},
-});
