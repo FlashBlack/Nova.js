@@ -13,6 +13,10 @@ var GCE = new function() {
 
 	
 	this.Start = function(parameters) {
+		if (!parameters.hasOwnProperty('canvas')) return false; //if no canvas was passed exit early
+		if (!parameters.hasOwnProperty('width')) parameters.width = 800; //if nothing was passed, set to defaut
+		if (!parameters.hasOwnProperty('height')) parameters.height = 600; //if nothing was passed, set to defaut
+
 		
 	}
 }
