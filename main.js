@@ -14,39 +14,64 @@ var GCE = new function() {
 		this.dt = (now - lastUpdate) / 1000;
 		lastUpdate = now;
 
+		console.log(this.dt);
 		UpdateEntities();
 
 		requestAnimationFrame(gameLoop);
 	}
+
+	this.GenerateGUID = function() {
+		function _p8(s) {
+        	var p = (Math.random().toString(16)+"000000000").substr(2,8);
+        	return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;
+    	}
+    	return _p8() + _p8(true) + _p8(true) + _p8();
+	}
 	
 	this.Start = function(parameters) {
-		parameters = SetDefaultParameters(parameters);
+		var defaultParameters = {
+			frameRate: 60
+		};
+		parameters = SetDefaultParameters(parameters, defaultParameters);
 
 		// ensure that a canvas id was passed
 		if (!parameters.hasOwnProperty('canvas')) {
 			console.error('Canvas ID must be passed!');
 			return false; //if no canvas was passed exit early
+		}
+		var canvas = document.getElementById(parameters.canvas);
+		if(canvas == undefined) {
+			console.error('Invalid Canvas ID!');
+			return false;
 		} else {
-			var canvas = document.getElementById(parameters.canvas)
-			if(canvas == undefined) {
-				console.error('Invalid Canvas ID!');
-				return false;
-			} else {
-				// finding the canvas was a success
-				this.canvas = canvas;
-				this.ctx = canvas.getContext('2d');
-			}
+			// finding the canvas was a success
+			this.canvas = canvas;
+			this.ctx = canvas.getContext('2d');
 		}
 
 		lastUpdate = performance.now();
 		requestAnimationFrame(gameLoop);
 	}
 
-	function SetDefaultParameters(parameters) {
-		var defaultParameters = {
-			frameRate: 60
-		};
+	this.CreateBlueprint = function(blueprintName, blueprint) {
+		EntityBlueprints[blueprintName] = blueprint;
+	}
 
+
+
+	this.CreateEntity = function(entityName, properties) {
+		if(EntityBlueprints.hasOwnProperty(entityName)) {
+			var newEntity = new EntityBlueprints[entityName];
+			newEntity.GUID = this.GenerateGUID();
+			newEntity.ENTITY_TYPE = entityName;
+			Entities[newEntity.GUID] = newEntity;
+			zOrder.push(newEntity.GUID);
+			if(typeof newEntity.Create === 'function') { newEntity.Create(properties); }
+			// add required components
+		}
+	}
+
+	function SetDefaultParameters(parameters, defaultParameters) {
 		for(var p in parameters) {
 			var currentParameter = parameters[p];
 			if(!defaultParameters.hasOwnProperty(p)) {
@@ -72,9 +97,7 @@ var GCE = new function() {
 		// then update the entities components
 		for(var i in zOrder) {
 			var currentEntity = Entities[zOrder[i]];
-			if(typeof currentEntity.Update === 'function') {
-				currentEntity.Update();
-			}
+			// update any components
 		}
 	}
 }

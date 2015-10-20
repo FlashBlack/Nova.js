@@ -1,3 +1,4 @@
 GCE.Start({
-	canvas: 'game'
+	canvas: 'game',
+	frameRate: 1
 })
