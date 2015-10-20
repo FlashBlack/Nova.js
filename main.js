@@ -3,10 +3,18 @@ var GCE = new function() {
 
 	// holds all the instances of entities
 	var Entities = {};
+	var zOrder = [];
 	// holds blueprint for each entity
 	var EntityBlueprints = {};
 
+	var lastUpdate;
+
 	var gameLoop = function() {
+		var now = performance.now();
+		this.dt = (now - lastUpdate) / 1000;
+		lastUpdate = now;
+
+		UpdateEntities();
 
 		requestAnimationFrame(gameLoop);
 	}
@@ -29,10 +37,15 @@ var GCE = new function() {
 				this.ctx = canvas.getContext('2d');
 			}
 		}
+
+		lastUpdate = performance.now();
+		requestAnimationFrame(gameLoop);
 	}
 
 	function SetDefaultParameters(parameters) {
-		var defaultParameters = {};
+		var defaultParameters = {
+			frameRate: 60
+		};
 
 		for(var p in parameters) {
 			var currentParameter = parameters[p];
@@ -45,5 +58,23 @@ var GCE = new function() {
 			}
 		}
 		return defaultParameters;
+	}
+
+	function UpdateEntities() {
+		// first call currentEntity.Update()
+		for(var e in Entities) {
+			var currentEntity = Entities[e];
+			if(typeof currentEntity.Update === 'function') {
+				currentEntity.Update();
+			}
+		}
+
+		// then update the entities components
+		for(var i in zOrder) {
+			var currentEntity = Entities[zOrder[i]];
+			if(typeof currentEntity.Update === 'function') {
+				currentEntity.Update();
+			}
+		}
 	}
 }
