@@ -8,6 +8,7 @@ var GCE = new function() {
 
 	var gameLoop = function() {
 
+		requestAnimationFrame(gameLoop);
 	}
 	
 	this.Start = function(parameters) {
