@@ -28,6 +28,9 @@ var GCE = new function() {
 		        y: (Math.sin(angle) * (pointX-originX) + Math.cos(angle) * (pointY-originY) + originY) - 1
 		    };
 		}
+		this.lerp = function(start, finish, strength){
+			return ((start*(strength))+finish)/(strength+1);
+		}
 	}
 
 	// holds all the instances of entities
