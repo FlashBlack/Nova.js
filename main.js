@@ -17,6 +17,17 @@ var GCE = new function() {
 			var dy = y2 - y1;
 			return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 		}
+		this.rotateAround = function(pointX, pointY, originX, originY, angle) {
+			angle = (angle * (Math.PI / 180.0)) * -1;
+			pointX++;
+			pointY++;
+			originX++;
+			originY++;
+		    return {
+		        x: (Math.cos(angle) * (pointX-originX) - Math.sin(angle) * (pointY-originY) + originX) - 1,
+		        y: (Math.sin(angle) * (pointX-originX) + Math.cos(angle) * (pointY-originY) + originY) - 1
+		    };
+		}
 	}
 
 	// holds all the instances of entities
@@ -43,6 +54,8 @@ var GCE = new function() {
 
 		// update all entities
 		UpdateEntities();
+
+		GCE.Input.UpdateKeys();
 
 		// do loop again
 		requestAnimationFrame(gameLoop);
@@ -267,6 +280,7 @@ var GCE = new function() {
 		};
 
 		this.BeginLoad = function() {
+			GCE.Input.Setup();
 			// load the sprites
 			for(var i in spritesToLoad) {
 				var currentSprite = spritesToLoad[i];
@@ -333,6 +347,67 @@ var GCE = new function() {
 		};
 	}
 
+	this.Input = new function() {
+		var keyCodes = {"BACK": 8, "TAB": 9, "ENTER": 13, "SHIFT": 16, "CTRL": 17, "ALT": 18, "BREAK": 19, "CAPS": 20, "ESCAPE": 27, "SPACE": 32, "PGUP": 33, "PGDOWN": 34, "END": 35, "HOME": 36, "LEFT": 37, "UP": 38, "RIGHT": 39, "DOWN": 40, "INSERT": 45, "DELETE": 46, 
+		"0": 48, "1": 49, "2": 50, "3": 51, "4": 52, "5": 53, "6": 54, "7": 55, "8": 56, "9": 57,
+		"A": 65, "B": 66, "C": 67, "D": 68, "E": 69, "F": 70, "G": 71, "H": 72, "I": 73, "J": 74, "K": 75, "L": 76, "M": 77, "N": 78, "O": 79, "P": 80, "Q": 81, "R": 82, "S": 83, "T": 84, "U": 85, "V": 86, "W": 87, "X": 88, "Y": 89, "Z": 90,
+		"LEFTWINDOW": 91, "RIGHTWINDOW": 92, "SELECT": 93, "NUM0": 96, "NUM1": 97, "NUM2": 98, "NUM3": 99, "NUM4": 100, "NUM5": 101, "NUM6": 102, "NUM7": 103, "NUM8": 104, "NUM9": 105, "MULTIPLY": 106, "ADD": 107, "SUBTRACT": 109, "DECIMAL": 110, "DIVIDE": 111,
+		"F1": 112, "F2": 113, "F3": 114, "F4": 115, "F5": 116, "F6": 117, "F7": 118, "F8": 119, "F9": 120, "F10": 121, "F11": 122, "F12": 123, "NUMLOCK": 144, "SCROLLLOCK": 145, "COLON": 186, "EQUALS": 187, "COMMA": 188,
+		"DASH": 189, "PERIOD": 190, "SLASH": 191, "TILDE": 192, "OPENBRACKET": 219, "BACKSLASH": 220, "CLOSEBRACKET": 221, "APOSTROPHE": 222
+		};
+		
+		var charCodes = [];
+		var keys = {};
+		var pressed = {};
+		var released = {};
+		for(var key in keyCodes) {
+			charCodes[keyCodes[key]] = key;
+			keys[key] = false;
+			pressed[key] = false;
+			released[key] = false;
+		}
+
+		this.Setup = function() {
+			$(window).bind('keydown', function(e) {
+				var keyCode = e.keyCode || e.which;
+				var charCode = charCodes[keyCode];
+				if(!keys[charCode]) { pressed[charCode] = true;	}
+				keys[charCode] = true;
+			})
+			$(window).bind('keyup', function(e) {
+				var keyCode = e.keyCode || e.which;
+				var charCode = charCodes[keyCode];
+				released[charCode] = true;
+				keys[charCode] = false;
+			})
+		}
+
+		this.UpdateKeys = function() {
+			for(var key in keys) {
+				pressed[key] = false;
+				released[key] = false;
+			}
+		}
+
+		this.KeyDown = function(key) {
+			if(typeof key === 'number') key = charCodes[key];
+			if(keys[key]) return true;
+			return false;
+		}
+
+		this.KeyPress = function(key) {
+			if(typeof key === 'number') key = charCodes[key];
+			if(pressed[key]) return true;
+			return false;
+		}
+
+		this.KeyUp = function(key) {
+			if(typeof key === 'number') key = charCodes[key];
+			if(released[key]) return true;
+			return false;
+		}
+	}
+
 	this.GetEntityByID = function(ID) {
 		if(Entities.hasOwnProperty(ID)) return Entities[ID];
 		return false;
@@ -362,10 +437,16 @@ GCE.NewComponent('Transform', function() {
 		x: 0,
 		y: 0
 	}
+	var origin = {
+		x: 0,
+		y: 0
+	}
 	this.Anchor = {
 		x: 0,
 		y: 0
 	}
+	this.scale = 1;
+	this.Rotation = 0;
 	this.Create = function(properties) {
 		// dont do anything if no properties were passed
 		if(properties == undefined) return false;
@@ -374,6 +455,8 @@ GCE.NewComponent('Transform', function() {
 			this.Position.y = properties.Position.y;
 		}
 		if(properties.hasOwnProperty('Anchor')) {
+			origin.x = properties.Anchor.x,
+			origin.y = properties.Anchor.y
 			this.Anchor.x = properties.Anchor.x,
 			this.Anchor.y = properties.Anchor.y
 		}
@@ -382,7 +465,19 @@ GCE.NewComponent('Transform', function() {
 		this.Position.x = x;
 		this.Position.y = y;
 	}
-}, true)
+	this.SetScale = function(newScale) {
+		this.scale = newScale;
+		this.Anchor.x = origin.x * newScale;
+		this.Anchor.y = origin.y * newScale;
+	}
+	this.SetAngle = function(newAngle) {
+		if(newAngle > 0) newAngle = 360 - newAngle;
+		var newOrigin = GCE.System.rotateAround(-origin.x, -origin.y, 0, 0, newAngle*-1);
+		this.Rotation = newAngle % 360;
+		this.Anchor.x = -newOrigin.x;
+		this.Anchor.y = -newOrigin.y;
+	}
+}, true);
 
 GCE.NewComponent('SpriteRenderer', function() {
 	this.drawAtInteger = false;
@@ -398,18 +493,27 @@ GCE.NewComponent('SpriteRenderer', function() {
 		// get the entities Transform component
 		var Transform = this.Owner.GetComponent('Transform');
 		// figure out where to draw it based on Transform.Position and Transform.Anchor
-		var drawX = Transform.Position.x + Transform.Anchor.x * -1;
-		var drawY = Transform.Position.y + Transform.Anchor.y * -1;
+		var drawX = Transform.Position.x - Transform.Anchor.x;
+		var drawY = Transform.Position.y - Transform.Anchor.y;
 		if(this.drawAtInteger) {
 			drawX = Math.round(drawX);
 			drawY = Math.round(drawY);
 		}
 		var frame = this.GetFrame();
 		// draw the image
+		GCE.ctx.save();
+		GCE.ctx.translate(drawX, drawY);
+		GCE.ctx.rotate(Transform.Rotation * Math.PI / 180);
+		GCE.ctx.translate(-drawX, -drawY);
 		GCE.ctx.drawImage(this.img, frame.x, frame.y, frame.width, frame.height, drawX, drawY, frame.width, frame.height);
+		GCE.ctx.restore();
+		GCE.ctx.fillStyle = 'red';
+		GCE.ctx.fillRect(Transform.Position.x - 1, Transform.Position.y - 1, 2, 2);
+		GCE.ctx.fillStyle = 'lime';
+		GCE.ctx.fillRect(drawX - 1, drawY - 1, 2, 2);
 	}
 
 	this.GetFrame = function() {
 		return this.sprite.animations[this.currentAnimation][0];
 	}
-}, true)
+}, true);
