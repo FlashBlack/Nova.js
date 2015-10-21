@@ -1,15 +1,8 @@
 GCE.CreateBlueprint('Player', function() {
-	this.requiredComponents = ['Transform', 'SpriteRenderer', 'Collider'];
+	this.requiredComponents = ['Transform', 'SpriteRenderer'];
 	this.Create = function(properties) {
-		this.position = data.position;
+		console.log('Created Player entity');
 	}
 	this.Update = function() {
-		// check collisions
-		GCE.NewEntity('Player', {
-			position: {
-				x: 0,
-				y: 0
-			}
-		})
 	}
 })
