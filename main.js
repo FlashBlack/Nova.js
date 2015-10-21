@@ -28,8 +28,14 @@ var GCE = new function() {
 		        y: (Math.sin(angle) * (pointX-originX) + Math.cos(angle) * (pointY-originY) + originY) - 1
 		    };
 		}
-		this.lerp = function(start, finish, strength){
-			return ((start*(strength))+finish)/(strength+1);
+		this.lerp = function(a, b, x) {
+			return a + x * (b - a);
+		}
+		this.angleLerp = function(a, b, x) {
+			return a + ((((((b - a) % 360) + 540) % 360) - 180) * x);
+		}
+		this.clamp = function(x, a, b) {
+			return Math.min(Math.max(x, a), b);
 		}
 	}
 
@@ -43,12 +49,13 @@ var GCE = new function() {
 	var Components = {};
 
 	this.Ready = function() {};
+	this.dt = 0;
 
 	// time of last update, used for deltatime
 	var lastUpdate;
 	var gameLoop = function() {
 		var now = performance.now();
-		this.dt = (now - lastUpdate) / 1000;
+		GCE.dt = (now - lastUpdate) / 1000;
 		lastUpdate = now;
 
 		// fill canvas with background colour
@@ -363,6 +370,8 @@ var GCE = new function() {
 		var keys = {};
 		var pressed = {};
 		var released = {};
+		this.mousex = 0;
+		this.mousey = 0;
 		for(var key in keyCodes) {
 			charCodes[keyCodes[key]] = key;
 			keys[key] = false;
@@ -382,6 +391,10 @@ var GCE = new function() {
 				var charCode = charCodes[keyCode];
 				released[charCode] = true;
 				keys[charCode] = false;
+			})
+			$(GCE.canvas).mousemove(function(e) {
+				GCE.Input.mousex = e.offsetX;
+				GCE.Input.mousey = e.offsetY;
 			})
 		}
 
@@ -448,8 +461,9 @@ GCE.NewComponent('Transform', function() {
 		x: 0,
 		y: 0
 	}
-	this.scale = 1;
-	this.Rotation = 0;
+	this.Scale = 1;
+	var Angle = 0;
+
 	this.Create = function(properties) {
 		// dont do anything if no properties were passed
 		if(properties == undefined) return false;
@@ -464,21 +478,32 @@ GCE.NewComponent('Transform', function() {
 			this.Anchor.y = properties.Anchor.y
 		}
 	}
+
 	this.SetPosition = function(x, y) {
 		this.Position.x = x;
 		this.Position.y = y;
 	}
+
 	this.SetScale = function(newScale) {
-		this.scale = newScale;
+		this.Scale = newScale;
 		this.Anchor.x = origin.x * newScale;
 		this.Anchor.y = origin.y * newScale;
 	}
+
 	this.SetAngle = function(newAngle) {
-		if(newAngle > 0) newAngle = 360 - newAngle;
+		if(newAngle < 0) newAngle = 360 + newAngle;
 		var newOrigin = GCE.System.rotateAround(-origin.x, -origin.y, 0, 0, newAngle*-1);
-		this.Rotation = newAngle % 360;
+		Angle = newAngle % 360;
 		this.Anchor.x = -newOrigin.x;
 		this.Anchor.y = -newOrigin.y;
+	}
+	this.GetAngle = function() {
+		return Angle;
+	}
+	this.MoveAtAngle = function(distance, direction) {
+		direction = direction * Math.PI / 180;
+		this.Position.x += distance * Math.cos(direction);
+		this.Position.y += distance * Math.sin(direction);
 	}
 }, true);
 
@@ -506,17 +531,76 @@ GCE.NewComponent('SpriteRenderer', function() {
 		// draw the image
 		GCE.ctx.save();
 		GCE.ctx.translate(drawX, drawY);
-		GCE.ctx.rotate(Transform.Rotation * Math.PI / 180);
+		GCE.ctx.rotate(Transform.GetAngle() * Math.PI / 180);
 		GCE.ctx.translate(-drawX, -drawY);
 		GCE.ctx.drawImage(this.img, frame.x, frame.y, frame.width, frame.height, drawX, drawY, frame.width, frame.height);
 		GCE.ctx.restore();
-		GCE.ctx.fillStyle = 'red';
-		GCE.ctx.fillRect(Transform.Position.x - 1, Transform.Position.y - 1, 2, 2);
-		GCE.ctx.fillStyle = 'lime';
-		GCE.ctx.fillRect(drawX - 1, drawY - 1, 2, 2);
 	}
 
 	this.GetFrame = function() {
 		return this.sprite.animations[this.currentAnimation][0];
 	}
 }, true);
+
+GCE.NewComponent('EightDirection', function() {
+	var keys = {
+		'up': ['W', 'UP'],
+		'down': ['S', 'DOWN'],
+		'left': ['A', 'LEFT'],
+		'right': ['D', 'RIGHT'],
+	}
+	this.moveSpeed = 150;
+	this.rotateSpeed = 15;
+	this.rotateTowards = true;
+	this.Create = function(properties) {
+		if(properties.hasOwnProperty('keys')) {
+			for(var key in keys) {
+				for(var i in properties.keys[key]) {
+					keys[key].push(properties.keys[key][i]);
+				}
+			}
+		}
+		if(properties.hasOwnProperty('moveSpeed')) this.moveSpeed = properties.moveSpeed;
+		if(properties.hasOwnProperty('rotateSpeed')) this.moveSpeed = properties.rotateSpeed;
+		if(properties.hasOwnProperty('rotateTowards')) this.rotateTowards = properties.rotateTowards;
+	}
+	this.Update = function() {
+		var Transform = this.Owner.GetComponent('Transform');
+		var horizontal = 0;
+		var vertical = 0;
+		// check input keys
+		for(var i in keys.up) {
+			if(GCE.Input.KeyDown(keys.up[i])) {
+				vertical--;
+				break;
+			}
+		}
+		for(var i in keys.down) {
+			if(GCE.Input.KeyDown(keys.down[i])) {
+				vertical++;
+				break;
+			}
+		}
+		for(var i in keys.left) {
+			if(GCE.Input.KeyDown(keys.left[i])) {
+				horizontal--;
+				break;
+			}
+		}
+		for(var i in keys.right) {
+			if(GCE.Input.KeyDown(keys.right[i])) {
+				horizontal++;
+				break;
+			}
+		}
+		horizontal = GCE.System.clamp(horizontal, -1, 1);
+		vertical = GCE.System.clamp(vertical, -1, 1);
+		if(horizontal != 0 || vertical != 0) {
+			var moveAngle = GCE.System.angleTowards(0, 0, horizontal, vertical);
+			if(this.rotateTowards) {
+				Transform.SetAngle(moveAngle);
+			}
+			Transform.MoveAtAngle(this.moveSpeed * GCE.dt, moveAngle);
+		}
+	}
+}, true)

@@ -1,20 +1,4 @@
 GCE.Ready = function() {
-	/*player = GCE.CreateEntity('Player', {
-		Transform: {
-			Position: {
-				x: 400,
-				y: 300
-			},
-			Anchor: {
-				x: 15,
-				y: 56
-			}
-		},
-		SpriteRenderer: {
-			sprite: 'Player',
-			drawAtInteger: true
-		}
-	})*/
 	player = GCE.CreateEntity('Topdown', {
 		Transform: {
 			Position: {
@@ -22,13 +6,16 @@ GCE.Ready = function() {
 				y: 300
 			},
 			Anchor: {
-				x: 16,
-				y: 16
+				x: 16.5,
+				y: 16.5
 			}
 		},
 		SpriteRenderer: {
 			sprite: 'Topdown',
-			drawAtInteger: true
+			// drawAtInteger: true
+		},
+		EightDirection: {
+			rotateTowards: false
 		}
 	})
 	$('#game').click(function(e) {
