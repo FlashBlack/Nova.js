@@ -1,9 +1,3 @@
-GCE.Start({
-	canvas: 'game',
-	sprites: ['player'],
-	entities: ['Player']
-})
-
 GCE.Ready = function() {
 	var player = GCE.CreateEntity('Player', {
 		Transform: {
@@ -17,10 +11,25 @@ GCE.Ready = function() {
 			}
 		},
 		SpriteRenderer: {
-			sprite: 'Player'
+			sprite: 'Player',
+			drawAtInteger: true
 		}
 	})
 	$('#game').click(function(e) {
-		GCE.GetEntityByID(player).GetComponent('Transform').SetPosition(e.offsetX, e.offsetY);
+		GCE.GetEntityByID(player).SetTarget(e.offsetX, e.offsetY);
+	})
+	$(document).keypress(function(e) {
+		var playerEntity = GCE.GetEntityByID(player);
+		if(e.keyCode == 61) {
+			playerEntity.SetSpeed(playerEntity.speed + 1);
+		} else if(e.keyCode == 45) {
+			playerEntity.SetSpeed(Math.max(playerEntity.speed, 1));
+		}
 	})
 }
+
+GCE.Start({
+	canvas: 'game',
+	sprites: ['player'],
+	entities: ['Player']
+})

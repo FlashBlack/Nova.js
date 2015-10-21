@@ -5,6 +5,19 @@ var GCE = new function() {
 	var isReady = false;
 	this.isReady = function() { return isReady; };
 
+	this.System = new function() {
+		this.angleTowards = function(x1, y1, x2, y2) {
+			var dx = x2 - x1;
+			var dy = y2 - y1;
+			return Math.atan2(dy, dx) * 180 / Math.PI;
+		}
+		this.distance = function(x1, y1, x2, y2) {
+			var dx = x2 - x1;
+			var dy = y2 - y1;
+			return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+		}
+	}
+
 	// holds all the instances of entities
 	var Entities = {};
 	// order for entity component updates. these are updated after all entities are updated
@@ -358,9 +371,11 @@ GCE.NewComponent('Transform', function() {
 }, true)
 
 GCE.NewComponent('SpriteRenderer', function() {
+	this.drawAtInteger = false;
 	this.Create = function(properties) {
 		this.sprite = GCE.Loader.GetSprite(properties.sprite);
 		this.img = GCE.Loader.GetImage(this.sprite);
+		if(properties.hasOwnProperty('drawAtInteger')) { this.drawAtInteger = properties.drawAtInteger; }
 		if(properties.hasOwnProperty('animation')) { this.currentAnimation = properties.animation }
 		else { this.currentAnimation = Object.keys(this.sprite.animations)[0]; }
 	}
@@ -371,6 +386,10 @@ GCE.NewComponent('SpriteRenderer', function() {
 		// figure out where to draw it based on Transform.Position and Transform.Anchor
 		var drawX = Transform.Position.x + Transform.Anchor.x * -1;
 		var drawY = Transform.Position.y + Transform.Anchor.y * -1;
+		if(this.drawAtInteger) {
+			drawX = Math.round(drawX);
+			drawY = Math.round(drawY);
+		}
 		var frame = this.GetFrame();
 		// draw the image
 		GCE.ctx.drawImage(this.img, frame.x, frame.y, frame.width, frame.height, drawX, drawY, frame.width, frame.height);
