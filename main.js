@@ -47,6 +47,7 @@ var GCE = new function() {
 	var EntityBlueprints = {};
 	// blueprints for components
 	var Components = {};
+	var Solids = [];
 
 	this.Ready = function() {};
 	this.dt = 0;
@@ -56,6 +57,7 @@ var GCE = new function() {
 	var gameLoop = function() {
 		var now = performance.now();
 		GCE.dt = (now - lastUpdate) / 1000;
+		GCE.fps = Math.round(1 / GCE.dt);
 		lastUpdate = now;
 
 		// fill canvas with background colour
@@ -64,6 +66,12 @@ var GCE = new function() {
 
 		// update all entities
 		UpdateEntities();
+
+		GCE.ctx.textBaseline = 'top';
+		GCE.ctx.fillStyle = 'lime';
+		GCE.ctx.font = '16px Georgia';
+		GCE.ctx.fillText(GCE.fps, 5, 5);
+		GCE.ctx.fillText(GCE.dt, 5, 21);
 
 		GCE.Input.UpdateKeys();
 
@@ -155,9 +163,10 @@ var GCE = new function() {
 			// used to add new components to an entity
 			newEntity.AddComponent = function(componentName, componentType, updateType, properties) {
 				// get a new entity of the required type, passing the properties for the Component.Create() function
-				var newComponent = GCE.GetComponent(componentType, properties);
+				var newComponent = GCE.GetComponent(componentName, componentType, properties, this.GUID);
 				// if a new component was created, add it to the entity
 				if(newComponent) {
+					newComponent.componentName = componentName;
 					switch(updateType) {
 						case 'PRE':
 							this.PreUpdate.push(componentName);
@@ -197,9 +206,10 @@ var GCE = new function() {
 					if(properties.hasOwnProperty(currentComponent)) { componentProperties = properties[currentComponent]; }
 					
 					// get the new component passing the properties and entity GUID for Component.Owner
-					var newComponent = this.GetComponent(currentComponent, componentProperties, newEntity.GUID);
+					var newComponent = this.GetComponent(currentComponent, currentComponent, componentProperties, newEntity.GUID);
 					// add the component if it was created successfully
 					if(newComponent) {
+						newComponent.componentName = currentComponent;
 						switch(componentUpdateType) {
 							case 'PRE':
 								newEntity.PreUpdate.push(currentComponent);
@@ -234,11 +244,12 @@ var GCE = new function() {
 	}
 
 	// used to create and return a new component
-	this.GetComponent = function(componentName, properties, GUID) {
+	this.GetComponent = function(componentName, componentType, properties, GUID) {
 		// ensure the component type exists
-		if(Components.hasOwnProperty(componentName)) {
+		if(Components.hasOwnProperty(componentType)) {
 			// create the new component
-			var newComponent = new Components[componentName];
+			var newComponent = new Components[componentType];
+			newComponent.componentName = componentName;
 			// if a GUID was passed, assign that entity to newComponent.Owner
 			if(GUID) { newComponent.Owner = this.GetEntityByID(GUID); }
 			// ensure a Create and Update function exists
@@ -324,7 +335,6 @@ var GCE = new function() {
 				toLoad++;
 				// grab the sprite json from sprites/ folder and load it in
 				$.getJSON('sprites/' + currentSprite + '.json', function(data) {
-					console.log(data);
 					var sprite = data.image.split('.')[0];
 					GCE.Loader.LoadImage(sprite, data.image);
 					Sprites[data.spriteName] = data;
@@ -449,6 +459,34 @@ var GCE = new function() {
 			if(released[key]) return true;
 			return false;
 		}
+	}
+
+	this.addSolid = function(solid) {
+		Solids.push(solid);
+	}
+
+	this.getSolids = function() {
+		return Solids;
+	}
+
+	this.Collides = function(collider1, collider2, offset1, offset2) {
+		if(offset1 != undefined) {
+			collider1.bboxleft += offset1.x;
+			collider1.bboxright += offset1.x;
+			collider1.bboxtop+= offset1.y;
+			collider1.bboxbottom += offset1.y;
+		}
+		if(offset2 != undefined) {
+			collider2.bboxleft += offset2.x;
+			collider2.bboxright += offset2.x;
+			collider2.bboxtop+= offset2.y;
+			collider2.bboxbottom += offset2.y;
+		}
+
+		return (collider1.bboxleft < collider2.bboxright &&
+				collider1.bboxright > collider2.bboxleft &&
+				collider1.bboxtop < collider2.bboxbottom &&
+				collider1.bboxbottom > collider2.bboxtop);
 	}
 
 	this.GetEntityByID = function(ID) {
@@ -581,7 +619,7 @@ GCE.NewComponent('EightDirection', function() {
 		'left': ['A', 'LEFT'],
 		'right': ['D', 'RIGHT'],
 	}
-	this.moveSpeed = 150;
+	this.moveSpeed = 200;
 	this.rotateSpeed = 15;
 	this.rotateTowards = true;
 	this.Create = function(properties) {
@@ -625,14 +663,52 @@ GCE.NewComponent('EightDirection', function() {
 				break;
 			}
 		}
-		horizontal = GCE.System.clamp(horizontal, -1, 1);
-		vertical = GCE.System.clamp(vertical, -1, 1);
 		if(horizontal != 0 || vertical != 0) {
 			var moveAngle = GCE.System.angleTowards(0, 0, horizontal, vertical);
 			if(this.rotateTowards) {
 				Transform.SetAngle(moveAngle);
 			}
-			Transform.MoveAtAngle(this.moveSpeed * GCE.dt, moveAngle);
+			var solids = GCE.getSolids();
+			var offset = {
+				x: (this.moveSpeed * GCE.dt) * Math.cos(moveAngle * Math.PI / 180),
+				y: (this.moveSpeed * GCE.dt) * Math.sin(moveAngle * Math.PI / 180)
+			}
+			var hitHorizontal = false;
+			var hitVertical = false;
+			for(var i in solids) {
+				var otherCollider = GCE.GetEntityByID(solids[i][0]).GetComponent(solids[i][1]);
+				if(horizontal != 0) {
+					var horizontalCollision = GCE.Collides(this.Owner.GetComponent('Collider'), otherCollider, {x: offset.x, y: 0});
+					if(horizontalCollision) {
+						hitHorizontal = true;
+						var overlaps = false;
+						while(!overlaps) {
+							console.log('test');
+							if(GCE.Collides(this.Owner.GetComponent('Collider'), otherCollider)) {
+								overlaps = true;
+								break;
+							}
+							Transform.Position.x += offset.x;
+						}
+					}
+				}
+				if(vertical != 0) {
+					var verticalCollision = GCE.Collides(this.Owner.GetComponent('Collider'), otherCollider, {x: 0, y: offset.y});
+					if(verticalCollision) {
+						hitVertical = true;
+						var overlaps = false;
+						while(!overlaps) {
+							if(GCE.Collides(this.Owner.GetComponent('Collider'), otherCollider)) {
+								overlaps = true;
+								break;
+							}
+							Transform.Position.y += offset.y;
+						}
+					}
+				}
+			}
+			if(!hitVertical) Transform.Position.y += offset.y;
+			if(!hitHorizontal) Transform.Position.x += offset.x;
 		}
 	}
 }, true)
@@ -646,18 +722,36 @@ GCE.NewComponent('Collider', function() {
 		if(parameters.hasOwnProperty('width')) this.width = parameters.width;
 		if(parameters.hasOwnProperty('height')) this.height = parameters.height;
 		if(parameters.hasOwnProperty('draw')) this.draw = parameters.draw;
+
+		if(parameters.hasOwnProperty('isSolid')) GCE.addSolid([this.Owner.GUID, this.componentName]);
+
+		this.Update();
 	}
 
 	this.Update = function() {
-		if(!this.draw) return;
-
 		var Transform = this.Owner.GetComponent('Transform');
-		var drawX = Transform.Position.x - Transform.GetOrigin().x;
-		var drawY = Transform.Position.y - Transform.GetOrigin().y;
+		var startX = Transform.Position.x - Transform.GetOrigin().x;
+		var startY = Transform.Position.y - Transform.GetOrigin().y;
+		this.bboxleft = startX;
+		this.bboxtop = startY;
+		this.bboxright = startX + this.width;
+		this.bboxbottom = startY + this.height;
 
+		if(!this.draw) return;
 		GCE.ctx.fillStyle = 'lime';
 		GCE.ctx.globalAlpha = .5;
-		GCE.ctx.fillRect(drawX, drawY, this.width, this.height);
+		GCE.ctx.fillRect(startX, startY, this.width, this.height);
+		GCE.ctx.globalAlpha = 1;
+	}
+
+	this.Draw = function() {
+		var Transform = this.Owner.GetComponent('Transform');
+		var startX = Transform.Position.x - Transform.GetOrigin().x;
+		var startY = Transform.Position.y - Transform.GetOrigin().y;
+		// console.log(startX, startY);
+		GCE.ctx.fillStyle = 'lime';
+		GCE.ctx.globalAlpha = .5;
+		GCE.ctx.fillRect(startX, startY, this.width, this.height);
 		GCE.ctx.globalAlpha = 1;
 	}
 })

@@ -1,5 +1,5 @@
 GCE.CreateBlueprint('Topdown', function() {
-	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['EightDirection', 'Pre'], ['Collider', 'Post']];
+	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['EightDirection', 'Pre'], ['Collider', 'Pre']];
 
 	var Target = {
 		x: 0,
@@ -9,7 +9,6 @@ GCE.CreateBlueprint('Topdown', function() {
 	this.speed = 100;
 
 	this.Create = function(parameters) {
-		console.log('Created topdown entity');
 	}
 
 	this.Update = function() {
