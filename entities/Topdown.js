@@ -1,5 +1,5 @@
 GCE.CreateBlueprint('Topdown', function() {
-	this.requiredComponents = ['Transform', 'SpriteRenderer', 'EightDirection'];
+	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['EightDirection', 'Pre'], ['Collider', 'Post']];
 
 	var Target = {
 		x: 0,

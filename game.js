@@ -16,6 +16,11 @@ GCE.Ready = function() {
 		},
 		EightDirection: {
 			rotateTowards: false
+		},
+		Collider: {
+			width: 33,
+			height: 33,
+			draw: true
 		}
 	})
 	$('#game').click(function(e) {

@@ -144,26 +144,37 @@ var GCE = new function() {
 			// add created entities GUID to zOrder array
 			zOrder.push(newEntity.GUID);
 			// call the entities create function if it has one, passing the properties
-			if(typeof newEntity.Create === 'function') { newEntity.Create(properties); }
+			if(typeof newEntity.Create === 'function') newEntity.Create(properties);
+			if(!newEntity.hasOwnProperty('Update')) newEntity.Update = function() { };
 
 			// add required components
 			newEntity.Components = {};
+			newEntity.PreUpdate = [];
+			newEntity.PostUpdate = [];
 			
 			// used to add new components to an entity
-			newEntity.AddComponent = function(componentName, componentType, properties) {
+			newEntity.AddComponent = function(componentName, componentType, updateType, properties) {
 				// get a new entity of the required type, passing the properties for the Component.Create() function
 				var newComponent = GCE.GetComponent(componentType, properties);
 				// if a new component was created, add it to the entity
 				if(newComponent) {
-					newEntity.Components[componentName] = newComponent;
+					switch(updateType) {
+						case 'PRE':
+							this.PreUpdate.push(componentName);
+							break;
+						case 'POST':
+							this.PostUpdate.push(componentName);
+							break;
+					}
+					this.Components[componentName] = newComponent;
 					return true;
 				}
 				return false;
 			}
 
 			newEntity.RemoveComponent = function(componentName){
-				if (newEntity.Components.hasOwnProperty(componentName)){
-					delete newEntity.Components[componentName];
+				if(this.Components.hasOwnProperty(componentName)) {
+					delete this.Components[componentName];
 					return true;
 				}
 				return false;
@@ -178,7 +189,8 @@ var GCE = new function() {
 			// add any required components that are stated int he blueprint
 			if(newEntity.hasOwnProperty('requiredComponents')) {
 				for(var i in newEntity.requiredComponents) {
-					var currentComponent = newEntity.requiredComponents[i];
+					var currentComponent = newEntity.requiredComponents[i][0];
+					var componentUpdateType = newEntity.requiredComponents[i][1].toUpperCase();
 					
 					// get component properties from the entity properties if they exist
 					var componentProperties = {};
@@ -187,7 +199,17 @@ var GCE = new function() {
 					// get the new component passing the properties and entity GUID for Component.Owner
 					var newComponent = this.GetComponent(currentComponent, componentProperties, newEntity.GUID);
 					// add the component if it was created successfully
-					if(newComponent) { newEntity.Components[currentComponent] = newComponent; }
+					if(newComponent) {
+						switch(componentUpdateType) {
+							case 'PRE':
+								newEntity.PreUpdate.push(currentComponent);
+								break;
+							case 'POST':
+								newEntity.PostUpdate.push(currentComponent);
+								break;
+						}
+						newEntity.Components[currentComponent] = newComponent;
+					}
 				}
 			}
 			// return the entities GUID
@@ -246,21 +268,26 @@ var GCE = new function() {
 	}
 
 	function UpdateEntities() {
-		// first call currentEntity.Update()
-		for(var e in Entities) {
-			var currentEntity = Entities[e];
-			if(typeof currentEntity.Update === 'function') {
-				currentEntity.Update();
+
+		var postUpdates = [];
+
+		for(var i in zOrder) {
+			var currentEntity = Entities[zOrder[i]];
+			for(var j in currentEntity.PreUpdate) {
+				currentEntity.Components[currentEntity.PreUpdate[j]].Update();
+			}
+			for(var k in currentEntity.PostUpdate) {
+				postUpdates.push([currentEntity.GUID, currentEntity.PostUpdate[k]]);
 			}
 		}
 
+		for(var e in Entities) {
+			Entities[e].Update();
+		}
+
 		// then update the entities components
-		for(var i in zOrder) {
-			var currentEntity = Entities[zOrder[i]];
-			// update any components
-			for(var e in currentEntity.Components) {
-				currentEntity.Components[e].Update();
-			}
+		for(var i in postUpdates) {
+			GCE.GetEntityByID(postUpdates[i][0]).GetComponent(postUpdates[i][1]).Update();
 		}
 	}
 
@@ -497,6 +524,11 @@ GCE.NewComponent('Transform', function() {
 		this.Anchor.x = -newOrigin.x;
 		this.Anchor.y = -newOrigin.y;
 	}
+
+	this.GetOrigin = function() {
+		return origin;
+	}
+
 	this.GetAngle = function() {
 		return Angle;
 	}
@@ -604,3 +636,28 @@ GCE.NewComponent('EightDirection', function() {
 		}
 	}
 }, true)
+
+GCE.NewComponent('Collider', function() {
+	this.width = 16;
+	this.height = 16;
+	this.draw = false;
+
+	this.Create = function(parameters) {
+		if(parameters.hasOwnProperty('width')) this.width = parameters.width;
+		if(parameters.hasOwnProperty('height')) this.height = parameters.height;
+		if(parameters.hasOwnProperty('draw')) this.draw = parameters.draw;
+	}
+
+	this.Update = function() {
+		if(!this.draw) return;
+
+		var Transform = this.Owner.GetComponent('Transform');
+		var drawX = Transform.Position.x - Transform.GetOrigin().x;
+		var drawY = Transform.Position.y - Transform.GetOrigin().y;
+
+		GCE.ctx.fillStyle = 'lime';
+		GCE.ctx.globalAlpha = .5;
+		GCE.ctx.fillRect(drawX, drawY, this.width, this.height);
+		GCE.ctx.globalAlpha = 1;
+	}
+})
