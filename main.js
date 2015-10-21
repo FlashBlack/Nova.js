@@ -5,6 +5,7 @@ var GCE = new function() {
 	var isReady = false;
 	this.isReady = function() { return isReady; };
 
+	// general functions and values
 	this.System = new function() {
 		this.angleTowards = function(x1, y1, x2, y2) {
 			var dx = x2 - x1;
@@ -37,7 +38,7 @@ var GCE = new function() {
 		lastUpdate = now;
 
 		// fill canvas with background colour
-		GCE.ctx.fillStyle = 'black';
+		GCE.ctx.fillStyle = 'grey';
 		GCE.ctx.fillRect(0, 0, GCE.canvas.width, GCE.canvas.height);
 
 		// update all entities
@@ -97,6 +98,9 @@ var GCE = new function() {
 		this.Loader.LoadSprites(parameters.sprites);
 		// add passed entities to loadqueue
 		this.Loader.LoadEntities(parameters.entities);
+
+		if(parameters.hasOwnProperty('jQueryIncluded') && parameters.jQueryIncluded) { this.Loader.BeginLoad(); }
+		else { LoadJQuery() }
 	}
 
 	this.CreateBlueprint = function(blueprintName, blueprint) {
@@ -129,6 +133,14 @@ var GCE = new function() {
 				// if a new component was created, add it to the entity
 				if(newComponent) {
 					newEntity.Components[componentName] = newComponent;
+					return true;
+				}
+				return false;
+			}
+
+			newEntity.RemoveComponent = function(componentName){
+				if (newEntity.Components.hasOwnProperty(componentName)){
+					delete newEntity.Components[componentName];
 					return true;
 				}
 				return false;
@@ -229,6 +241,15 @@ var GCE = new function() {
 		}
 	}
 
+	function LoadJQuery() {
+		var newScript = document.createElement('script');
+		newScript.src = 'http://code.jquery.com/jquery-1.11.3.min.js'
+		newScript.onload = function() {
+			GCE.Loader.BeginLoad();
+		}
+		document.getElementsByTagName('head')[0].appendChild(newScript);
+	}
+
 	this.Loader = new function() {
 		var loaded = 0;
 		var toLoad = 0;
@@ -239,25 +260,13 @@ var GCE = new function() {
 		var scriptsLoaded = 0;
 		var spritesToLoad, entitiesToLoad;
 
-		// adds a script tag to head for required libraries
-		var requiredScripts = ['http://code.jquery.com/jquery-1.11.3.min.js', 'http://requirejs.org/docs/release/2.1.20/minified/require.js']
-		for(var i in requiredScripts) {
-			var newScript = document.createElement('script');
-			newScript.src = requiredScripts[i];
-			scriptsToLoad++;
-			newScript.onload = function() {
-				GCE.Loader.LoadScript();
-			}
-			document.getElementsByTagName('head')[0].appendChild(newScript);
-		}
-
 		// initialize GCE if the last object has been loaded. note: this does not include scripts
 		this.LoadObject = function() {
 			loaded++;
 			if(loaded >= toLoad) GCE.init();
 		};
 
-		var BeginLoad = function() {
+		this.BeginLoad = function() {
 			// load the sprites
 			for(var i in spritesToLoad) {
 				var currentSprite = spritesToLoad[i];
@@ -275,7 +284,12 @@ var GCE = new function() {
 			for(var i in entitiesToLoad) {
 				var currentEntity = entitiesToLoad[i];
 				toLoad++;
-				require(['entities/' + currentEntity], function() { GCE.Loader.LoadObject(); })
+				// require(['entities/' + currentEntity], function() { GCE.Loader.LoadObject(); })
+				$.ajax({
+					url: 'entities/' + currentEntity + '.js',
+					dataType: 'script',
+					success: GCE.Loader.LoadObject,
+				})
 			}
 		}
 
@@ -303,7 +317,7 @@ var GCE = new function() {
 
 		this.LoadScript = function() {
 			scriptsLoaded++;
-			if(scriptsLoaded >= scriptsToLoad) BeginLoad();
+			if(scriptsLoaded >= scriptsToLoad) this.BeginLoad();
 		}
 
 		this.GetImage = function(image) {
