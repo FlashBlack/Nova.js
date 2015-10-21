@@ -1,5 +1,5 @@
 GCE.Ready = function() {
-	player = GCE.CreateEntity('Player', {
+	/*player = GCE.CreateEntity('Player', {
 		Transform: {
 			Position: {
 				x: 400,
@@ -12,6 +12,22 @@ GCE.Ready = function() {
 		},
 		SpriteRenderer: {
 			sprite: 'Player',
+			drawAtInteger: true
+		}
+	})*/
+	player = GCE.CreateEntity('Topdown', {
+		Transform: {
+			Position: {
+				x: 400,
+				y: 300
+			},
+			Anchor: {
+				x: 16,
+				y: 16
+			}
+		},
+		SpriteRenderer: {
+			sprite: 'Topdown',
 			drawAtInteger: true
 		}
 	})
