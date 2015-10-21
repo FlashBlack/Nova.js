@@ -32,5 +32,5 @@ GCE.Ready = function() {
 GCE.Start({
 	canvas: 'game',
 	sprites: ['player', 'topdown'],
-	entities: ['Player']
+	entities: ['Player', 'Topdown']
 })
