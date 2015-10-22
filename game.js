@@ -14,7 +14,7 @@ GCE.Ready = function() {
 				width: 32,
 				height: 32,
 				isSolid: true,
-				draw: true
+				// draw: true
 			}
 		})
 	}
@@ -32,7 +32,7 @@ GCE.Ready = function() {
 		},
 		SpriteRenderer: {
 			sprite: 'Topdown',
-			// drawAtInteger: true
+			drawAtInteger: true
 		},
 		EightDirection: {
 			rotateTowards: false
@@ -40,7 +40,7 @@ GCE.Ready = function() {
 		Collider: {
 			width: 33,
 			height: 33,
-			draw: true
+			// draw: true
 		}
 	})
 

@@ -483,6 +483,9 @@ var GCE = new function() {
 			collider2.bboxbottom += offset2.y;
 		}
 
+		collider1.Draw();
+		collider2.Draw();
+
 		return (collider1.bboxleft < collider2.bboxright &&
 				collider1.bboxright > collider2.bboxleft &&
 				collider1.bboxtop < collider2.bboxbottom &&
@@ -526,7 +529,7 @@ GCE.NewComponent('Transform', function() {
 		x: 0,
 		y: 0
 	}
-	this.Scale = 1;
+	var Scale = 1;
 	var Angle = 0;
 
 	this.Create = function(properties) {
@@ -550,15 +553,18 @@ GCE.NewComponent('Transform', function() {
 	}
 
 	this.SetScale = function(newScale) {
-		this.Scale = newScale;
-		this.Anchor.x = origin.x * newScale;
-		this.Anchor.y = origin.y * newScale;
+		Scale = newScale;
+		var newOrigin = GCE.System.rotateAround(-origin.x * newScale, -origin.y * newScale, 0, 0, Angle);
+		this.Anchor.x = -newOrigin.x;
+		this.Anchor.y = -newOrigin.y;
+
 	}
 
 	this.SetAngle = function(newAngle) {
 		if(newAngle < 0) newAngle = 360 + newAngle;
+		newAngle = newAngle % 360;
+		Angle = newAngle;
 		var newOrigin = GCE.System.rotateAround(-origin.x, -origin.y, 0, 0, newAngle*-1);
-		Angle = newAngle % 360;
 		this.Anchor.x = -newOrigin.x;
 		this.Anchor.y = -newOrigin.y;
 	}
@@ -570,6 +576,11 @@ GCE.NewComponent('Transform', function() {
 	this.GetAngle = function() {
 		return Angle;
 	}
+
+	this.GetScale = function() {
+		return Scale;
+	}
+
 	this.MoveAtAngle = function(distance, direction) {
 		direction = direction * Math.PI / 180;
 		this.Position.x += distance * Math.cos(direction);
@@ -603,7 +614,7 @@ GCE.NewComponent('SpriteRenderer', function() {
 		GCE.ctx.translate(drawX, drawY);
 		GCE.ctx.rotate(Transform.GetAngle() * Math.PI / 180);
 		GCE.ctx.translate(-drawX, -drawY);
-		GCE.ctx.drawImage(this.img, frame.x, frame.y, frame.width, frame.height, drawX, drawY, frame.width, frame.height);
+		GCE.ctx.drawImage(this.img, frame.x, frame.y, frame.width, frame.height, drawX, drawY, frame.width * Transform.GetScale(), frame.height * Transform.GetScale());
 		GCE.ctx.restore();
 	}
 
@@ -683,12 +694,11 @@ GCE.NewComponent('EightDirection', function() {
 						hitHorizontal = true;
 						var overlaps = false;
 						while(!overlaps) {
-							console.log('test');
 							if(GCE.Collides(this.Owner.GetComponent('Collider'), otherCollider)) {
 								overlaps = true;
 								break;
 							}
-							Transform.Position.x += offset.x;
+							Transform.Position.y += Math.sign(horizontal);
 						}
 					}
 				}
@@ -702,7 +712,7 @@ GCE.NewComponent('EightDirection', function() {
 								overlaps = true;
 								break;
 							}
-							Transform.Position.y += offset.y;
+							Transform.Position.y += Math.sign(vertical);
 						}
 					}
 				}
