@@ -38,9 +38,7 @@ GCE.Ready = function() {
 			rotateTowards: false
 		},
 		Collider: {
-			width: 33,
-			height: 33,
-			// draw: true
+			draw: true
 		}
 	})
 

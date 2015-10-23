@@ -37,6 +37,12 @@ var GCE = new function() {
 		this.clamp = function(x, a, b) {
 			return Math.min(Math.max(x, a), b);
 		}
+		this.midpoint = function(x1, y1, x2, y2) {
+			return {
+				x: (x1 + x2) / 2,
+				y: (y1 + y2) / 2
+			}
+		}
 	}
 
 	// holds all the instances of entities
@@ -483,13 +489,17 @@ var GCE = new function() {
 			collider2.bboxbottom += offset2.y;
 		}
 
-		collider1.Draw();
-		collider2.Draw();
+		/*collider1.Draw();
+		collider2.Draw();*/
 
 		return (collider1.bboxleft < collider2.bboxright &&
 				collider1.bboxright > collider2.bboxleft &&
 				collider1.bboxtop < collider2.bboxbottom &&
 				collider1.bboxbottom > collider2.bboxtop);
+	}
+
+	this.Debug = new function() {
+		// var 
 	}
 
 	this.GetEntityByID = function(ID) {
@@ -586,6 +596,7 @@ GCE.NewComponent('Transform', function() {
 		this.Position.x += distance * Math.cos(direction);
 		this.Position.y += distance * Math.sin(direction);
 	}
+
 }, true);
 
 GCE.NewComponent('SpriteRenderer', function() {
@@ -616,6 +627,7 @@ GCE.NewComponent('SpriteRenderer', function() {
 		GCE.ctx.translate(-drawX, -drawY);
 		GCE.ctx.drawImage(this.img, frame.x, frame.y, frame.width, frame.height, drawX, drawY, frame.width * Transform.GetScale(), frame.height * Transform.GetScale());
 		GCE.ctx.restore();
+		
 	}
 
 	this.GetFrame = function() {
@@ -686,34 +698,23 @@ GCE.NewComponent('EightDirection', function() {
 			}
 			var hitHorizontal = false;
 			var hitVertical = false;
+			var Collider = this.Owner.GetComponent('Collider');
 			for(var i in solids) {
 				var otherCollider = GCE.GetEntityByID(solids[i][0]).GetComponent(solids[i][1]);
 				if(horizontal != 0) {
-					var horizontalCollision = GCE.Collides(this.Owner.GetComponent('Collider'), otherCollider, {x: offset.x, y: 0});
+					var horizontalCollision = GCE.Collides(Collider, otherCollider, {x: offset.x, y: 0});
 					if(horizontalCollision) {
 						hitHorizontal = true;
 						var overlaps = false;
-						while(!overlaps) {
-							if(GCE.Collides(this.Owner.GetComponent('Collider'), otherCollider)) {
-								overlaps = true;
-								break;
-							}
-							Transform.Position.y += Math.sign(horizontal);
-						}
+						// Transform.Position.y += 
 					}
 				}
 				if(vertical != 0) {
-					var verticalCollision = GCE.Collides(this.Owner.GetComponent('Collider'), otherCollider, {x: 0, y: offset.y});
+					var verticalCollision = GCE.Collides(Collider, otherCollider, {x: 0, y: offset.y});
 					if(verticalCollision) {
 						hitVertical = true;
 						var overlaps = false;
-						while(!overlaps) {
-							if(GCE.Collides(this.Owner.GetComponent('Collider'), otherCollider)) {
-								overlaps = true;
-								break;
-							}
-							Transform.Position.y += Math.sign(vertical);
-						}
+						// Transform.Position.y += Math.sign(vertical);
 					}
 				}
 			}
@@ -724,13 +725,13 @@ GCE.NewComponent('EightDirection', function() {
 }, true)
 
 GCE.NewComponent('Collider', function() {
-	this.width = 16;
-	this.height = 16;
 	this.draw = false;
+	this.bboxleft = 0;
+	this.bboxright = 0;
+	this.bboxtop = 0;
+	this.bboxbottom = 0;
 
 	this.Create = function(parameters) {
-		if(parameters.hasOwnProperty('width')) this.width = parameters.width;
-		if(parameters.hasOwnProperty('height')) this.height = parameters.height;
 		if(parameters.hasOwnProperty('draw')) this.draw = parameters.draw;
 
 		if(parameters.hasOwnProperty('isSolid')) GCE.addSolid([this.Owner.GUID, this.componentName]);
@@ -739,29 +740,59 @@ GCE.NewComponent('Collider', function() {
 	}
 
 	this.Update = function() {
-		var Transform = this.Owner.GetComponent('Transform');
-		var startX = Transform.Position.x - Transform.GetOrigin().x;
-		var startY = Transform.Position.y - Transform.GetOrigin().y;
-		this.bboxleft = startX;
-		this.bboxtop = startY;
-		this.bboxright = startX + this.width;
-		this.bboxbottom = startY + this.height;
-
+		this.UpdateBoundingBox("SpriteRenderer");
 		if(!this.draw) return;
-		GCE.ctx.fillStyle = 'lime';
-		GCE.ctx.globalAlpha = .5;
-		GCE.ctx.fillRect(startX, startY, this.width, this.height);
-		GCE.ctx.globalAlpha = 1;
+		this.Draw();
 	}
 
 	this.Draw = function() {
-		var Transform = this.Owner.GetComponent('Transform');
-		var startX = Transform.Position.x - Transform.GetOrigin().x;
-		var startY = Transform.Position.y - Transform.GetOrigin().y;
-		// console.log(startX, startY);
 		GCE.ctx.fillStyle = 'lime';
-		GCE.ctx.globalAlpha = .5;
-		GCE.ctx.fillRect(startX, startY, this.width, this.height);
+		GCE.ctx.strokeStyle = 'lime';
+		GCE.lineWidth = 1;
+		GCE.ctx.globalAlpha = .25;
+		GCE.ctx.fillRect(Math.floor(this.bboxleft), Math.floor(this.bboxtop), Math.ceil(this.bboxright - this.bboxleft), Math.ceil(this.bboxbottom - this.bboxtop));
 		GCE.ctx.globalAlpha = 1;
+		GCE.ctx.strokeRect(Math.floor(this.bboxleft), Math.floor(this.bboxtop), Math.ceil(this.bboxright - this.bboxleft), Math.ceil(this.bboxbottom - this.bboxtop));
+	}
+
+	this.UpdateBoundingBox = function(renderer) {
+		renderer = this.Owner.GetComponent(renderer);
+		var Transform = this.Owner.GetComponent("Transform");
+		if(!renderer || !Transform) return false;
+
+		var Angle = -Transform.GetAngle();
+		var startX = Transform.Position.x - Transform.Anchor.x;
+		var startY = Transform.Position.y - Transform.Anchor.y;
+
+		var spriteWidth = renderer.GetFrame().width;
+		var spriteHeight = renderer.GetFrame().height;
+
+		var tl = {x: startX, y: startY};
+		var tr = GCE.System.rotateAround(startX + spriteWidth, startY, startX, startY, Angle);
+		var br = GCE.System.rotateAround(startX + spriteWidth, startY + spriteHeight, startX, startY, Angle);
+		var bl = GCE.System.rotateAround(startX, startY + spriteHeight, startX, startY, Angle);
+
+		var mid = GCE.System.midpoint(tl.x, tl.y, br.x, br.y);
+		var top = mid.y;
+		var bottom = mid.y;
+		var left = mid.x;
+		var right = mid.x;
+
+		var setSide = function(corners) {
+			for(var i in corners) {
+				var corner = corners[i];
+				if(corner.x < left) left = corner.x;
+				if(corner.y < top) top = corner.y;
+				if(corner.x > right) right = corner.x;
+				if(corner.y > bottom) bottom = corner.y;
+			}
+		}
+		setSide([tl, tr, br, bl]);
+		this.bboxleft = left;
+		this.bboxright = right;
+		this.bboxtop = top;
+		this.bboxbottom = bottom;
+
+		return true;
 	}
 })
