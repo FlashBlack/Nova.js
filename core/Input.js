@@ -23,7 +23,6 @@ Nova.Input = new function() {
 	this.Touch = {
 		x: 0,
 		y: 0,
-		Pressed: false,
 		Down: false,
 		Moving: false,
 	}
@@ -67,17 +66,25 @@ Nova.Input = new function() {
 			self.Mouse.Down = false;
 		})
 		//Touch
-		/*$(Nova.canvas).on('tap', function(e) {
-			self.Touch.x = e.offsetX;
-			self.Touch.y = e.offsetY;
-			self.Mouse.Moving = true;
+		$(Nova.canvas).on('touchstart', function(e) {
+			var touch = e.originalEvent.touches[0]
+			self.Touch.x = touch.clientX;
+			self.Touch.y = touch.clientY;
+			self.Touch.Down = true;
 		})
-		$(Nova.canvas).swipe(function(e) {
-			console.log(e);
-			self.Touch.x = e.offsetX;
-			self.Touch.y = e.offsetY;
-			self.Mouse.Moving = true;
-		})*/
+		$(Nova.canvas).on('touchmove', function(e) {
+			var touch = e.originalEvent.touches[0]
+			self.Touch.x = touch.clientX;
+			self.Touch.y = touch.clientY;
+			self.Touch.Moving = true;
+		})
+		$(Nova.canvas).on('touchend', function(e) {
+			var touch = e.originalEvent.touches[0]
+			self.Touch.x = touch.clientX;
+			self.Touch.y = touch.clientY;
+			self.Touch.Down = false;
+			self.Touch.Moving = false;
+		})
 	}
 
 	this.UpdateInput = function() {
