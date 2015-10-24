@@ -1,14 +1,14 @@
 Nova.Viewport = new function(){
 	this.Position = new Nova.System.Vector2();
 	this.Size = new Nova.System.Vector2();
-	this.Scale = new Nova.System.Vector2();
-	this.rotation = 0;
+	this.Scale = new Nova.System.Vector2(1, 1);
+	this.Rotation = 0;
 
 	this.Apply = function(){
-		Nova.ctx.translate(-this.Position.X, -this.Position.Y);
-		Nova.ctx.translate(this.Position.X + (this.Size.X/2), this.Position.Y + (this.Size.Y/2));
-		Nova.ctx.rotate(-this.rotation * Math.PI/180);
-		Nova.ctx.scale(this.Scale.X, this.Scale.Y);
-		Nova.ctx.translate(-(this.Position.X + (this.Size.X/2)), -(this.Position.Y + (this.Size.Y/2)));
+		Nova.ctx.translate(-Nova.Viewport.Position.X, -Nova.Viewport.Position.Y);
+		Nova.ctx.translate(Nova.Viewport.Position.X + (Nova.Viewport.Size.X/2), Nova.Viewport.Position.Y + (Nova.Viewport.Size.Y/2));
+		Nova.ctx.rotate(-Nova.Viewport.Rotation * Math.PI/180);
+		Nova.ctx.scale(Nova.Viewport.Scale.X, Nova.Viewport.Scale.Y);
+		Nova.ctx.translate(-(Nova.Viewport.Position.X + (Nova.Viewport.Size.X/2)), -(Nova.Viewport.Position.Y + (Nova.Viewport.Size.Y/2)));
 	}
 }
