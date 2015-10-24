@@ -40,7 +40,7 @@ var Nova = new function() {
 		Nova.ctx.fillText(Nova.fps, 5, 5);
 		Nova.ctx.fillText(Nova.dt, 5, 21);
 
-		Nova.Input.UpdateKeys();
+		Nova.Input.UpdateInput();
 
 		// do loop again
 		requestAnimationFrame(gameLoop);
@@ -329,3 +329,17 @@ var Nova = new function() {
 }
 
 var COLON = console;
+COLON.insert = function(){
+	console.log(
+	"                   ____"+
+	"              /  /'    `\\  \\"+
+	"              \\ (   )(   ) /"+
+	"               \\{~~~~~~~~}/"+
+	"                {   /\\   }"+
+	"                {  }  {  }"+
+	"               {  }    {  }"+
+	"              {- }      { -}"+
+	"             _| |        | |_"+
+	"             \\[ ]        [ ]/"
+	);
+}
