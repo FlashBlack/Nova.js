@@ -327,3 +327,5 @@ var Nova = new function() {
 		return EntityBlueprints;
 	}
 }
+
+var COLON = console;
