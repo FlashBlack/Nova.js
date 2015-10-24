@@ -1,4 +1,4 @@
-GCE.CreateBlueprint('Player', function() {
+Nova.CreateBlueprint('Player', function() {
 	this.requiredComponents = ['Transform', 'SpriteRenderer'];
 	
 	var Target = {

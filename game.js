@@ -1,6 +1,6 @@
-GCE.Ready = function() {
+Nova.Ready = function() {
 	for(var i = 0; i < 4; i++) {
-		GCE.CreateEntity('Wall', {
+		Nova.CreateEntity('Wall', {
 			Transform: {
 				Position: {
 					x: 100 + i*32,
@@ -19,15 +19,15 @@ GCE.Ready = function() {
 		})
 	}
 
-	player = GCE.CreateEntity('Topdown', {
+	player = Nova.CreateEntity('Topdown', {
 		Transform: {
 			Position: {
 				x: 400,
 				y: 300
 			},
 			Anchor: {
-				x: 16.5,
-				y: 16.5
+				x: 16,
+				y: 16
 			}
 		},
 		SpriteRenderer: {
@@ -44,11 +44,11 @@ GCE.Ready = function() {
 
 
 	$('#game').click(function(e) {
-		GCE.GetEntityByID(player).SetTarget(e.offsetX, e.offsetY);
-		// GCE.GetEntityByID(player).GetComponent('Transform').SetPosition(e.offsetX, e.offsetY);
+		Nova.GetEntityByID(player).SetTarget(e.offsetX, e.offsetY);
+		// Nova.GetEntityByID(player).GetComponent('Transform').SetPosition(e.offsetX, e.offsetY);
 	})
 	$(document).keypress(function(e) {
-		var playerEntity = GCE.GetEntityByID(player);
+		var playerEntity = Nova.GetEntityByID(player);
 		if(e.keyCode == 61) {
 			playerEntity.SetSpeed(playerEntity.speed + 1);
 		} else if(e.keyCode == 45) {
@@ -57,7 +57,7 @@ GCE.Ready = function() {
 	})
 }
 
-GCE.Start({
+Nova.Start({
 	canvas: 'game',
 	sprites: ['player', 'topdown', 'wall'],
 	entities: ['Player', 'Topdown', 'Wall']

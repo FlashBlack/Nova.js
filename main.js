@@ -1,16 +1,24 @@
-var GCE = new function() {
+var Nova = new function() {
 	this.VERSION = '0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.1';
 
-	// becomes true when all assets are loaded, and GCE.Ready() is called
+	// becomes true when all assets are loaded, and Nova.Ready() is called
 	var isReady = false;
+	var started = false;
 	this.isReady = function() { return isReady; };
 
 	// general functions and values
 	this.System = new function() {
+		this.GenerateGUID = function() {
+			function _p8(s) {
+	        	var p = (Math.random().toString(16)+"000000000").substr(2,8);
+	        	return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;
+	    	}
+	    	return _p8() + _p8(true) + _p8(true) + _p8();
+		}
 		this.angleTowards = function(x1, y1, x2, y2) {
 			var dx = x2 - x1;
 			var dy = y2 - y1;
-			return Math.atan2(dy, dx) * 180 / Math.PI;
+			return this.toDegrees(Math.atan2(dy, dx));
 		}
 		this.distance = function(x1, y1, x2, y2) {
 			var dx = x2 - x1;
@@ -18,7 +26,7 @@ var GCE = new function() {
 			return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 		}
 		this.rotateAround = function(pointX, pointY, originX, originY, angle) {
-			angle = (angle * (Math.PI / 180.0)) * -1;
+			angle = this.toRadians(angle) * -1;
 			pointX++;
 			pointY++;
 			originX++;
@@ -43,6 +51,12 @@ var GCE = new function() {
 				y: (y1 + y2) / 2
 			}
 		}
+		this.toRadians = function(angle) {
+			return angle * (Math.PI / 180);
+		}
+		this.toDegrees = function(angle) {
+			return angle * (180 / Math.PI);
+		}
 	}
 
 	// holds all the instances of entities
@@ -62,46 +76,39 @@ var GCE = new function() {
 	var lastUpdate;
 	var gameLoop = function() {
 		var now = performance.now();
-		GCE.dt = (now - lastUpdate) / 1000;
-		GCE.fps = Math.round(1 / GCE.dt);
+		Nova.dt = (now - lastUpdate) / 1000;
+		Nova.fps = Math.round(1 / Nova.dt);
 		lastUpdate = now;
 
 		// fill canvas with background colour
-		GCE.ctx.fillStyle = 'grey';
-		GCE.ctx.fillRect(0, 0, GCE.canvas.width, GCE.canvas.height);
+		Nova.ctx.fillStyle = 'grey';
+		Nova.ctx.fillRect(0, 0, Nova.canvas.width, Nova.canvas.height);
 
 		// update all entities
 		UpdateEntities();
 
-		GCE.ctx.textBaseline = 'top';
-		GCE.ctx.fillStyle = 'lime';
-		GCE.ctx.font = '16px Georgia';
-		GCE.ctx.fillText(GCE.fps, 5, 5);
-		GCE.ctx.fillText(GCE.dt, 5, 21);
+		Nova.ctx.textBaseline = 'top';
+		Nova.ctx.fillStyle = 'lime';
+		Nova.ctx.font = '16px Georgia';
+		Nova.ctx.fillText(Nova.fps, 5, 5);
+		Nova.ctx.fillText(Nova.dt, 5, 21);
 
-		GCE.Input.UpdateKeys();
+		Nova.Input.UpdateKeys();
 
 		// do loop again
 		requestAnimationFrame(gameLoop);
 	}
 
-	this.GenerateGUID = function() {
-		function _p8(s) {
-        	var p = (Math.random().toString(16)+"000000000").substr(2,8);
-        	return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;
-    	}
-    	return _p8() + _p8(true) + _p8(true) + _p8();
-	}
-
-	// this is the last function to be called for ready state, it actually starts the loop adter calling GCE.Ready()
+	// this is the last function to be called for ready state, it actually starts the loop adter calling Nova.Ready()
 	this.init = function() {
 		isReady = true;
 		this.Ready();
 		lastUpdate = performance.now();
 		requestAnimationFrame(gameLoop);
+		this.init = function() { console.warn('The game has already been initialized!')}
 	}
 	
-	// used to setup GCE sprites, entities, components, images, parameters, etc.
+	// used to setup Nova sprites, entities, components, images, parameters, etc.
 	this.Start = function(parameters) {
 		// required parameters
 		var defaultParameters = {
@@ -150,7 +157,7 @@ var GCE = new function() {
 			// assign created instance to a temporary variable
 			var newEntity = new EntityBlueprints[entityName];
 			// assign its GUID and ENTITY_TYPE
-			newEntity.GUID = this.GenerateGUID();
+			newEntity.GUID = this.System.GenerateGUID();
 			newEntity.ENTITY_TYPE = entityName;
 			
 			// add created entity to Entities object
@@ -169,7 +176,7 @@ var GCE = new function() {
 			// used to add new components to an entity
 			newEntity.AddComponent = function(componentName, componentType, updateType, properties) {
 				// get a new entity of the required type, passing the properties for the Component.Create() function
-				var newComponent = GCE.GetComponent(componentName, componentType, properties, this.GUID);
+				var newComponent = Nova.GetComponent(componentName, componentType, properties, this.GUID);
 				// if a new component was created, add it to the entity
 				if(newComponent) {
 					newComponent.componentName = componentName;
@@ -304,7 +311,7 @@ var GCE = new function() {
 
 		// then update the entities components
 		for(var i in postUpdates) {
-			GCE.GetEntityByID(postUpdates[i][0]).GetComponent(postUpdates[i][1]).Update();
+			Nova.GetEntityByID(postUpdates[i][0]).GetComponent(postUpdates[i][1]).Update();
 		}
 	}
 
@@ -312,7 +319,7 @@ var GCE = new function() {
 		var newScript = document.createElement('script');
 		newScript.src = 'http://code.jquery.com/jquery-1.11.3.min.js'
 		newScript.onload = function() {
-			GCE.Loader.BeginLoad();
+			Nova.Loader.BeginLoad();
 		}
 		document.getElementsByTagName('head')[0].appendChild(newScript);
 	}
@@ -325,16 +332,18 @@ var GCE = new function() {
 		var LoadedImages = {};
 		var scriptsToLoad = 0;
 		var scriptsLoaded = 0;
-		var spritesToLoad, entitiesToLoad;
+		var spritesToLoad = [];
+		var entitiesToLoad = [];
+		var componentsToLoad = ["Collider", "EightDirection", "SpriteRenderer", "Transform"];
 
-		// initialize GCE if the last object has been loaded. note: this does not include scripts
+		// initialize Nova if the last object has been loaded. note: this does not include scripts
 		this.LoadObject = function() {
 			loaded++;
-			if(loaded >= toLoad) GCE.init();
+			if(loaded >= toLoad) Nova.init();
 		};
 
 		this.BeginLoad = function() {
-			GCE.Input.Setup();
+			Nova.Input.Setup();
 			// load the sprites
 			for(var i in spritesToLoad) {
 				var currentSprite = spritesToLoad[i];
@@ -342,20 +351,29 @@ var GCE = new function() {
 				// grab the sprite json from sprites/ folder and load it in
 				$.getJSON('sprites/' + currentSprite + '.json', function(data) {
 					var sprite = data.image.split('.')[0];
-					GCE.Loader.LoadImage(sprite, data.image);
+					Nova.Loader.LoadImage(sprite, data.image);
 					Sprites[data.spriteName] = data;
-					GCE.Loader.LoadObject();
+					Nova.Loader.LoadObject();
 				})
 			}
 			// load the entities
 			for(var i in entitiesToLoad) {
 				var currentEntity = entitiesToLoad[i];
 				toLoad++;
-				// require(['entities/' + currentEntity], function() { GCE.Loader.LoadObject(); })
 				$.ajax({
 					url: 'entities/' + currentEntity + '.js',
 					dataType: 'script',
-					success: GCE.Loader.LoadObject,
+					success: Nova.Loader.LoadObject,
+				})
+			}
+			// load components
+			for(var i in componentsToLoad) {
+				var currentComponent = componentsToLoad[i];
+				toLoad++;
+				$.ajax({
+					url: 'components/' + currentComponent + '.js',
+					dataType: 'script',
+					success: Nova.Loader.LoadObject
 				})
 			}
 		}
@@ -368,18 +386,22 @@ var GCE = new function() {
 				tempImage.src = 'images/' + file;
 				tempImage.onload = function() {
 					Images[name] = this;
-					GCE.Loader.LoadObject();
+					Nova.Loader.LoadObject();
 				}
 			}
 		};
 
 		this.LoadSprites = function(sprites) {
 			// assign the sprites array to spritesToLoad for loading later (after scripts)
-			spritesToLoad = sprites;
+			spritesToLoad = spritesToLoad.concat(sprites);
 		};
 
 		this.LoadEntities = function(entities) {
-			entitiesToLoad = entities;
+			entitiesToLoad = entitiesToLoad.concat(entities);
+		}
+
+		this.LoadComponents = function(components) {
+			componentsToLoad = componentsToLoad.concat(components);
 		}
 
 		this.LoadScript = function() {
@@ -435,9 +457,9 @@ var GCE = new function() {
 				released[charCode] = true;
 				keys[charCode] = false;
 			})
-			$(GCE.canvas).mousemove(function(e) {
-				GCE.Input.mousex = e.offsetX;
-				GCE.Input.mousey = e.offsetY;
+			$(Nova.canvas).mousemove(function(e) {
+				Nova.Input.mousex = e.offsetX;
+				Nova.Input.mousey = e.offsetY;
 			})
 		}
 
@@ -489,9 +511,6 @@ var GCE = new function() {
 			collider2.bboxbottom += offset2.y;
 		}
 
-		/*collider1.Draw();
-		collider2.Draw();*/
-
 		return (collider1.bboxleft < collider2.bboxright &&
 				collider1.bboxright > collider2.bboxleft &&
 				collider1.bboxtop < collider2.bboxbottom &&
@@ -516,283 +535,3 @@ var GCE = new function() {
 		return EntityBlueprints;
 	}
 }
-
-/*
-~~~~~~~~~~~~~~~~~~~~
-|  				   |
-|	 COMPONENTS    |
-|				   |
-~~~~~~~~~~~~~~~~~~~~
-*/
-
-GCE.NewComponent('Transform', function() {
-	// default values
-	this.Position = {
-		x: 0,
-		y: 0
-	}
-	var origin = {
-		x: 0,
-		y: 0
-	}
-	this.Anchor = {
-		x: 0,
-		y: 0
-	}
-	var Scale = 1;
-	var Angle = 0;
-
-	this.Create = function(properties) {
-		// dont do anything if no properties were passed
-		if(properties == undefined) return false;
-		if(properties.hasOwnProperty('Position')) {
-			this.Position.x = properties.Position.x;
-			this.Position.y = properties.Position.y;
-		}
-		if(properties.hasOwnProperty('Anchor')) {
-			origin.x = properties.Anchor.x,
-			origin.y = properties.Anchor.y
-			this.Anchor.x = properties.Anchor.x,
-			this.Anchor.y = properties.Anchor.y
-		}
-	}
-
-	this.SetPosition = function(x, y) {
-		this.Position.x = x;
-		this.Position.y = y;
-	}
-
-	this.SetScale = function(newScale) {
-		Scale = newScale;
-		var newOrigin = GCE.System.rotateAround(-origin.x * newScale, -origin.y * newScale, 0, 0, Angle);
-		this.Anchor.x = -newOrigin.x;
-		this.Anchor.y = -newOrigin.y;
-
-	}
-
-	this.SetAngle = function(newAngle) {
-		if(newAngle < 0) newAngle = 360 + newAngle;
-		newAngle = newAngle % 360;
-		Angle = newAngle;
-		var newOrigin = GCE.System.rotateAround(-origin.x, -origin.y, 0, 0, newAngle*-1);
-		this.Anchor.x = -newOrigin.x;
-		this.Anchor.y = -newOrigin.y;
-	}
-
-	this.GetOrigin = function() {
-		return origin;
-	}
-
-	this.GetAngle = function() {
-		return Angle;
-	}
-
-	this.GetScale = function() {
-		return Scale;
-	}
-
-	this.MoveAtAngle = function(distance, direction) {
-		direction = direction * Math.PI / 180;
-		this.Position.x += distance * Math.cos(direction);
-		this.Position.y += distance * Math.sin(direction);
-	}
-
-}, true);
-
-GCE.NewComponent('SpriteRenderer', function() {
-	this.drawAtInteger = false;
-	this.Create = function(properties) {
-		this.sprite = GCE.Loader.GetSprite(properties.sprite);
-		this.img = GCE.Loader.GetImage(this.sprite);
-		if(properties.hasOwnProperty('drawAtInteger')) { this.drawAtInteger = properties.drawAtInteger; }
-		if(properties.hasOwnProperty('animation')) { this.currentAnimation = properties.animation }
-		else { this.currentAnimation = Object.keys(this.sprite.animations)[0]; }
-	}
-
-	this.Update = function() {
-		// get the entities Transform component
-		var Transform = this.Owner.GetComponent('Transform');
-		// figure out where to draw it based on Transform.Position and Transform.Anchor
-		var drawX = Transform.Position.x - Transform.Anchor.x;
-		var drawY = Transform.Position.y - Transform.Anchor.y;
-		if(this.drawAtInteger) {
-			drawX = Math.round(drawX);
-			drawY = Math.round(drawY);
-		}
-		var frame = this.GetFrame();
-		// draw the image
-		GCE.ctx.save();
-		GCE.ctx.translate(drawX, drawY);
-		GCE.ctx.rotate(Transform.GetAngle() * Math.PI / 180);
-		GCE.ctx.translate(-drawX, -drawY);
-		GCE.ctx.drawImage(this.img, frame.x, frame.y, frame.width, frame.height, drawX, drawY, frame.width * Transform.GetScale(), frame.height * Transform.GetScale());
-		GCE.ctx.restore();
-		
-	}
-
-	this.GetFrame = function() {
-		return this.sprite.animations[this.currentAnimation][0];
-	}
-}, true);
-
-GCE.NewComponent('EightDirection', function() {
-	var keys = {
-		'up': ['W', 'UP'],
-		'down': ['S', 'DOWN'],
-		'left': ['A', 'LEFT'],
-		'right': ['D', 'RIGHT'],
-	}
-	this.moveSpeed = 200;
-	this.rotateSpeed = 15;
-	this.rotateTowards = true;
-	this.Create = function(properties) {
-		if(properties.hasOwnProperty('keys')) {
-			for(var key in keys) {
-				for(var i in properties.keys[key]) {
-					keys[key].push(properties.keys[key][i]);
-				}
-			}
-		}
-		if(properties.hasOwnProperty('moveSpeed')) this.moveSpeed = properties.moveSpeed;
-		if(properties.hasOwnProperty('rotateSpeed')) this.moveSpeed = properties.rotateSpeed;
-		if(properties.hasOwnProperty('rotateTowards')) this.rotateTowards = properties.rotateTowards;
-	}
-	this.Update = function() {
-		var Transform = this.Owner.GetComponent('Transform');
-		var horizontal = 0;
-		var vertical = 0;
-		// check input keys
-		for(var i in keys.up) {
-			if(GCE.Input.KeyDown(keys.up[i])) {
-				vertical--;
-				break;
-			}
-		}
-		for(var i in keys.down) {
-			if(GCE.Input.KeyDown(keys.down[i])) {
-				vertical++;
-				break;
-			}
-		}
-		for(var i in keys.left) {
-			if(GCE.Input.KeyDown(keys.left[i])) {
-				horizontal--;
-				break;
-			}
-		}
-		for(var i in keys.right) {
-			if(GCE.Input.KeyDown(keys.right[i])) {
-				horizontal++;
-				break;
-			}
-		}
-		if(horizontal != 0 || vertical != 0) {
-			var moveAngle = GCE.System.angleTowards(0, 0, horizontal, vertical);
-			if(this.rotateTowards) {
-				Transform.SetAngle(moveAngle);
-			}
-			var solids = GCE.getSolids();
-			var offset = {
-				x: (this.moveSpeed * GCE.dt) * Math.cos(moveAngle * Math.PI / 180),
-				y: (this.moveSpeed * GCE.dt) * Math.sin(moveAngle * Math.PI / 180)
-			}
-			var hitHorizontal = false;
-			var hitVertical = false;
-			var Collider = this.Owner.GetComponent('Collider');
-			for(var i in solids) {
-				var otherCollider = GCE.GetEntityByID(solids[i][0]).GetComponent(solids[i][1]);
-				if(horizontal != 0) {
-					var horizontalCollision = GCE.Collides(Collider, otherCollider, {x: offset.x, y: 0});
-					if(horizontalCollision) {
-						hitHorizontal = true;
-						var overlaps = false;
-						// Transform.Position.y += 
-					}
-				}
-				if(vertical != 0) {
-					var verticalCollision = GCE.Collides(Collider, otherCollider, {x: 0, y: offset.y});
-					if(verticalCollision) {
-						hitVertical = true;
-						var overlaps = false;
-						// Transform.Position.y += Math.sign(vertical);
-					}
-				}
-			}
-			if(!hitVertical) Transform.Position.y += offset.y;
-			if(!hitHorizontal) Transform.Position.x += offset.x;
-		}
-	}
-}, true)
-
-GCE.NewComponent('Collider', function() {
-	this.draw = false;
-	this.bboxleft = 0;
-	this.bboxright = 0;
-	this.bboxtop = 0;
-	this.bboxbottom = 0;
-
-	this.Create = function(parameters) {
-		if(parameters.hasOwnProperty('draw')) this.draw = parameters.draw;
-
-		if(parameters.hasOwnProperty('isSolid')) GCE.addSolid([this.Owner.GUID, this.componentName]);
-
-		this.Update();
-	}
-
-	this.Update = function() {
-		this.UpdateBoundingBox("SpriteRenderer");
-		if(!this.draw) return;
-		this.Draw();
-	}
-
-	this.Draw = function() {
-		GCE.ctx.fillStyle = 'lime';
-		GCE.ctx.strokeStyle = 'lime';
-		GCE.lineWidth = 1;
-		GCE.ctx.globalAlpha = .25;
-		GCE.ctx.fillRect(Math.floor(this.bboxleft), Math.floor(this.bboxtop), Math.ceil(this.bboxright - this.bboxleft), Math.ceil(this.bboxbottom - this.bboxtop));
-		GCE.ctx.globalAlpha = 1;
-		GCE.ctx.strokeRect(Math.floor(this.bboxleft), Math.floor(this.bboxtop), Math.ceil(this.bboxright - this.bboxleft), Math.ceil(this.bboxbottom - this.bboxtop));
-	}
-
-	this.UpdateBoundingBox = function(renderer) {
-		renderer = this.Owner.GetComponent(renderer);
-		var Transform = this.Owner.GetComponent("Transform");
-		if(!renderer || !Transform) return false;
-
-		var Angle = -Transform.GetAngle();
-		var startX = Transform.Position.x - Transform.Anchor.x;
-		var startY = Transform.Position.y - Transform.Anchor.y;
-
-		var spriteWidth = renderer.GetFrame().width;
-		var spriteHeight = renderer.GetFrame().height;
-
-		var tl = {x: startX, y: startY};
-		var tr = GCE.System.rotateAround(startX + spriteWidth, startY, startX, startY, Angle);
-		var br = GCE.System.rotateAround(startX + spriteWidth, startY + spriteHeight, startX, startY, Angle);
-		var bl = GCE.System.rotateAround(startX, startY + spriteHeight, startX, startY, Angle);
-
-		var mid = GCE.System.midpoint(tl.x, tl.y, br.x, br.y);
-		var top = mid.y;
-		var bottom = mid.y;
-		var left = mid.x;
-		var right = mid.x;
-
-		var setSide = function(corners) {
-			for(var i in corners) {
-				var corner = corners[i];
-				if(corner.x < left) left = corner.x;
-				if(corner.y < top) top = corner.y;
-				if(corner.x > right) right = corner.x;
-				if(corner.y > bottom) bottom = corner.y;
-			}
-		}
-		setSide([tl, tr, br, bl]);
-		this.bboxleft = left;
-		this.bboxright = right;
-		this.bboxtop = top;
-		this.bboxbottom = bottom;
-
-		return true;
-	}
-})

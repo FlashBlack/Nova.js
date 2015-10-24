@@ -1,4 +1,4 @@
-GCE.CreateBlueprint('Topdown', function() {
+Nova.CreateBlueprint('Topdown', function() {
 	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['EightDirection', 'Pre'], ['Collider', 'Pre']];
 
 	var Target = {
@@ -14,14 +14,14 @@ GCE.CreateBlueprint('Topdown', function() {
 	this.Update = function() {
 		var Transform = this.GetComponent('Transform');
 		var Position = Transform.Position;
-		var mouseAngle = GCE.System.angleTowards(Position.x, Position.y, GCE.Input.mousex, GCE.Input.mousey);
-		Transform.SetAngle(GCE.System.angleLerp(Transform.GetAngle(), mouseAngle, 15 * GCE.dt));
+		var mouseAngle = Nova.System.angleTowards(Position.x, Position.y, Nova.Input.mousex, Nova.Input.mousey);
+		Transform.SetAngle(Nova.System.angleLerp(Transform.GetAngle(), mouseAngle, 15 * Nova.dt));
 		/*if(moving) {
-			if(GCE.System.distance(Position.x, Position.y, Target.x, Target.y) >= 4) {
-				var angle = GCE.System.angleTowards(Position.x, Position.y, Target.x, Target.y);
+			if(Nova.System.distance(Position.x, Position.y, Target.x, Target.y) >= 4) {
+				var angle = Nova.System.angleTowards(Position.x, Position.y, Target.x, Target.y);
 
-				Position.x += Math.cos(angle * Math.PI / 180) * (this.speed * GCE.dt);
-				Position.y += Math.sin(angle * Math.PI / 180) * (this.speed * GCE.dt);
+				Position.x += Math.cos(angle * Math.PI / 180) * (this.speed * Nova.dt);
+				Position.y += Math.sin(angle * Math.PI / 180) * (this.speed * Nova.dt);
 			} else {
 				moving = false;
 			}
