@@ -48,4 +48,19 @@ Nova.System = new function() {
 	this.toDegrees = function(angle) {
 		return angle * (180 / Math.PI);
 	}
+	this.loopThroughObject = function(object, callback){
+		for (var prop in object){
+			if (object.hasOwnProperty(prop)){
+				callback(prop, object[prop]);
+			}
+		}
+	}
+	/*
+		loopThroughEntities EXAMPLE:
+		var entities = {}
+
+		GCE.System.loopThroughEntities(entities, function(GUID, Entity){
+			Entity.update();
+		});
+	*/
 }
