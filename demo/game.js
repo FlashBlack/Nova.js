@@ -65,6 +65,7 @@ Nova.Start({
 		entities: '../entities/',
 		components: '../components/',
 		sprites: '../sprites/',
-		images: '../images/'
+		images: '../images/',
+		audio: '../audio/'
 	}
 })

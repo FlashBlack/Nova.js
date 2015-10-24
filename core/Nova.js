@@ -78,6 +78,7 @@ var Nova = new function() {
 			this.Loader.SetDirectory('components', dirs.components);
 			this.Loader.SetDirectory('sprites', dirs.sprites);
 			this.Loader.SetDirectory('images', dirs.images);
+			this.Loader.SetDirectory('audio', dirs.audio);
 		}
 
 		// ensure the passed ID exists
