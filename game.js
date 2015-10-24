@@ -21,6 +21,17 @@ Nova.Ready = function() {
 			}
 		})
 	}*/
+	Nova.CreateEntity('Grid', {
+		Transform: {
+			Position: {
+				x: 0,
+				y: 0
+			}
+		},
+		SpriteRenderer: {
+			sprite: 'Grid'
+		}
+	})
 
 	player = Nova.CreateEntity('Topdown', {
 		Transform: {
@@ -53,8 +64,8 @@ Nova.Ready = function() {
 
 Nova.Start({
 	canvas: 'game',
-	sprites: ['topdown', 'wall'],
-	entities: ['Topdown', 'Wall'],
+	sprites: ['topdown', 'wall', 'grid'],
+	entities: ['Topdown', 'Wall', 'Grid'],
 	// sounds: ['laser9.mp3'],
 	/*directories: {
 		entities: '../entities/',

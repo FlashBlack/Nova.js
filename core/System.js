@@ -58,6 +58,7 @@ Nova.System = new function() {
 	this.Vector2 = function(x, y) {
 		this.X = parseFloat(x) || 0;
 		this.Y = parseFloat(y) || 0;
+		this.isVector2 = true;
 
 		this.Transform = function(x, y) {
 			this.X += parseFloat(x);
@@ -79,6 +80,21 @@ Nova.System = new function() {
 	        this.X = (Math.cos(radians) * (this.X-vector.X) - Math.sin(radians) * (this.Y-vector.X) + vector.X),
 	        this.Y = (Math.sin(radians) * (this.X-vector.X) + Math.cos(radians) * (this.Y-vector.X) + vector.Y)
 		}
+	}
+	this.SetDefaultProperties = function(properties, defaultProperties) {
+		for(var p in properties) {
+			if (properties.hasOwnProperty(p)){
+				var currentProperty = properties[p];
+				if(!defaultProperties.hasOwnProperty(p)) {
+					defaultProperties[p] = currentProperty;
+				} 
+				// if the type matches, set the passed value. else leave as default
+				else if(typeof defaultProperties[p] == typeof currentProperty) {
+					defaultProperties[p] = currentProperty;
+				}
+			}
+		}
+		return defaultProperties;
 	}
 
 	/*

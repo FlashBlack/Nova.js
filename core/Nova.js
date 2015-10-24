@@ -64,7 +64,7 @@ var Nova = new function() {
 			sounds: [],
 		};
 		// get default parameters if something is missing
-		parameters = SetDefaultParameters(parameters, defaultParameters);
+		parameters = this.System.SetDefaultProperties(parameters, defaultParameters);
 
 		// ensure that a canvas id was passed
 		if (!parameters.hasOwnProperty('canvas')) {
@@ -240,23 +240,6 @@ var Nova = new function() {
 			return newComponent;
 		}
 		return false;
-	}
-
-	// used to ensure that 
-	function SetDefaultParameters(parameters, defaultParameters) {
-		for(var p in parameters) {
-			if (parameters.hasOwnProperty(p)){
-				var currentParameter = parameters[p];
-				if(!defaultParameters.hasOwnProperty(p)) {
-					defaultParameters[p] = currentParameter;
-				} 
-				// if the type matches, set the passed value. else leave as default
-				else if(typeof defaultParameters[p] == typeof currentParameter) {
-					defaultParameters[p] = currentParameter;
-				}
-			}
-		}
-		return defaultParameters;
 	}
 
 	function UpdateEntities() {
