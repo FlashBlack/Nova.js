@@ -33,7 +33,7 @@ Nova.NewComponent('Collider', function() {
 		}
 		lastAngle = this.Owner.GetComponent("Transform").GetAngle();
 		if(!this.draw) return;
-		this.Draw();
+		// this.Draw();
 	}
 
 	this.Draw = function() {
@@ -113,9 +113,7 @@ Nova.NewComponent('Collider', function() {
 	}
 
 	var UpdateCollider = function() {
-		console.log('updating collider');
 		var Angle = self.Owner.GetComponent("Transform").GetAngle();
-		console.log(Angle);
 		for(var i = 0; i < polygonActual.length; i++) {
 			polygon[i].Set(polygonActual[i].X, polygonActual[i].Y);
 			polygon[i].RotateAround(new Nova.System.Vector2(), Angle);

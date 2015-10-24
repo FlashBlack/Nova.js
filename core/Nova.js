@@ -95,8 +95,7 @@ var Nova = new function() {
 			// draw loading bar here?
 		}
 
-		this.Viewport.Size.X = this.canvas.width;
-		this.Viewport.Size.Y = this.canvas.height;
+		this.Viewport.Size.Set(this.canvas.width, this.canvas.height);
 		// add passed sprites to loadqueue
 		this.Loader.LoadSprites(parameters.sprites);
 		// add passed entities to loadqueue
