@@ -1,2 +1,2 @@
-# GuineaCowEngine
-GuineaCowEngine
+# Nova.js
+Nova Game Engine
