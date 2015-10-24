@@ -62,6 +62,7 @@ var Nova = new function() {
 			sprites: [],
 			entities: [],
 			sounds: [],
+			pointFiltering: true,
 		};
 		// get default parameters if something is missing
 		parameters = this.System.SetDefaultProperties(parameters, defaultParameters);
@@ -94,6 +95,12 @@ var Nova = new function() {
 			this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 			// draw loading bar here?
 		}
+
+		Nova.ctx.mozImageSmoothingEnabled = !parameters.pointFiltering;
+		Nova.ctx.webkitImageSmoothingEnabled = !parameters.pointFiltering;
+		Nova.ctx.msImageSmoothingEnabled = !parameters.pointFiltering;
+		Nova.ctx.imageSmoothingEnabled = !parameters.pointFiltering;
+		Nova.ctx.imageSmoothingEnabled = !parameters.pointFiltering;
 
 		this.Viewport.Size.Set(this.canvas.width, this.canvas.height);
 		// add passed sprites to loadqueue

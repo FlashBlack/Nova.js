@@ -28,7 +28,7 @@ Nova.NewComponent('SpriteRenderer', function() {
 		var frame = this.GetFrame();
 		// draw the image
 		Nova.ctx.save();
-		// Nova.Viewport.Apply();
+		Nova.Viewport.Apply();
 		Nova.ctx.translate(drawX, drawY);
 		Nova.ctx.rotate(Nova.System.toRadians(Transform.GetAngle()));
 		Nova.ctx.translate(-drawX, -drawY);
