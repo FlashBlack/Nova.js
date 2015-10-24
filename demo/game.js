@@ -42,10 +42,10 @@ Nova.Ready = function() {
 		},
 		Collider: {
 			polygon: [
-			[-16, -16],
-			[16, -16],
-			[16, 16],
-			[-16, 16]],
+			[0, 0],
+			[33, 0],
+			[33, 33],
+			[0, 33]],
 			draw: true
 		}
 	})
@@ -55,7 +55,7 @@ Nova.Start({
 	canvas: 'game',
 	sprites: ['player', 'topdown', 'wall'],
 	entities: ['Player', 'Topdown', 'Wall'],
-	sounds: ['laser9.mp3'],
+	// sounds: ['laser9.mp3'],
 	directories: {
 		entities: '../entities/',
 		components: '../components/',

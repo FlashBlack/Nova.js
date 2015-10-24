@@ -4,6 +4,7 @@ Nova.NewComponent('Collider', function() {
 	this.bboxright = 0;
 	this.bboxtop = 0;
 	this.bboxbottom = 0;
+	var midpoint = [0, 0];
 
 	var polygonActual = [];
 	var polygon = [];
@@ -30,6 +31,7 @@ Nova.NewComponent('Collider', function() {
 		var Transform = this.Owner.GetComponent("Transform");
 		var startX = Transform.Position.x - Transform.Anchor.x;
 		var startY = Transform.Position.y - Transform.Anchor.y;
+		var Angle = Transform.GetAngle();
 
 		// draw collider
 		Nova.ctx.fillStyle = 'blue';
@@ -40,7 +42,8 @@ Nova.NewComponent('Collider', function() {
 		Nova.ctx.moveTo(startX + polygon[0][0], startY + polygon[0][1]);
 		for(var i = 1; i < polygon.length; i++) {
 			var currentPoint = polygon[i];
-			Nova.ctx.lineTo(startX + currentPoint[0], startY + currentPoint[1]);
+			var pointPosition = Nova.System.rotateAround(startX + currentPoint[0], startY + currentPoint[1], startX, startY, -Angle);
+			Nova.ctx.lineTo(pointPosition.x, pointPosition.y);
 			if(i == polygon.length-1) {
 				Nova.ctx.closePath();
 			}
@@ -75,6 +78,7 @@ Nova.NewComponent('Collider', function() {
 		var bl = Nova.System.rotateAround(startX, startY + spriteHeight, startX, startY, Angle);
 
 		var mid = Nova.System.midpoint(tl.x, tl.y, br.x, br.y);
+		midpoint = mid;
 		var top = mid.y;
 		var bottom = mid.y;
 		var left = mid.x;
