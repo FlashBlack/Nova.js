@@ -14,7 +14,7 @@ Nova.CreateBlueprint('Topdown', function() {
 	this.Update = function() {
 		var Transform = this.GetComponent('Transform');
 		var Position = Transform.Position;
-		var mouseAngle = Nova.System.angleTowards(Position.x, Position.y, Nova.Input.mousex, Nova.Input.mousey);
+		var mouseAngle = Nova.System.angleTowards(Position.x, Position.y, Nova.Input.Mouse.x, Nova.Input.Mouse.y);
 		Transform.SetAngle(Nova.System.angleLerp(Transform.GetAngle(), mouseAngle, 15 * Nova.dt));
 		if(Nova.Input.Mouse.Pressed) {
 			Nova.Audio.Play('laser9');

@@ -11,8 +11,6 @@ Nova.Ready = function() {
 				sprite: 'Wall'
 			},
 			Collider: {
-				width: 32,
-				height: 32,
 				isSolid: true,
 				// draw: true
 			}
