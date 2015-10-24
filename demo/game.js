@@ -56,11 +56,11 @@ Nova.Start({
 	sprites: ['player', 'topdown', 'wall'],
 	entities: ['Player', 'Topdown', 'Wall'],
 	// sounds: ['laser9.mp3'],
-	/*directories: {
+	directories: {
 		entities: '../entities/',
 		components: '../components/',
 		sprites: '../sprites/',
 		images: '../images/',
 		audio: '../audio/'
-	}*/
+	}
 })
