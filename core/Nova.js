@@ -61,7 +61,7 @@ var Nova = new function() {
 		var defaultParameters = {
 			sprites: [],
 			entities: [],
-
+			sounds: [],
 		};
 		// get default parameters if something is missing
 		parameters = SetDefaultParameters(parameters, defaultParameters);
@@ -99,6 +99,8 @@ var Nova = new function() {
 		this.Loader.LoadSprites(parameters.sprites);
 		// add passed entities to loadqueue
 		this.Loader.LoadEntities(parameters.entities);
+		// add passed sounds to loadqueue
+		this.Loader.LoadSounds(parameters.sounds);
 
 		if(parameters.hasOwnProperty('jQueryIncluded') && parameters.jQueryIncluded) { this.Loader.BeginLoad(); }
 		else { LoadJQuery() }
@@ -236,13 +238,15 @@ var Nova = new function() {
 	// used to ensure that 
 	function SetDefaultParameters(parameters, defaultParameters) {
 		for(var p in parameters) {
-			var currentParameter = parameters[p];
-			if(!defaultParameters.hasOwnProperty(p)) {
-				defaultParameters[p] = currentParameter;
-			} 
-			// if the type matches, set the passed value. else leave as default
-			else if(typeof defaultParameters[p] == typeof currentParameter) {
-				defaultParameters[p] = currentParameter;
+			if (p.hasOwnProperty(parameters)){
+				var currentParameter = parameters[p];
+				if(!defaultParameters.hasOwnProperty(p)) {
+					defaultParameters[p] = currentParameter;
+				} 
+				// if the type matches, set the passed value. else leave as default
+				else if(typeof defaultParameters[p] == typeof currentParameter) {
+					defaultParameters[p] = currentParameter;
+				}
 			}
 		}
 		return defaultParameters;
@@ -262,10 +266,10 @@ var Nova = new function() {
 			}
 		}
 
-		for(var e in Entities) {
-			Entities[e].Update();
-		}
-
+		this.System.loopThroughObject(Entities, function(GUID, Entity){
+			Entity.Update();
+		});
+		
 		// then update the entities components
 		for(var i in postUpdates) {
 			Nova.GetEntityByID(postUpdates[i][0]).GetComponent(postUpdates[i][1]).Update();
