@@ -1,11 +1,14 @@
 Nova.NewComponent('SpriteRenderer', function() {
 	this.drawAtInteger = false;
 	this.Create = function(properties) {
+		if(!properties.hasOwnProperty('sprite')) return false;
 		this.sprite = Nova.Loader.GetSprite(properties.sprite);
 		this.img = Nova.Loader.GetImage(this.sprite);
 		if(properties.hasOwnProperty('drawAtInteger')) { this.drawAtInteger = properties.drawAtInteger; }
 		if(properties.hasOwnProperty('animation')) { this.currentAnimation = properties.animation }
 		else { this.currentAnimation = Object.keys(this.sprite.animations)[0]; }
+
+		return true;
 	}
 
 	this.Update = function() {

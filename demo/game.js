@@ -12,7 +12,12 @@ Nova.Ready = function() {
 			},
 			Collider: {
 				isSolid: true,
-				// draw: true
+				polygon: [
+				[0, 0],
+				[32, 0],
+				[32, 32],
+				[0, 32]],
+				draw: true
 			}
 		})
 	}
@@ -36,21 +41,12 @@ Nova.Ready = function() {
 			rotateTowards: false
 		},
 		Collider: {
+			polygon: [
+			[-16, -16],
+			[16, -16],
+			[16, 16],
+			[-16, 16]],
 			draw: true
-		}
-	})
-
-
-	$('#game').click(function(e) {
-		Nova.GetEntityByID(player).SetTarget(e.offsetX, e.offsetY);
-		// Nova.GetEntityByID(player).GetComponent('Transform').SetPosition(e.offsetX, e.offsetY);
-	})
-	$(document).keypress(function(e) {
-		var playerEntity = Nova.GetEntityByID(player);
-		if(e.keyCode == 61) {
-			playerEntity.SetSpeed(playerEntity.speed + 1);
-		} else if(e.keyCode == 45) {
-			playerEntity.SetSpeed(Math.max(playerEntity.speed - 1, 1));
 		}
 	})
 }

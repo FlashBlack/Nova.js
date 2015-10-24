@@ -5,12 +5,19 @@ Nova.NewComponent('Collider', function() {
 	this.bboxtop = 0;
 	this.bboxbottom = 0;
 
+	var polygonActual = [];
+	var polygon = [];
+
 	this.Create = function(parameters) {
 		if(parameters.hasOwnProperty('draw')) this.draw = parameters.draw;
-
 		if(parameters.hasOwnProperty('isSolid')) Nova.addSolid([this.Owner.GUID, this.componentName]);
 
+		if(!parameters.hasOwnProperty('polygon') || !Array.isArray(parameters.polygon)) return false;
+		polygonActual = parameters.polygon;
+		polygon = parameters.polygon;
+
 		this.Update();
+		return true;
 	}
 
 	this.Update = function() {
@@ -20,9 +27,30 @@ Nova.NewComponent('Collider', function() {
 	}
 
 	this.Draw = function() {
+		var Transform = this.Owner.GetComponent("Transform");
+		var startX = Transform.Position.x - Transform.Anchor.x;
+		var startY = Transform.Position.y - Transform.Anchor.y;
+
+		// draw collider
+		Nova.ctx.fillStyle = 'blue';
+		Nova.ctx.strokeStyle = 'blue';
+		Nova.ctx.lineWidth = 1;
+		Nova.ctx.globalAlpha = .25;
+		Nova.ctx.beginPath();
+		Nova.ctx.moveTo(startX + polygon[0][0], startY + polygon[0][1]);
+		for(var i = 1; i < polygon.length; i++) {
+			var currentPoint = polygon[i];
+			Nova.ctx.lineTo(startX + currentPoint[0], startY + currentPoint[1]);
+			if(i == polygon.length-1) {
+				Nova.ctx.closePath();
+			}
+		}
+		Nova.ctx.stroke();
+		Nova.ctx.fill();
+
+		// draw bounding box
 		Nova.ctx.fillStyle = 'lime';
 		Nova.ctx.strokeStyle = 'lime';
-		Nova.lineWidth = 1;
 		Nova.ctx.globalAlpha = .25;
 		Nova.ctx.fillRect(Math.floor(this.bboxleft), Math.floor(this.bboxtop), Math.ceil(this.bboxright - this.bboxleft), Math.ceil(this.bboxbottom - this.bboxtop));
 		Nova.ctx.globalAlpha = 1;

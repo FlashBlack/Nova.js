@@ -17,7 +17,6 @@ Nova.NewComponent('Transform', function() {
 
 	this.Create = function(properties) {
 		// dont do anything if no properties were passed
-		if(properties == undefined) return false;
 		if(properties.hasOwnProperty('Position')) {
 			this.Position.x = properties.Position.x;
 			this.Position.y = properties.Position.y;
@@ -28,6 +27,8 @@ Nova.NewComponent('Transform', function() {
 			this.Anchor.x = properties.Anchor.x,
 			this.Anchor.y = properties.Anchor.y
 		}
+
+		return true;
 	}
 
 	this.SetPosition = function(x, y) {

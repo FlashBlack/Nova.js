@@ -136,6 +136,7 @@ var Nova = new function() {
 			newEntity.AddComponent = function(componentName, componentType, updateType, properties) {
 				// get a new entity of the required type, passing the properties for the Component.Create() function
 				var newComponent = Nova.GetComponent(componentName, componentType, properties, this.GUID);
+				if(!newComponent) return false;
 				// if a new component was created, add it to the entity
 				if(newComponent) {
 					newComponent.componentName = componentName;
@@ -179,6 +180,7 @@ var Nova = new function() {
 					
 					// get the new component passing the properties and entity GUID for Component.Owner
 					var newComponent = this.GetComponent(currentComponent, currentComponent, componentProperties, newEntity.GUID);
+					if(!newComponent) return false;
 					// add the component if it was created successfully
 					if(newComponent) {
 						newComponent.componentName = currentComponent;
@@ -225,10 +227,14 @@ var Nova = new function() {
 			// if a GUID was passed, assign that entity to newComponent.Owner
 			if(GUID) { newComponent.Owner = this.GetEntityByID(GUID); }
 			// ensure a Create and Update function exists
-			if(!newComponent.hasOwnProperty('Create')) { newComponent.Create = function() {} }
+			if(!newComponent.hasOwnProperty('Create')) { newComponent.Create = function() { return true; } }
 			if(!newComponent.hasOwnProperty('Update')) { newComponent.Update = function() {} }
 			// call newComponent.Create() passing in the component properties
-			newComponent.Create(properties);
+			var created = newComponent.Create(properties);
+			if(!created) {
+				console.error('Failed to create component \'' + componentName + '\' on entity \'' + GUID + '\'');
+				return false;
+			}
 			// return the created component
 			return newComponent;
 		}

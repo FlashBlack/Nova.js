@@ -19,6 +19,8 @@ Nova.NewComponent('EightDirection', function() {
 		if(properties.hasOwnProperty('moveSpeed')) this.moveSpeed = properties.moveSpeed;
 		if(properties.hasOwnProperty('rotateSpeed')) this.moveSpeed = properties.rotateSpeed;
 		if(properties.hasOwnProperty('rotateTowards')) this.rotateTowards = properties.rotateTowards;
+
+		return true;
 	}
 	this.Update = function() {
 		var Transform = this.Owner.GetComponent('Transform');
