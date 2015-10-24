@@ -238,7 +238,7 @@ var Nova = new function() {
 	// used to ensure that 
 	function SetDefaultParameters(parameters, defaultParameters) {
 		for(var p in parameters) {
-			if (p.hasOwnProperty(parameters)){
+			if (parameters.hasOwnProperty(p)){
 				var currentParameter = parameters[p];
 				if(!defaultParameters.hasOwnProperty(p)) {
 					defaultParameters[p] = currentParameter;
