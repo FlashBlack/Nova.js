@@ -19,14 +19,17 @@ Nova.CreateBlueprint('Topdown', function() {
 		// if(Nova.Input.Mouse.Pressed) Nova.Audio.Play('laser9');
 
 		//Move Viewport
-		if (Nova.Input.KeyDown('I')) Nova.Viewport.Position.Y -= 100 * Nova.dt;
+		/*if (Nova.Input.KeyDown('I')) Nova.Viewport.Position.Y -= 100 * Nova.dt;
 		if (Nova.Input.KeyDown('J')) Nova.Viewport.Position.X -= 100 * Nova.dt;
 		if (Nova.Input.KeyDown('K')) Nova.Viewport.Position.Y += 100 * Nova.dt;
-		if (Nova.Input.KeyDown('L')) Nova.Viewport.Position.X += 100 * Nova.dt;
+		if (Nova.Input.KeyDown('L')) Nova.Viewport.Position.X += 100 * Nova.dt;*/
+
+		//Move Viewport To Topdown
+		Nova.Viewport.Position.Set(Nova.System.lerp(Nova.Viewport.Position.X ,Transform.Position.x - Nova.Viewport.Size.X/2, 2 * Nova.dt), Nova.System.lerp(Nova.Viewport.Position.Y, Transform.Position.y - Nova.Viewport.Size.Y/2, 2 * Nova.dt))
 
 		//Rotate Viewport
-		if (Nova.Input.KeyDown('U')) Nova.Viewport.Rotation += 100 * Nova.dt;
-		if (Nova.Input.KeyDown('O')) Nova.Viewport.Rotation -= 100 * Nova.dt;
+		if (Nova.Input.KeyDown('U')) Nova.Viewport.Rotation += 50 * Nova.dt;
+		if (Nova.Input.KeyDown('O')) Nova.Viewport.Rotation -= 50 * Nova.dt;
 
 		//Zoom Viewport
 		if (Nova.Input.KeyDown('OPENBRACKET')) {
