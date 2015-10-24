@@ -1,0 +1,3 @@
+Nova.Render = new function() {
+	
+}

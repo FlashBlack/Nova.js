@@ -51,8 +51,8 @@ Nova.NewComponent('Collider', function() {
 		Nova.ctx.moveTo(startX + polygon[0].X, startY + polygon[0].Y);
 		for(var i = 1; i < polygon.length; i++) {
 			var currentPoint = polygon[i];
-			var pointPosition = Nova.System.rotateAround(startX + currentPoint.X, startY + currentPoint.Y, startX, startY, -Angle);
-			Nova.ctx.lineTo(pointPosition.Y, pointPosition.Y);
+			// var pointPosition = Nova.System.rotateAround(startX + currentPoint.X, startY + currentPoint.Y, startX, startY, -Angle);
+			Nova.ctx.lineTo(startX + currentPoint.X, startY + currentPoint.Y);
 			if(i == polygon.length-1) {
 				Nova.ctx.closePath();
 			}
@@ -113,7 +113,9 @@ Nova.NewComponent('Collider', function() {
 	}
 
 	var UpdateCollider = function() {
+		console.log('updating collider');
 		var Angle = self.Owner.GetComponent("Transform").GetAngle();
+		console.log(Angle);
 		for(var i = 0; i < polygonActual.length; i++) {
 			polygon[i].Set(polygonActual[i].X, polygonActual[i].Y);
 			polygon[i].RotateAround(new Nova.System.Vector2(), Angle);

@@ -71,13 +71,13 @@ Nova.System = new function() {
 
 		this.RotateAround = function(vector, angle) {
 			var radians = Nova.System.toRadians(angle) * -1;
-			if(vector.x == 0 && vector.y == 0) {
-				this.X = (Math.cos(radians) * ((this.x+1)-(vector.x+1)) - Math.sin(radians) * ((this.y+1)-(vector.y+1)) + (vector.x+1))-1,
-	        	this.Y = (Math.sin(radians) * ((this.x+1)-(vector.x+1)) + Math.cos(radians) * ((this.y+1)-(vector.y+1)) + (vector.y+1))-1
+			if(vector.X == 0 && vector.X == 0) {
+				this.X = (Math.cos(radians) * ((this.X+1)-(vector.X+1)) - Math.sin(radians) * ((this.Y+1)-(vector.Y+1)) + (vector.X+1))-1,
+	        	this.Y = (Math.sin(radians) * ((this.X+1)-(vector.X+1)) + Math.cos(radians) * ((this.Y+1)-(vector.Y+1)) + (vector.Y+1))-1
 	        	return;
 			}
-	        this.X = (Math.cos(radians) * (this.x-vector.x) - Math.sin(radians) * (this.y-vector.x) + vector.x),
-	        this.Y = (Math.sin(radians) * (this.x-vector.x) + Math.cos(radians) * (this.y-vector.x) + vector.y)
+	        this.X = (Math.cos(radians) * (this.X-vector.X) - Math.sin(radians) * (this.Y-vector.X) + vector.X),
+	        this.Y = (Math.sin(radians) * (this.X-vector.X) + Math.cos(radians) * (this.Y-vector.X) + vector.Y)
 		}
 	}
 

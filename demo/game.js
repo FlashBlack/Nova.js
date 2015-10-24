@@ -1,5 +1,5 @@
 Nova.Ready = function() {
-	for(var i = 0; i < 4; i++) {
+	/*for(var i = 0; i < 4; i++) {
 		Nova.CreateEntity('Wall', {
 			Transform: {
 				Position: {
@@ -20,7 +20,7 @@ Nova.Ready = function() {
 				draw: true
 			}
 		})
-	}
+	}*/
 
 	player = Nova.CreateEntity('Topdown', {
 		Transform: {
