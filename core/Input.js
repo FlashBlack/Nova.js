@@ -20,6 +20,13 @@ Nova.Input = new function() {
 		Released: false,
 		Moving: false,
 	};
+	this.Touch = {
+		x: 0,
+		y: 0,
+		Pressed: false,
+		Down: false,
+		Moving: false,
+	}
 	for(var key in keyCodes) {
 		charCodes[keyCodes[key]] = key;
 		keys[key] = false;
@@ -28,6 +35,7 @@ Nova.Input = new function() {
 	}
 
 	this.Setup = function() {
+		//Keyboard
 		$(window).bind('keydown', function(e) {
 			var keyCode = e.keyCode || e.which;
 			var charCode = charCodes[keyCode];
@@ -40,6 +48,7 @@ Nova.Input = new function() {
 			released[charCode] = true;
 			keys[charCode] = false;
 		})
+		//Mouse
 		$(Nova.canvas).mousemove(function(e) {
 			self.Mouse.x = e.offsetX;
 			self.Mouse.y = e.offsetY;
@@ -57,6 +66,18 @@ Nova.Input = new function() {
 			self.Mouse.Released = true;
 			self.Mouse.Down = false;
 		})
+		//Touch
+		/*$(Nova.canvas).on('tap', function(e) {
+			self.Touch.x = e.offsetX;
+			self.Touch.y = e.offsetY;
+			self.Mouse.Moving = true;
+		})
+		$(Nova.canvas).swipe(function(e) {
+			console.log(e);
+			self.Touch.x = e.offsetX;
+			self.Touch.y = e.offsetY;
+			self.Mouse.Moving = true;
+		})*/
 	}
 
 	this.UpdateInput = function() {
