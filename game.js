@@ -40,13 +40,12 @@ Nova.Ready = function() {
 				y: 300
 			},
 			Anchor: {
-				x: 16,
-				y: 16
+				x: 16.5,
+				y: 16.5
 			}
 		},
 		SpriteRenderer: {
 			sprite: 'Topdown',
-			drawAtInteger: true
 		},
 		EightDirection: {
 			rotateTowards: false
@@ -64,7 +63,7 @@ Nova.Ready = function() {
 
 Nova.Start({
 	canvas: 'game',
-	sprites: ['topdown', 'wall', 'grid'],
+	sprites: ['topdown', 'wall', 'grid', 'test'],
 	entities: ['Topdown', 'Wall', 'Grid'],
 	// sounds: ['laser9.mp3'],
 	/*directories: {

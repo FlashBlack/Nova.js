@@ -103,6 +103,7 @@ var Nova = new function() {
 		Nova.ctx.imageSmoothingEnabled = !parameters.pointFiltering;
 
 		this.Viewport.Size.Set(this.canvas.width, this.canvas.height);
+		this.Render.SetContext(this.ctx);
 		// add passed sprites to loadqueue
 		this.Loader.LoadSprites(parameters.sprites);
 		// add passed entities to loadqueue

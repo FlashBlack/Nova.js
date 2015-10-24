@@ -33,7 +33,7 @@ Nova.NewComponent('Collider', function() {
 		}
 		lastAngle = this.Owner.GetComponent("Transform").GetAngle();
 		if(!this.draw) return;
-		// this.Draw();
+		this.Draw();
 	}
 
 	this.Draw = function() {

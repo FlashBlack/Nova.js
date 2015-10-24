@@ -40,7 +40,42 @@ Nova.CreateBlueprint('Topdown', function() {
 			Nova.Viewport.Scale.X += 1 * Nova.dt
 			Nova.Viewport.Scale.Y += 1 * Nova.dt
 		}
-
+		Nova.Render.Sprite({
+			Position: new Nova.System.Vector2(-32, 0),
+			Sprite: 'Test',
+		})
+		Nova.Render.Image({
+			Position: new Nova.System.Vector2(-32, 32),
+			Image: 'test'
+		})
+		Nova.Render.Rectangle({
+			Position: new Nova.System.Vector2(-32, 64),
+			Size: new Nova.System.Vector2(32, 32),
+			Fill: true
+		})
+		Nova.Render.Line({
+			Start: new Nova.System.Vector2(-32, 96),
+			End: new Nova.System.Vector2(0, 128)
+		})
+		Nova.Render.Path({
+			Path: [
+			new Nova.System.Vector2(-32, 160),
+			new Nova.System.Vector2(-16, 128),
+			new Nova.System.Vector2(0, 160)
+			],
+			Complete: true,
+			Fill: true
+		})
+		Nova.Render.Arc({
+			Position: new Nova.System.Vector2(-16, 176),
+			Radius: 16,
+			Fill: true
+		})
+		Nova.Render.Ellipse({
+			Position: new Nova.System.Vector2(-16, 208),
+			Radius: new Nova.System.Vector2(16, 8),
+			Fill: true,
+		})
 	}
 
 	this.SetTarget = function(x, y) {

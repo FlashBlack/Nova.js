@@ -67,6 +67,7 @@ Nova.Loader = new function() {
 			// grab the sprite json from sprites/ folder and load it in
 			$.getJSON(directories.sprites + currentSprite + '.json', function(data) {
 				var sprite = data.image.split('.')[0];
+				data.isSprite = true;
 				Nova.Loader.LoadImage(sprite, data.image);
 				Sprites[data.spriteName] = data;
 				Nova.Loader.LoadObject();
