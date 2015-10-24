@@ -15,7 +15,7 @@ Nova.Loader = new function() {
 
 	var directories = {
 		entities: 'entities/',
-		components: 'components',
+		components: 'components/',
 		sprites: 'sprites/',
 		images: 'images/',
 		audio: 'audio/'
@@ -28,9 +28,11 @@ Nova.Loader = new function() {
 	}
 
 	// initialize Nova if the last object has been loaded. note: this does not include scripts
-	this.LoadObject = function() {
+	this.LoadObject = function(name) {
 		loaded++;
-		if(loaded >= toLoad) Nova.init();
+		if(loaded >= toLoad) {
+			Nova.init();
+		}
 	};
 
 	this.BeginLoad = function() {
@@ -43,7 +45,7 @@ Nova.Loader = new function() {
 			$.ajax({
 				url: directories.entities + currentEntity + '.js',
 				dataType: 'script',
-				success: Nova.Loader.LoadObject,
+				success: Nova.Loader.LoadObject
 			})
 		}
 		
