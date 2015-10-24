@@ -266,7 +266,7 @@ var Nova = new function() {
 			}
 		}
 
-		this.System.loopThroughObject(Entities, function(GUID, Entity){
+		Nova.System.loopThroughObject(Entities, function(GUID, Entity){
 			Entity.Update();
 		});
 		
