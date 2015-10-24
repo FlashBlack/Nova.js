@@ -74,7 +74,7 @@ Nova.Loader = new function() {
 		// load the audio
 		for(var i in soundsToLoad) {
 			var currentSound = soundsToLoad[i];
-			console.log(currentSound);
+			this.LoadSound(currentSound.split('.')[0], currentSound);
 		}
 	}
 
@@ -98,7 +98,7 @@ Nova.Loader = new function() {
 			LoadedSounds[name] = true;
 			var tempSound = new Audio();
 			tempSound.src = directories.audio + file;
-			tempSound.onload = function() {
+			tempSound.oncanplaythrough = function() {
 				Sounds[name] = this;
 				Nova.Loader.LoadObject();
 			}
@@ -132,4 +132,9 @@ Nova.Loader = new function() {
 		if(Sprites.hasOwnProperty(sprite)) return Sprites[sprite];
 		return false;
 	};
+
+	this.GetSound = function(sound) {
+		if(Sounds.hasOwnProperty(sound)) return Sounds[sound];
+		return false;
+	}
 }

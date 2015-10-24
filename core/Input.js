@@ -11,8 +11,15 @@ Nova.Input = new function() {
 	var keys = {};
 	var pressed = {};
 	var released = {};
-	this.mousex = 0;
-	this.mousey = 0;
+	var self = this;
+	this.Mouse = {
+		x: 0,
+		y: 0,
+		Pressed: false,
+		Down: false,
+		Released: false,
+		Moving: false,
+	};
 	for(var key in keyCodes) {
 		charCodes[keyCodes[key]] = key;
 		keys[key] = false;
@@ -34,16 +41,31 @@ Nova.Input = new function() {
 			keys[charCode] = false;
 		})
 		$(Nova.canvas).mousemove(function(e) {
-			Nova.Input.mousex = e.offsetX;
-			Nova.Input.mousey = e.offsetY;
+			self.Mouse.x = e.offsetX;
+			self.Mouse.y = e.offsetY;
+			self.Mouse.Moving = true;
+		})
+		$(Nova.canvas).mouseup(function(e) {
+			self.Mouse.x = e.offsetX;
+			self.Mouse.y = e.offsetY;
+			self.Mouse.Pressed = true;
+			self.Mouse.Down = true;
+		})
+		$(Nova.canvas).mousedown(function(e) {
+			self.Mouse.x = e.offsetX;
+			self.Mouse.y = e.offsetY;
+			self.Mouse.Released = true;
+			self.Mouse.Down = false;
 		})
 	}
 
-	this.UpdateKeys = function() {
+	this.UpdateInput = function() {
 		for(var key in keys) {
 			pressed[key] = false;
 			released[key] = false;
 		}
+		this.Mouse.Pressed = false;
+		this.Mouse.Released = false;
 	}
 
 	this.KeyDown = function(key) {
