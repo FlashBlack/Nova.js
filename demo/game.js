@@ -60,5 +60,11 @@ Nova.Ready = function() {
 Nova.Start({
 	canvas: 'game',
 	sprites: ['player', 'topdown', 'wall'],
-	entities: ['Player', 'Topdown', 'Wall']
+	entities: ['Player', 'Topdown', 'Wall'],
+	directories: {
+		entities: '../entities/',
+		components: '../components/',
+		sprites: '../sprites/',
+		images: '../images/'
+	}
 })
