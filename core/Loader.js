@@ -1,19 +1,24 @@
 Nova.Loader = new function() {
 	var loaded = 0;
 	var toLoad = 0;
+
 	var Images = {};
 	var Sprites = {};
+	var Sounds = {};
 	var LoadedImages = {};
-	var scriptsToLoad = 0;
-	var scriptsLoaded = 0;
-	var spritesToLoad = [];
+	var LoadedSounds = {};
+
 	var entitiesToLoad = [];
 	var componentsToLoad = ["Collider", "EightDirection", "SpriteRenderer", "Transform"];
+	var spritesToLoad = [];
+	var soundsToLoad = [];
+
 	var directories = {
 		entities: 'entities/',
 		components: 'components',
 		sprites: 'sprites/',
-		images: 'images/'
+		images: 'images/',
+		audio: 'audio/'
 	}
 
 	this.SetDirectory = function(directory, path) {
@@ -30,6 +35,29 @@ Nova.Loader = new function() {
 
 	this.BeginLoad = function() {
 		Nova.Input.Setup();
+
+		// load the entities
+		for(var i in entitiesToLoad) {
+			var currentEntity = entitiesToLoad[i];
+			toLoad++;
+			$.ajax({
+				url: directories.entities + currentEntity + '.js',
+				dataType: 'script',
+				success: Nova.Loader.LoadObject,
+			})
+		}
+		
+		// load components
+		for(var i in componentsToLoad) {
+			var currentComponent = componentsToLoad[i];
+			toLoad++;
+			$.ajax({
+				url: directories.components + currentComponent + '.js',
+				dataType: 'script',
+				success: Nova.Loader.LoadObject
+			})
+		}
+		
 		// load the sprites
 		for(var i in spritesToLoad) {
 			var currentSprite = spritesToLoad[i];
@@ -42,25 +70,11 @@ Nova.Loader = new function() {
 				Nova.Loader.LoadObject();
 			})
 		}
-		// load the entities
-		for(var i in entitiesToLoad) {
-			var currentEntity = entitiesToLoad[i];
-			toLoad++;
-			$.ajax({
-				url: directories.entities + currentEntity + '.js',
-				dataType: 'script',
-				success: Nova.Loader.LoadObject,
-			})
-		}
-		// load components
-		for(var i in componentsToLoad) {
-			var currentComponent = componentsToLoad[i];
-			toLoad++;
-			$.ajax({
-				url: directories.components + currentComponent + '.js',
-				dataType: 'script',
-				success: Nova.Loader.LoadObject
-			})
+		
+		// load the audio
+		for(var i in soundsToLoad) {
+			var currentSound = soundsToLoad[i];
+			console.log(currentSound);
 		}
 	}
 
@@ -68,6 +82,7 @@ Nova.Loader = new function() {
 		// dont load the image if it has already been loaded, this allows multiple sprites to use the same image
 		if(!LoadedImages.hasOwnProperty(name)) {
 			toLoad++;
+			LoadedImages[name] = true;
 			var tempImage = new Image();
 			tempImage.src = directories.images + file;
 			tempImage.onload = function() {
@@ -77,22 +92,33 @@ Nova.Loader = new function() {
 		}
 	};
 
-	this.LoadSprites = function(sprites) {
-		// assign the sprites array to spritesToLoad for loading later (after scripts)
-		spritesToLoad = spritesToLoad.concat(sprites);
-	};
+	this.LoadSound = function(name, file) {
+		if(!LoadedSounds.hasOwnProperty(name)) {
+			toLoad++;
+			LoadedSounds[name] = true;
+			var tempSound = new Audio();
+			tempSound.src = directories.audio + file;
+			tempSound.onload = function() {
+				Sounds[name] = this;
+				Nova.Loader.LoadObject();
+			}
+		}
+	}
 
 	this.LoadEntities = function(entities) {
 		entitiesToLoad = entitiesToLoad.concat(entities);
 	}
-
+	
 	this.LoadComponents = function(components) {
 		componentsToLoad = componentsToLoad.concat(components);
 	}
+	
+	this.LoadSprites = function(sprites) {
+		spritesToLoad = spritesToLoad.concat(sprites);
+	};
 
-	this.LoadScript = function() {
-		scriptsLoaded++;
-		if(scriptsLoaded >= scriptsToLoad) this.BeginLoad();
+	this.LoadSounds = function(sounds) {
+		soundsToLoad = soundsToLoad.concat(sounds);
 	}
 
 	this.GetImage = function(image) {

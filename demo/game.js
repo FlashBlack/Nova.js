@@ -61,6 +61,7 @@ Nova.Start({
 	canvas: 'game',
 	sprites: ['player', 'topdown', 'wall'],
 	entities: ['Player', 'Topdown', 'Wall'],
+	sounds: ['testsound', 'butts'],
 	directories: {
 		entities: '../entities/',
 		components: '../components/',
