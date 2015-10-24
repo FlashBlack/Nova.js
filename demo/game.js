@@ -53,8 +53,8 @@ Nova.Ready = function() {
 
 Nova.Start({
 	canvas: 'game',
-	sprites: ['player', 'topdown', 'wall'],
-	entities: ['Player', 'Topdown', 'Wall'],
+	sprites: ['topdown', 'wall'],
+	entities: ['Topdown', 'Wall'],
 	// sounds: ['laser9.mp3'],
 	directories: {
 		entities: '../entities/',

@@ -5,17 +5,22 @@ Nova.NewComponent('Collider', function() {
 	this.bboxtop = 0;
 	this.bboxbottom = 0;
 	var midpoint = [0, 0];
+	var self = this;
 
 	var polygonActual = [];
 	var polygon = [];
+	var lastAngle = 0;
 
 	this.Create = function(parameters) {
 		if(parameters.hasOwnProperty('draw')) this.draw = parameters.draw;
 		if(parameters.hasOwnProperty('isSolid')) Nova.addSolid([this.Owner.GUID, this.componentName]);
 
 		if(!parameters.hasOwnProperty('polygon') || !Array.isArray(parameters.polygon)) return false;
-		polygonActual = parameters.polygon;
-		polygon = parameters.polygon;
+		for(var i = 0; i < parameters.polygon.length; i++) {
+			if(!Array.isArray(parameters.polygon)) return false;
+			polygonActual.push(new Nova.System.Vector2(parameters.polygon[i][0], parameters.polygon[i][1]));
+		}
+		polygon = polygonActual;
 
 		this.Update();
 		return true;
@@ -23,6 +28,10 @@ Nova.NewComponent('Collider', function() {
 
 	this.Update = function() {
 		this.UpdateBoundingBox("SpriteRenderer");
+		if(lastAngle != this.Owner.GetComponent("Transform").GetAngle()) {
+			UpdateCollider();
+		}
+		lastAngle = this.Owner.GetComponent("Transform").GetAngle();
 		if(!this.draw) return;
 		this.Draw();
 	}
@@ -39,11 +48,11 @@ Nova.NewComponent('Collider', function() {
 		Nova.ctx.lineWidth = 1;
 		Nova.ctx.globalAlpha = .25;
 		Nova.ctx.beginPath();
-		Nova.ctx.moveTo(startX + polygon[0][0], startY + polygon[0][1]);
+		Nova.ctx.moveTo(startX + polygon[0].X, startY + polygon[0].Y);
 		for(var i = 1; i < polygon.length; i++) {
 			var currentPoint = polygon[i];
-			var pointPosition = Nova.System.rotateAround(startX + currentPoint[0], startY + currentPoint[1], startX, startY, -Angle);
-			Nova.ctx.lineTo(pointPosition.x, pointPosition.y);
+			var pointPosition = Nova.System.rotateAround(startX + currentPoint.X, startY + currentPoint.Y, startX, startY, -Angle);
+			Nova.ctx.lineTo(pointPosition.Y, pointPosition.Y);
 			if(i == polygon.length-1) {
 				Nova.ctx.closePath();
 			}
@@ -101,5 +110,13 @@ Nova.NewComponent('Collider', function() {
 		this.bboxbottom = bottom;
 
 		return true;
+	}
+
+	var UpdateCollider = function() {
+		var Angle = self.Owner.GetComponent("Transform").GetAngle();
+		for(var i = 0; i < polygonActual.length; i++) {
+			polygon[i].Set(polygonActual[i].X, polygonActual[i].Y);
+			polygon[i].RotateAround(new Nova.System.Vector2(), Angle);
+		}
 	}
 })

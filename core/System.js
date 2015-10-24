@@ -55,6 +55,32 @@ Nova.System = new function() {
 			}
 		}
 	}
+	this.Vector2 = function(x, y) {
+		this.X = parseFloat(x) || 0;
+		this.Y = parseFloat(y) || 0;
+
+		this.Transform = function(x, y) {
+			this.X += parseFloat(x);
+			this.Y += parseFloat(y);
+		}
+
+		this.Set = function(x, y) {
+			this.X = parseFloat(x);
+			this.Y = parseFloat(y);
+		}
+
+		this.RotateAround = function(vector, angle) {
+			var radians = Nova.System.toRadians(angle) * -1;
+			if(vector.x == 0 && vector.y == 0) {
+				this.X = (Math.cos(radians) * ((this.x+1)-(vector.x+1)) - Math.sin(radians) * ((this.y+1)-(vector.y+1)) + (vector.x+1))-1,
+	        	this.Y = (Math.sin(radians) * ((this.x+1)-(vector.x+1)) + Math.cos(radians) * ((this.y+1)-(vector.y+1)) + (vector.y+1))-1
+	        	return;
+			}
+	        this.X = (Math.cos(radians) * (this.x-vector.x) - Math.sin(radians) * (this.y-vector.x) + vector.x),
+	        this.Y = (Math.sin(radians) * (this.x-vector.x) + Math.cos(radians) * (this.y-vector.x) + vector.y)
+		}
+	}
+
 	/*
 		loopThroughEntities EXAMPLE:
 		var entities = {}

@@ -1,5 +1,5 @@
 var Nova = new function() {
-	this.VERSION = '0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.1';
+	this.VERSION = '0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.2';
 
 	// becomes true when all assets are loaded, and Nova.Ready() is called
 	var isReady = false;
