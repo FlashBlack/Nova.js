@@ -101,7 +101,7 @@ var Nova = new function() {
 		Nova.ctx.imageSmoothingEnabled = !parameters.pointFiltering;
 		Nova.ctx.imageSmoothingEnabled = !parameters.pointFiltering;
 
-		if (parameters.hasOwnProperty('fillKeepAspectRatio')) fillKeepAspectRatio(this.canvas);
+		if (parameters.fillKeepAspectRatio) fillKeepAspectRatio(this.canvas);
 		function fillKeepAspectRatio(canvas) {
 			canvas.style.position = 'absolute';
 			canvas.style.left = '50%';
