@@ -61,12 +61,15 @@ Nova.NewComponent('Collider', function() {
 		Nova.ctx.fill();
 
 		// draw bounding box
+		Nova.ctx.save();
+		Nova.Viewport.Apply();
 		Nova.ctx.fillStyle = 'lime';
 		Nova.ctx.strokeStyle = 'lime';
 		Nova.ctx.globalAlpha = .25;
 		Nova.ctx.fillRect(Math.floor(this.bboxleft), Math.floor(this.bboxtop), Math.ceil(this.bboxright - this.bboxleft), Math.ceil(this.bboxbottom - this.bboxtop));
 		Nova.ctx.globalAlpha = 1;
 		Nova.ctx.strokeRect(Math.floor(this.bboxleft), Math.floor(this.bboxtop), Math.ceil(this.bboxright - this.bboxleft), Math.ceil(this.bboxbottom - this.bboxtop));
+		Nova.ctx.restore();
 	}
 
 	this.UpdateBoundingBox = function(renderer) {
