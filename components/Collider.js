@@ -19,8 +19,8 @@ Nova.NewComponent('Collider', function() {
 		for(var i = 0; i < parameters.polygon.length; i++) {
 			if(!Array.isArray(parameters.polygon)) return false;
 			polygonActual.push(new Nova.System.Vector2(parameters.polygon[i][0], parameters.polygon[i][1]));
+			polygon.push(new Nova.System.Vector2(parameters.polygon[i][0], parameters.polygon[i][1]));
 		}
-		polygon = polygonActual;
 
 		this.Update();
 		return true;
@@ -42,11 +42,12 @@ Nova.NewComponent('Collider', function() {
 		var startY = Transform.Position.y - Transform.Anchor.y;
 		var Angle = Transform.GetAngle();
 
+		Nova.ctx.save();
+		Nova.Viewport.Apply();
 		// draw collider
 		Nova.ctx.fillStyle = 'blue';
 		Nova.ctx.strokeStyle = 'blue';
 		Nova.ctx.lineWidth = 1;
-		Nova.ctx.globalAlpha = .25;
 		Nova.ctx.beginPath();
 		Nova.ctx.moveTo(startX + polygon[0].X, startY + polygon[0].Y);
 		for(var i = 1; i < polygon.length; i++) {
@@ -57,12 +58,12 @@ Nova.NewComponent('Collider', function() {
 				Nova.ctx.closePath();
 			}
 		}
+		Nova.ctx.globalAlpha = 1;
 		Nova.ctx.stroke();
+		Nova.ctx.globalAlpha = .25;
 		Nova.ctx.fill();
 
 		// draw bounding box
-		Nova.ctx.save();
-		Nova.Viewport.Apply();
 		Nova.ctx.fillStyle = 'lime';
 		Nova.ctx.strokeStyle = 'lime';
 		Nova.ctx.globalAlpha = .25;
@@ -119,7 +120,7 @@ Nova.NewComponent('Collider', function() {
 		var Angle = self.Owner.GetComponent("Transform").GetAngle();
 		for(var i = 0; i < polygonActual.length; i++) {
 			polygon[i].Set(polygonActual[i].X, polygonActual[i].Y);
-			polygon[i].RotateAround(new Nova.System.Vector2(), Angle);
+			polygon[i].RotateAround(new Nova.System.Vector2(), -Angle);
 		}
 	}
 })

@@ -1,109 +1,71 @@
 Nova.NewComponent('TileRenderer', function() {
 	this.canvas = document.createElement('canvas');
 	this.ctx = this.canvas.getContext('2d');
+	var originalMap;
+	var tileset, tilesetSize;
+	var render = new Image();
 
-	this.Create = function(parameters){
+	this.Create = function(parameters) {
 		var defaultParameters = {
 			Alpha: 1,
 			drawAtInteger: false,
 			pointFiltering: true,
 		}
-		parameters = this.System.SetDefaultProperties(parameters, defaultParameters);
-		if (!parameters.hasOwnProperty('tilemap')) {
-			console.error('You need to pass a tilemap into the TileRenderer!');
-			return false;
-		}
-		this.tilemap = parameters.tilemap;
+		parameters = Nova.System.SetDefaultProperties(parameters, defaultParameters);
 		this.Alpha = parameters.Alpha;
 		this.drawAtInteger = parameters.drawAtInteger;
 
-		this.canvas.width = tilemap.width * 64;
-		this.canvas.height = tilemap.height * 64;
-		this.ctx.mozImageSmoothingEnabled = !parameters.pointFiltering;
-		this.ctx.webkitImageSmoothingEnabled = !parameters.pointFiltering;
-		this.ctx.msImageSmoothingEnabled = !parameters.pointFiltering;
-		this.ctx.imageSmoothingEnabled = !parameters.pointFiltering;
-		this.ctx.imageSmoothingEnabled = !parameters.pointFiltering;
+		if (!parameters.hasOwnProperty('Tilemap')) return false;
+		originalMap = Nova.Loader.GetTilemap(parameters.Tilemap);
+		if(!originalMap) {
+			console.log('unable to find tilemap ', parameters.Tilemap);
+			return false;
+		}
 
-		this.UpdateTilemap();
+		tileset = Nova.Loader.GetImage(originalMap.image.split(".")[0]);
+		if(!tileset) return false;
+		tilesetSize = new Nova.System.Vector2(tileset.width, tileset.height);
+
+		this.data = originalMap.data;
+		this.Size = new Nova.System.Vector2(originalMap.width, originalMap.height);
+		this.TileSize = new Nova.System.Vector2(originalMap.tileWidth, originalMap.tileHeight);
+
+		this.canvas.width = tilesetSize.X * this.TileSize.X;
+		this.canvas.height = tilesetSize.Y * this.TileSize.Y;
+
+		this.DrawTilemap();
+
+		return true;
 	}
-
 	
 	this.Update = function() {
-		// get the entities Transform component
 		var Transform = this.Owner.GetComponent('Transform');
-		// figure out where to draw it based on Transform.Position and Transform.Anchor
+
 		var drawX = Transform.Position.x - Transform.Anchor.x;
 		var drawY = Transform.Position.y - Transform.Anchor.y;
 		if(this.drawAtInteger) {
 			drawX = Math.round(drawX);
 			drawY = Math.round(drawY);
 		}
-		// draw the image
+
 		Nova.ctx.save();
 		Nova.Viewport.Apply();
 		Nova.ctx.globalAlpha = this.Alpha;
-		Nova.ctx.drawImage(this.canvas, drawX, drawY, this.canvas.width * Transform.GetScale(), this.canvas.height * Transform.GetScale());
-		Nova.ctx.globalAlpha = 1;
+		Nova.ctx.drawImage(render, drawX, drawY, this.canvas.width * Transform.GetScale(), this.canvas.height * Transform.GetScale());
 		Nova.ctx.restore();
-		
 	}
 
-	this.UpdateTilemap = function(){
-		tilemap.layers.forEach(function(layer){
-			for (var i=0;i<layer.width;i++){
-				for (var j=0;j<layer.height;j++){
-					var tileset = new Image();
-					tileset.src = tilemap.tilesets[0].image,
-					this.context.drawImage(tileset,
-										   layer.data[(j*tilemap.width)+i]*tilemap.tilewidth - tilemap.tileheight,
-										   0,
-										   tilemap.tilesets[0].tilewidth,
-										   tilemap.tilesets[0].tileheight,
-										   i*64,
-										   j*64,
-										   64,
-										   64);
-				}
-			}
-		};
+	this.DrawTilemap = function() {
+		for(var i = 0; i < this.data.length; i++) {
+			var tile = this.data[i] - 1;
+			var drawX = (i % this.Size.X) * this.TileSize.X;
+			var drawY = (Math.floor(i / this.Size.Y)) * this.TileSize.Y;
+			var tileX = (tile % (tilesetSize.X / this.TileSize.X)) * this.TileSize.X;
+			var tileY = (Math.floor(tile / (tilesetSize.X / this.TileSize.X))) * this.TileSize.X;
+
+			this.ctx.drawImage(tileset, tileX, tileY, this.TileSize.X, this.TileSize.Y, drawX, drawY, this.TileSize.X, this.TileSize.Y);
+		}
+		render.src = this.canvas.toDataURL();
 	}
-/*		this.canvas = document.createElement('canvas');
-		this.context = this.canvas.getContext('2d');
-		var rawTilemap = Game.load.tilemap({ 
-			src:'Tilemaps/Test/Test.json',
-			onload: function(){
-				var tilemap = JSON.parse(rawTilemap.responseText);
-
-				this.canvas.width = tilemap.width * 64;
-				this.canvas.height = tilemap.height * 64;
-				this.context.mozImageSmoothingEnabled = false;
-				this.context.webkitImageSmoothingEnabled = false;
-				this.context.msImageSmoothingEnabled = false;
-				this.context.imageSmoothingEnabled = false;
-				this.context.imageSmoothingEnabled = false;
-
-				TEST = tilemap
-
-				tilemap.layers.forEach(function(layer){
-					for (var i=0;i<layer.width;i++){
-						for (var j=0;j<layer.height;j++){
-							var tileset = new Image();
-							tileset.src = tilemap.tilesets[0].image,
-							this.context.drawImage(tileset,
-												   layer.data[(j*tilemap.width)+i]*tilemap.tilewidth - tilemap.tileheight,
-												   0,
-												   tilemap.tilesets[0].tilewidth,
-												   tilemap.tilesets[0].tileheight,
-												   i*64,
-												   j*64,
-												   64,
-												   64);
-							
-						}
-					}
-				}.bind(this));
-			}.bind(this),
-		});*/
 
 }, true);

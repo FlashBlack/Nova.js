@@ -53,13 +53,13 @@ Nova.Input = new function() {
 			self.Mouse.y = e.offsetY;
 			self.Mouse.Moving = true;
 		})
-		$(Nova.canvas).mouseup(function(e) {
+		$(Nova.canvas).mousedown(function(e) {
 			self.Mouse.x = e.offsetX;
 			self.Mouse.y = e.offsetY;
 			self.Mouse.Pressed = true;
 			self.Mouse.Down = true;
 		})
-		$(Nova.canvas).mousedown(function(e) {
+		$(Nova.canvas).mouseup(function(e) {
 			self.Mouse.x = e.offsetX;
 			self.Mouse.y = e.offsetY;
 			self.Mouse.Released = true;

@@ -10,7 +10,7 @@ Nova.Loader = new function() {
 	var LoadedSounds = {};
 
 	var entitiesToLoad = [];
-	var componentsToLoad = ["Collider", "EightDirection", "SpriteRenderer", "Transform"];
+	var componentsToLoad = ["Collider", "EightDirection", "SpriteRenderer", "Transform", "TileRenderer"];
 	var spritesToLoad = [];
 	var soundsToLoad = [];
 	var tilemapsToLoad = [];
@@ -48,6 +48,7 @@ Nova.Loader = new function() {
 			$.ajax({
 				url: directories.entities + currentEntity + '.js',
 				dataType: 'script',
+				error: function(thing, error, actualError) { console.log('Error loading ' + this.url.split(".")[0]); console.log(actualError) },
 				success: Nova.Loader.LoadObject
 			})
 		}
@@ -59,6 +60,7 @@ Nova.Loader = new function() {
 			$.ajax({
 				url: directories.components + currentComponent + '.js',
 				dataType: 'script',
+				error: function(thing, error, actualError) { console.log('Error loading ' + this.url.split(".")[0]); console.log(actualError) },
 				success: Nova.Loader.LoadObject
 			})
 		}

@@ -1,5 +1,14 @@
 Nova.Ready = function() {
-	/*for(var i = 0; i < 4; i++) {
+	Nova.CreateEntity('TestMap', {
+		Transform: {
+			x: 0,
+			y: 0
+		},
+		TileRenderer: {
+			Tilemap: 'Test'
+		}
+	})
+	for(var i = 0; i < 4; i++) {
 		Nova.CreateEntity('Wall', {
 			Transform: {
 				Position: {
@@ -20,18 +29,7 @@ Nova.Ready = function() {
 				draw: true
 			}
 		})
-	}*/
-	Nova.CreateEntity('Grid', {
-		Transform: {
-			Position: {
-				x: 0,
-				y: 0
-			}
-		},
-		SpriteRenderer: {
-			sprite: 'Grid'
-		}
-	})
+	}
 
 	player = Nova.CreateEntity('Topdown', {
 		Transform: {
@@ -63,8 +61,8 @@ Nova.Ready = function() {
 
 Nova.Start({
 	canvas: 'game',
-	sprites: ['topdown', 'wall', 'grid', 'test'],
-	entities: ['Topdown', 'Wall', 'Grid'],
+	sprites: ['topdown', 'wall', 'test'],
+	entities: ['Topdown', 'Wall', 'TestMap'],
 	maps: ['Test'],
 	// sounds: ['laser9.mp3'],
 	/*directories: {

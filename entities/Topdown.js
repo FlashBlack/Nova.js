@@ -1,12 +1,12 @@
 Nova.CreateBlueprint('Topdown', function() {
-	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['EightDirection', 'Pre'], ['Collider', 'Pre']];
+	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['Collider', 'Pre']];
 
 	var Target = {
 		x: 0,
 		y: 0
 	}
 	var moving = false;
-	this.speed = 100;
+	this.speed = 150;
 
 	this.Create = function(parameters) {
 	}
@@ -30,6 +30,16 @@ Nova.CreateBlueprint('Topdown', function() {
 		//Rotate Viewport
 		if (Nova.Input.KeyDown('U')) Nova.Viewport.Rotation += 50 * Nova.dt;
 		if (Nova.Input.KeyDown('O')) Nova.Viewport.Rotation -= 50 * Nova.dt;
+
+		if(Nova.Input.KeyDown("D")) Transform.Position.x += this.speed * Nova.dt;
+		if(Nova.Input.KeyDown("A")) Transform.Position.x -= this.speed * Nova.dt;
+		if(Nova.Input.KeyDown("W")) Transform.Position.y -= this.speed * Nova.dt;
+		if(Nova.Input.KeyDown("S")) Transform.Position.y += this.speed * Nova.dt;
+
+		if(Nova.Input.Mouse.Pressed) {
+			console.log('Mouse pressed');
+			// if(Nova.Collision.Overlaps())
+		}
 
 		//Zoom Viewport
 		if (Nova.Input.KeyDown('OPENBRACKET')) {
@@ -71,11 +81,11 @@ Nova.CreateBlueprint('Topdown', function() {
 			Radius: 16,
 			Fill: true
 		})
-		Nova.Render.Ellipse({
+		/*Nova.Render.Ellipse({
 			Position: new Nova.System.Vector2(-16, 208),
 			Radius: new Nova.System.Vector2(16, 8),
 			Fill: true,
-		})
+		})*/
 		Nova.Render.Text({
 			Position: new Nova.System.Vector2(-32, 224),
 			Text: 'butts'

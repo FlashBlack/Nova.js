@@ -130,7 +130,6 @@ var Nova = new function() {
 			// add created entities GUID to zOrder array
 			zOrder.push(newEntity.GUID);
 			// call the entities create function if it has one, passing the properties
-			if(typeof newEntity.Create === 'function') newEntity.Create(properties);
 			if(!newEntity.hasOwnProperty('Update')) newEntity.Update = function() { };
 
 			// add required components
@@ -203,6 +202,7 @@ var Nova = new function() {
 				}
 			}
 			// return the entities GUID
+			if(typeof newEntity.Create === 'function') newEntity.Create(properties);
 			return newEntity.GUID;
 		}
 		return false;

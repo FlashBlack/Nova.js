@@ -8,6 +8,6 @@ Nova.Collision = new function() {
 	}
 
 	this.Overlaps = function(c1, c2) {
-		// for(var )
+		console.log(c1, c2);
 	}
 }
