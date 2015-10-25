@@ -1,4 +1,25 @@
 Nova.System = new function() {
+	var UserAgent = (function() {
+		var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+	    // Opera 8.0+ (UA detection to detect Blink/v8-powered Opera)
+		var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
+		var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+		    // At least Safari 3+: "[object HTMLElementConstructor]"
+		var isChrome = !!window.chrome && !isOpera;              // Chrome 1+
+		var isIE = /*@cc_on!@*/false || !!document.documentMode;
+
+		if(isOpera) return 'Opera';
+		if(isFirefox) return 'Firefox';
+		if(isSafari) return 'Safari';
+		if(isChrome) return 'Chrome';
+		if(isIE) return 'Internet Explorer';
+		return 'Unknown';
+	})();
+
+	this.GetUserAgent = function() {
+		return UserAgent;
+	}
+
 	this.GenerateGUID = function() {
 		function _p8(s) {
         	var p = (Math.random().toString(16)+"000000000").substr(2,8);

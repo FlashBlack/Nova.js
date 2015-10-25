@@ -28,12 +28,14 @@ Nova.Render = new function() {
 		else var startAngle = 0;
 		if(properties.hasOwnProperty('EndAngle')) var startAngle = Nova.System.toRadians(properties.EndAngle);
 		else var endAngle = 2*Math.PI;
+		if(properties.Radius.isVector2) var Radius = properties.Radius.X;
+		else var Radius = parseFloat(properties.Radius);
 
 		c.save();
 		if(!drawToGUI) Nova.Viewport.Apply();
 		c.globalAlpha = properties.StrokeAlpha || 1;
 		c.beginPath();
-		c.arc(properties.Position.X, properties.Position.Y, parseFloat(properties.Radius), startAngle, endAngle);
+		c.arc(properties.Position.X, properties.Position.Y, Radius, startAngle, endAngle);
 		c.strokeStyle = properties.StrokeColour || 'red';
 		c.lineWidth = properties.StrokeWidth || 1;
 		c.stroke()
@@ -45,6 +47,11 @@ Nova.Render = new function() {
 		c.restore();
 	}
 	this.Ellipse = function(properties) {
+		console.warn('Nova.Render.Ellipse is only supported in Chrome or Opera. Will fallback to Nova.Render.Arc if Nova.System.GetUserAgent() does not match.');
+		if(Nova.System.GetUserAgent() != 'Chrome' && Nova.System.GetUserAgent() != 'Opera') {
+			this.Arc(properties);
+			return false;
+		}
 		if(!properties.hasOwnProperty('Position') || !properties.Position.isVector2) return false;
 		if(!properties.hasOwnProperty('Radius') || !properties.Radius.isVector2) return false;
 		var drawToGUI = properties.GUI || false;
