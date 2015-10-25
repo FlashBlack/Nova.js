@@ -116,12 +116,19 @@ Nova.Loader = new function() {
 		if(!LoadedSounds.hasOwnProperty(name)) {
 			toLoad++;
 			LoadedSounds[name] = true;
-			var tempSound = new Audio();
-			tempSound.src = directories.audio + file;
-			tempSound.oncanplaythrough = function() {
-				Sounds[name] = this;
-				Nova.Loader.LoadObject();
+			var request = new XMLHttpRequest();
+			request.open('GET', directories.audio + file, true);
+			request.responseType = 'arraybuffer';
+
+			request.onload = function() {
+				Nova.Audio.Decode(request.response, function(data) {
+					Nova.Audio.AddSound(name, data);
+					Nova.Loader.LoadObject();
+				}, function() {
+					console.warn('Could not load sound! Name' + name + ' File: ' + file);
+				})
 			}
+			request.send();
 		}
 	}
 
