@@ -27,7 +27,7 @@ Nova.Ready = function() {
 				[32, 0],
 				[32, 32],
 				[0, 32]],
-				// draw: true
+				draw: true
 			}
 		}))
 	}
@@ -55,18 +55,19 @@ Nova.Ready = function() {
 			[32, 0],
 			[32, 32],
 			[0, 32]],
-			// draw: true
+			draw: true
 		}
 	})
 }
 
 Nova.Start({
 	canvas: 'game',
-	fillKeepAspectRatio: true,
+	fillKeepAspectRatio: false,
+	pointFiltering: true,
 	sprites: ['topdown', 'wall', 'test'],
 	entities: ['Topdown', 'Wall', 'Map'],
 	maps: ['Level001'],
-	// sounds: ['laser9.mp3'],
+	sounds: ['laser9.mp3'],
 	/*directories: {
 		entities: '../entities/',
 		components: '../components/',

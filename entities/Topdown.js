@@ -14,9 +14,6 @@ Nova.CreateBlueprint('Topdown', function() {
 	this.Update = function() {
 		var Transform = this.GetComponent('Transform');
 		var Position = Transform.Position;
-		var mouseAngle = Nova.System.angleTowards(Position.x, Position.y, Nova.Input.Mouse.x, Nova.Input.Mouse.y);
-		Transform.SetAngle(Nova.System.angleLerp(Transform.GetAngle(), mouseAngle, 15 * Nova.dt));
-		// if(Nova.Input.Mouse.Pressed) Nova.Audio.Play('laser9');
 
 		//Move Viewport
 		/*if (Nova.Input.KeyDown('I')) Nova.Viewport.Position.Y -= 100 * Nova.dt;
@@ -36,6 +33,14 @@ Nova.CreateBlueprint('Topdown', function() {
 		if(Nova.Input.KeyDown("W")) Transform.Position.y -= this.speed * Nova.dt;
 		if(Nova.Input.KeyDown("S")) Transform.Position.y += this.speed * Nova.dt;
 
+		var mouseAngle = Nova.System.angleTowards(Position.x, Position.y, Nova.Input.Mouse.X, Nova.Input.Mouse.Y);
+		Nova.Render.Arc({
+			Position: Nova.Input.Mouse,
+			Radius: 6,
+			Fill: true
+		})
+		Transform.SetAngle(Nova.System.angleLerp(Transform.GetAngle(), mouseAngle, 15 * Nova.dt));
+
 		var solids = Nova.getSolids();
 		for(var i = 0; i < solids.length; i++) {
 			if(Nova.Collision.Overlaps(this.GetComponent("Collider"), solids[i])) {
@@ -43,7 +48,7 @@ Nova.CreateBlueprint('Topdown', function() {
 			}
 		}
 		if(Nova.Input.Mouse.Pressed) {
-			console.log('Mouse pressed');
+			Nova.Audio.Play('laser9');
 		}
 
 		//Zoom Viewport
