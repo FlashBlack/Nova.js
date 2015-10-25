@@ -59,6 +59,7 @@ var Nova = new function() {
 			entities: [],
 			sounds: [],
 			tilemaps: [],
+			fillKeepAspectRatio: false,
 			pointFiltering: true,
 		};
 		// get default parameters if something is missing
@@ -99,6 +100,33 @@ var Nova = new function() {
 		Nova.ctx.msImageSmoothingEnabled = !parameters.pointFiltering;
 		Nova.ctx.imageSmoothingEnabled = !parameters.pointFiltering;
 		Nova.ctx.imageSmoothingEnabled = !parameters.pointFiltering;
+
+		if (parameters.hasOwnProperty('fillKeepAspectRatio')) fillKeepAspectRatio(this.canvas);
+		function fillKeepAspectRatio(canvas) {
+			canvas.style.position = 'absolute';
+			canvas.style.left = '50%';
+			canvas.style.marginLeft = -canvas.width/2+'px';
+
+			var style = canvas.getAttribute('style') || '';
+			window.addEventListener('resize', function () {resize(canvas);}, false);
+			resize(canvas);
+
+			function resize(canvas) {
+				var scale = {x: 1, y: 1};
+				scale.x = (window.innerWidth - 10) / canvas.width;
+				scale.y = (window.innerHeight - 10) / canvas.height;
+				
+				if (scale.x < 1 || scale.y < 1) {
+					scale = '1, 1';
+				} else if (scale.x < scale.y) {
+					scale = scale.x + ', ' + scale.x;
+				} else {
+					scale = scale.y + ', ' + scale.y;
+				}
+				
+				canvas.setAttribute('style', style + ' ' + '-ms-transform-origin: center top; -webkit-transform-origin: center top; -moz-transform-origin: center top; -o-transform-origin: center top; transform-origin: center top; -ms-transform: scale(' + scale + '); -webkit-transform: scale3d(' + scale + ', 1); -moz-transform: scale(' + scale + '); -o-transform: scale(' + scale + '); transform: scale(' + scale + ');');
+			}
+		}
 
 		this.Viewport.Size.Set(this.canvas.width, this.canvas.height);
 		this.Render.SetContext(this.ctx);

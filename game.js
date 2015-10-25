@@ -62,6 +62,7 @@ Nova.Ready = function() {
 
 Nova.Start({
 	canvas: 'game',
+	fillKeepAspectRatio: true,
 	sprites: ['topdown', 'wall', 'test'],
 	entities: ['Topdown', 'Wall', 'Map'],
 	maps: ['Level001'],
