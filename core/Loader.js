@@ -5,6 +5,7 @@ Nova.Loader = new function() {
 	var Images = {};
 	var Sprites = {};
 	var Sounds = {};
+	var Tilemaps = {};
 	var LoadedImages = {};
 	var LoadedSounds = {};
 
@@ -12,13 +13,15 @@ Nova.Loader = new function() {
 	var componentsToLoad = ["Collider", "EightDirection", "SpriteRenderer", "Transform"];
 	var spritesToLoad = [];
 	var soundsToLoad = [];
+	var tilemapsToLoad = [];
 
 	var directories = {
 		entities: 'entities/',
 		components: 'components/',
 		sprites: 'sprites/',
 		images: 'images/',
-		audio: 'audio/'
+		audio: 'audio/',
+		tilemaps: 'tilemaps/'
 	}
 
 	this.SetDirectory = function(directory, path) {
@@ -79,6 +82,18 @@ Nova.Loader = new function() {
 			var currentSound = soundsToLoad[i];
 			this.LoadSound(currentSound.split('.')[0], currentSound);
 		}
+
+		for(var i in tilemapsToLoad) {
+			var currentTilemap = tilemapsToLoad[i];
+			toLoad++;
+			$.getJSON(directories.tilemaps + currentTilemap + '.json', function(data) {
+				var tileset = data.image.split('.')[0];
+				data.isTilemap = true;
+				Nova.Loader.LoadImage(tileset, data.image);
+				Tilemaps[data.mapName] = data;
+				Nova.Loader.LoadObject();
+			})
+		}
 	}
 
 	this.LoadImage = function(name, file) {
@@ -118,10 +133,14 @@ Nova.Loader = new function() {
 	
 	this.LoadSprites = function(sprites) {
 		spritesToLoad = spritesToLoad.concat(sprites);
-	};
+	}
 
 	this.LoadSounds = function(sounds) {
 		soundsToLoad = soundsToLoad.concat(sounds);
+	}
+
+	this.LoadTilemaps = function(maps) {
+		tilemapsToLoad = tilemapsToLoad.concat(maps);
 	}
 
 	this.GetImage = function(image) {
@@ -139,5 +158,18 @@ Nova.Loader = new function() {
 	this.GetSound = function(sound) {
 		if(Sounds.hasOwnProperty(sound)) return Sounds[sound];
 		return false;
+	}
+
+	this.GetTilemap = function(map) {
+		if(Tilemaps.hasOwnProperty(map)) return Tilemaps[map];
+		return false;
+	}
+
+	// DEBUG PURPOSES. REMOVE FOR PRODUCTION
+	this.GetAllItems = function() {
+		console.log('Images', Images);
+		console.log('Sprites', Sprites);
+		console.log('Sounds', Sounds);
+		console.log('Tilemaps', Tilemaps);
 	}
 }

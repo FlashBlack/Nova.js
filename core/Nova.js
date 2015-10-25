@@ -48,7 +48,7 @@ var Nova = new function() {
 		this.Ready();
 		lastUpdate = performance.now();
 		requestAnimationFrame(gameLoop);
-		this.init = function() { console.warn('The game has already been initialized!')}
+		this.init = function() { console.warn('The game has already been initialized!') }
 	}
 	
 	// used to setup Nova sprites, entities, components, images, parameters, etc.
@@ -58,6 +58,7 @@ var Nova = new function() {
 			sprites: [],
 			entities: [],
 			sounds: [],
+			tilemaps: [],
 			pointFiltering: true,
 		};
 		// get default parameters if something is missing
@@ -76,6 +77,7 @@ var Nova = new function() {
 			this.Loader.SetDirectory('sprites', dirs.sprites);
 			this.Loader.SetDirectory('images', dirs.images);
 			this.Loader.SetDirectory('audio', dirs.audio);
+			this.Loader.SetDirectory('maps', dirs.maps);
 		}
 
 		// ensure the passed ID exists
@@ -100,12 +102,11 @@ var Nova = new function() {
 
 		this.Viewport.Size.Set(this.canvas.width, this.canvas.height);
 		this.Render.SetContext(this.ctx);
-		// add passed sprites to loadqueue
+
 		this.Loader.LoadSprites(parameters.sprites);
-		// add passed entities to loadqueue
 		this.Loader.LoadEntities(parameters.entities);
-		// add passed sounds to loadqueue
 		this.Loader.LoadSounds(parameters.sounds);
+		this.Loader.LoadTilemaps(parameters.maps);
 
 		if(parameters.hasOwnProperty('jQueryIncluded') && parameters.jQueryIncluded) { this.Loader.BeginLoad(); }
 		else { LoadJQuery() }

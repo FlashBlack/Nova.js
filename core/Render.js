@@ -114,6 +114,7 @@ Nova.Render = new function() {
 		if(properties.hasOwnProperty('Height')) Size.X = parseFloat(properties.Height);
 
 		c.save();
+		
 		if(!drawToGUI) Nova.Viewport.Apply();
 		c.globalAlpha = properties.Alpha || 1;
 		c.drawImage(Image, Frame.x, Frame.y, Frame.width, Frame.height, properties.Position.X, properties.Position.Y, Size.X, Size.Y);

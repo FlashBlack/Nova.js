@@ -27,6 +27,9 @@ Nova.NewComponent('SpriteRenderer', function() {
 		}
 		var frame = this.GetFrame();
 		// draw the image
+		// Nova.Render.Sprite({
+		// 	Sprite: 
+		// })
 		Nova.ctx.save();
 		Nova.Viewport.Apply();
 		Nova.ctx.translate(drawX, drawY);
@@ -39,7 +42,8 @@ Nova.NewComponent('SpriteRenderer', function() {
 		
 	}
 
-	this.GetFrame = function() {
+	this.GetFrame = function(id) {
+		if(id) return 0;
 		return this.sprite.animations[this.currentAnimation][0];
 	}
 }, true);
