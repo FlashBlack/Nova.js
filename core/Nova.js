@@ -276,7 +276,6 @@ var Nova = new function() {
 	}
 
 	function UpdateEntities() {
-
 		for(var i = 0; i < zOrder.length; i++) {
 			var currentEntity = Entities[zOrder[i]];
 			
@@ -290,32 +289,11 @@ var Nova = new function() {
 				currentEntity.Components[currentEntity.PostUpdate[j]].Update();
 			}
 		}
-
-		/*var postUpdates = [];
-
-		for(var i in zOrder) {
-			var currentEntity = Entities[zOrder[i]];
-			for(var j in currentEntity.PreUpdate) {
-				currentEntity.Components[currentEntity.PreUpdate[j]].Update();
-			}
-			for(var k in currentEntity.PostUpdate) {
-				postUpdates.push([currentEntity.GUID, currentEntity.PostUpdate[k]]);
-			}
-		}
-
-		Nova.System.loopThroughObject(Entities, function(GUID, Entity){
-			Entity.Update();
-		});
-		
-		// then update the entities components
-		for(var i in postUpdates) {
-			Nova.GetEntityByID(postUpdates[i][0]).GetComponent(postUpdates[i][1]).Update();
-		}*/
 	}
 
 	function LoadJQuery() {
 		var newScript = document.createElement('script');
-		newScript.src = 'http://code.jquery.com/jquery-1.11.3.min.js'
+		newScript.src = 'https://code.jquery.com/jquery-1.11.3.min.js'
 		newScript.onload = function() {
 			Nova.Loader.BeginLoad();
 		}

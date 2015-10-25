@@ -22,6 +22,7 @@ Nova.Render = new function() {
 	}
 	this.Arc = function(properties) {
 		if(!properties.hasOwnProperty('Position') || !properties.Position.isVector2) return false;
+		var angle = properties.Angle || 0;
 		if(!properties.hasOwnProperty('Radius')) return false;
 		var drawToGUI = properties.GUI || false;
 
@@ -34,6 +35,9 @@ Nova.Render = new function() {
 
 		c.save();
 		if(!drawToGUI) Nova.Viewport.Apply();
+		c.translate(properties.Position.X, properties.Position.Y);
+		c.rotate(angle);
+		c.translate(-properties.Position.X, -properties.Position.Y);
 		c.globalAlpha = properties.StrokeAlpha || 1;
 		c.beginPath();
 		c.arc(properties.Position.X, properties.Position.Y, Radius, startAngle, endAngle);

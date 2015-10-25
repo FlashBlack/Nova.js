@@ -32,9 +32,9 @@ Nova.System = new function() {
 		var dy = y2 - y1;
 		return this.toDegrees(Math.atan2(dy, dx));
 	}
-	this.distance = function(x1, y1, x2, y2) {
-		var dx = x2 - x1;
-		var dy = y2 - y1;
+	this.distance = function(p1, p2) {
+		var dx = p2.X - p1.X;
+		var dy = p2.Y - p1.Y;
 		return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 	}
 	this.rotateAround = function(pointX, pointY, originX, originY, angle) {

@@ -12,20 +12,17 @@ Nova.Input = new function() {
 	var pressed = {};
 	var released = {};
 	var self = this;
-	this.Mouse = {
-		x: 0,
-		y: 0,
-		Pressed: false,
-		Down: false,
-		Released: false,
-		Moving: false,
-	};
-	this.Touch = {
-		x: 0,
-		y: 0,
-		Down: false,
-		Moving: false,
-	}
+	this.MouseGUI = new Nova.System.Vector2();
+	this.Mouse = new Nova.System.Vector2();
+	this.Mouse.Pressed = false;
+	this.Mouse.Down = false;
+	this.Mouse.Released = false;
+	this.Mouse.Moving = false;
+	this.TouchGUI = new Nova.System.Vector2();
+	this.Touch = new Nova.System.Vector2();
+	this.Touch.Touching = false;
+	this.Touch.Moving = false;
+
 	for(var key in keyCodes) {
 		charCodes[keyCodes[key]] = key;
 		keys[key] = false;
@@ -49,42 +46,55 @@ Nova.Input = new function() {
 		})
 		//Mouse
 		$(Nova.canvas).mousemove(function(e) {
-			self.Mouse.x = e.offsetX;
-			self.Mouse.y = e.offsetY;
+			self.MouseGUI.X = e.offsetX;
+			self.MouseGUI.Y = e.offsetY;
 			self.Mouse.Moving = true;
+			self.UpdatePositions();
 		})
 		$(Nova.canvas).mousedown(function(e) {
-			self.Mouse.x = e.offsetX;
-			self.Mouse.y = e.offsetY;
+			self.Mouse.X = e.offsetX;
+			self.Mouse.Y = e.offsetY;
 			self.Mouse.Pressed = true;
 			self.Mouse.Down = true;
 		})
 		$(Nova.canvas).mouseup(function(e) {
-			self.Mouse.x = e.offsetX;
-			self.Mouse.y = e.offsetY;
+			self.Mouse.X = e.offsetX;
+			self.Mouse.Y = e.offsetY;
 			self.Mouse.Released = true;
 			self.Mouse.Down = false;
 		})
 		//Touch
 		$(Nova.canvas).on('touchstart', function(e) {
 			var touch = e.originalEvent.touches[0]
-			self.Touch.x = touch.clientX;
-			self.Touch.y = touch.clientY;
-			self.Touch.Down = true;
+			self.TouchGUI.X = touch.clientX;
+			self.TouchGUI.Y = touch.clientY;
+			self.Touch.Touching = true;
 		})
 		$(Nova.canvas).on('touchmove', function(e) {
 			var touch = e.originalEvent.touches[0]
-			self.Touch.x = touch.clientX;
-			self.Touch.y = touch.clientY;
+			self.TouchGUI.X = touch.clientX;
+			self.TouchGUI.Y = touch.clientY;
 			self.Touch.Moving = true;
 		})
 		$(Nova.canvas).on('touchend', function(e) {
 			var touch = e.originalEvent.touches[0]
-			self.Touch.x = touch.clientX;
-			self.Touch.y = touch.clientY;
-			self.Touch.Down = false;
+			self.TouchGUI.X = touch.clientX;
+			self.TouchGUI.Y = touch.clientY;
+			self.Touch.Touching = false;
 			self.Touch.Moving = false;
 		})
+	}
+
+	this.UpdatePositions = function() {
+		var Position = Nova.Viewport.Position;
+		var Scale = Nova.Viewport.Scale;
+		var Rotation = Nova.Viewport.Rotation;
+		console.log(Rotation);
+
+		self.Mouse.RotateAround(Position, Rotation);
+		self.Mouse.X = self.Mouse.X * Scale.X;
+		self.Mouse.Y = self.Mouse.Y * Scale.Y;
+		self.Mouse.Set(self.MouseGUI.X + Position.X, self.MouseGUI.Y + Position.Y);
 	}
 
 	this.UpdateInput = function() {
