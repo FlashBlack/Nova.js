@@ -1,11 +1,11 @@
 Nova.Ready = function() {
-	Nova.CreateEntity('TestMap', {
+	Nova.CreateEntity('Level', {
 		Transform: {
 			x: 0,
 			y: 0
 		},
 		TileRenderer: {
-			Tilemap: 'Test'
+			Tilemap: 'Level001'
 		}
 	})
 	for(var i = 0; i < 4; i++) {
@@ -62,8 +62,8 @@ Nova.Ready = function() {
 Nova.Start({
 	canvas: 'game',
 	sprites: ['topdown', 'wall', 'test'],
-	entities: ['Topdown', 'Wall', 'TestMap'],
-	maps: ['Test'],
+	entities: ['Topdown', 'Wall', 'Map'],
+	maps: ['Level001'],
 	// sounds: ['laser9.mp3'],
 	/*directories: {
 		entities: '../entities/',

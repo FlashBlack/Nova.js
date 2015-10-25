@@ -1,6 +1,6 @@
-Nova.CreateBlueprint('TestMap', function() {
+Nova.CreateBlueprint('Level', function() {
 	this.requiredComponents = [['Transform', 'Post'], ['TileRenderer', 'Post']];
 	this.Create = function(parameters) {
-		this.GetComponent('Transform').SetScale(4);
+		// this.GetComponent('Transform').SetScale(4);
 	}
 })
