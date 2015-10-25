@@ -36,9 +36,14 @@ Nova.CreateBlueprint('Topdown', function() {
 		if(Nova.Input.KeyDown("W")) Transform.Position.y -= this.speed * Nova.dt;
 		if(Nova.Input.KeyDown("S")) Transform.Position.y += this.speed * Nova.dt;
 
+		var solids = Nova.getSolids();
+		for(var i = 0; i < solids.length; i++) {
+			if(Nova.Collision.Overlaps(this.GetComponent("Collider"), solids[i])) {
+				console.log('overlaps');
+			}
+		}
 		if(Nova.Input.Mouse.Pressed) {
 			console.log('Mouse pressed');
-			// if(Nova.Collision.Overlaps())
 		}
 
 		//Zoom Viewport
@@ -61,7 +66,7 @@ Nova.CreateBlueprint('Topdown', function() {
 		Nova.Render.Rectangle({
 			Position: new Nova.System.Vector2(-32, 64),
 			Size: new Nova.System.Vector2(32, 32),
-			Fill: true
+			Fill: true,
 		})
 		Nova.Render.Line({
 			Start: new Nova.System.Vector2(-32, 96),

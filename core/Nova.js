@@ -299,7 +299,12 @@ var Nova = new function() {
 	}
 
 	this.getSolids = function() {
-		return Solids;
+		var allSolids = [];
+		for(var i = 0; i < Solids.length; i++) {
+			var object = Nova.GetEntityByID(Solids[i][0]).GetComponent(Solids[i][1]);
+			if(object) allSolids.push(object);
+		}
+		return allSolids;
 	}
 
 	this.Collides = function(collider1, collider2, offset1, offset2) {

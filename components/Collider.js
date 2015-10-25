@@ -64,12 +64,12 @@ Nova.NewComponent('Collider', function() {
 		Nova.ctx.fill();
 
 		// draw bounding box
-		Nova.ctx.fillStyle = 'lime';
+		/*Nova.ctx.fillStyle = 'lime';
 		Nova.ctx.strokeStyle = 'lime';
 		Nova.ctx.globalAlpha = .25;
 		Nova.ctx.fillRect(Math.floor(this.bboxleft), Math.floor(this.bboxtop), Math.ceil(this.bboxright - this.bboxleft), Math.ceil(this.bboxbottom - this.bboxtop));
 		Nova.ctx.globalAlpha = 1;
-		Nova.ctx.strokeRect(Math.floor(this.bboxleft), Math.floor(this.bboxtop), Math.ceil(this.bboxright - this.bboxleft), Math.ceil(this.bboxbottom - this.bboxtop));
+		Nova.ctx.strokeRect(Math.floor(this.bboxleft), Math.floor(this.bboxtop), Math.ceil(this.bboxright - this.bboxleft), Math.ceil(this.bboxbottom - this.bboxtop));*/
 		Nova.ctx.restore();
 	}
 
@@ -122,5 +122,16 @@ Nova.NewComponent('Collider', function() {
 			polygon[i].Set(polygonActual[i].X, polygonActual[i].Y);
 			polygon[i].RotateAround(new Nova.System.Vector2(), -Angle);
 		}
+	}
+
+	this.getPolygon = function() {
+		var Transform = this.Owner.GetComponent("Transform");
+		var startX = Transform.Position.x - Transform.Anchor.x;
+		var startY = Transform.Position.y - Transform.Anchor.y;
+		var poly = [];
+		for(var i = 0; i < polygon.length; i++) {
+			poly.push(new Nova.System.Vector2(polygon[i].X + startX, polygon[i].Y + startY));
+		}
+		return poly;
 	}
 })

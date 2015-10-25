@@ -1,4 +1,5 @@
 Nova.Ready = function() {
+	walls = [];
 	Nova.CreateEntity('Level', {
 		Transform: {
 			x: 0,
@@ -6,10 +7,10 @@ Nova.Ready = function() {
 		},
 		TileRenderer: {
 			Tilemap: 'Level001'
-		}
+		},
 	})
-	for(var i = 0; i < 4; i++) {
-		Nova.CreateEntity('Wall', {
+	for(var i = 0; i < 1; i++) {
+		walls.push(Nova.CreateEntity('Wall', {
 			Transform: {
 				Position: {
 					x: 100 + i*32,
@@ -26,9 +27,9 @@ Nova.Ready = function() {
 				[32, 0],
 				[32, 32],
 				[0, 32]],
-				draw: true
+				// draw: true
 			}
-		})
+		}))
 	}
 
 	player = Nova.CreateEntity('Topdown', {
@@ -54,7 +55,7 @@ Nova.Ready = function() {
 			[32, 0],
 			[32, 32],
 			[0, 32]],
-			draw: true
+			// draw: true
 		}
 	})
 }

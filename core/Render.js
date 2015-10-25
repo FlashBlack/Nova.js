@@ -10,8 +10,8 @@ Nova.Render = new function() {
 
 		c.save();
 		if(!drawToGUI) Nova.Viewport.Apply();
-		c.fillStyle = properties.fillStyle || 'red';
-		c.strokeStyle = properties.strokeStyle || 'red';
+		c.fillStyle = properties.FillColour || 'red';
+		c.strokeStyle = properties.StrokeColour || 'red';
 		c.globalAlpha = properties.StrokeAlpha || 1;
 		c.strokeRect(properties.Position.X, properties.Position.Y, properties.Size.X, properties.Size.Y);
 		if(properties.Fill) {
