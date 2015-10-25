@@ -34,11 +34,7 @@ var Nova = new function() {
 		// update all entities
 		UpdateEntities();
 
-		Nova.ctx.textBaseline = 'top';
-		Nova.ctx.fillStyle = 'lime';
-		Nova.ctx.font = '16px Georgia';
-		Nova.ctx.fillText(Nova.fps, 5, 5);
-		Nova.ctx.fillText(Nova.dt, 5, 21);
+		Nova.Debug.Update();
 
 		Nova.Input.UpdateInput();
 
@@ -46,7 +42,7 @@ var Nova = new function() {
 		requestAnimationFrame(gameLoop);
 	}
 
-	// this is the last function to be called for ready state, it actually starts the loop adter calling Nova.Ready()
+	// this is the last function to be called for ready state, it actually starts the loop after calling Nova.Ready()
 	this.init = function() {
 		isReady = true;
 		this.Ready();
@@ -252,7 +248,21 @@ var Nova = new function() {
 
 	function UpdateEntities() {
 
-		var postUpdates = [];
+		for(var i = 0; i < zOrder.length; i++) {
+			var currentEntity = Entities[zOrder[i]];
+			
+			for(var j = 0; j < currentEntity.PreUpdate.length; j++) {
+				currentEntity.Components[currentEntity.PreUpdate[j]].Update();
+			}
+			
+			currentEntity.Update();
+			
+			for(var j = 0; j < currentEntity.PostUpdate.length; j++) {
+				currentEntity.Components[currentEntity.PostUpdate[j]].Update();
+			}
+		}
+
+		/*var postUpdates = [];
 
 		for(var i in zOrder) {
 			var currentEntity = Entities[zOrder[i]];
@@ -271,7 +281,7 @@ var Nova = new function() {
 		// then update the entities components
 		for(var i in postUpdates) {
 			Nova.GetEntityByID(postUpdates[i][0]).GetComponent(postUpdates[i][1]).Update();
-		}
+		}*/
 	}
 
 	function LoadJQuery() {

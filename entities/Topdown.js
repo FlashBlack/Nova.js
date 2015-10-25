@@ -76,6 +76,10 @@ Nova.CreateBlueprint('Topdown', function() {
 			Radius: new Nova.System.Vector2(16, 8),
 			Fill: true,
 		})
+		Nova.Render.Text({
+			Position: new Nova.System.Vector2(-32, 224),
+			Text: 'butts'
+		})
 	}
 
 	this.SetTarget = function(x, y) {

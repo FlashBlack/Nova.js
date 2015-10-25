@@ -7,10 +7,11 @@ Nova.Render = new function() {
 		if(!properties.hasOwnProperty('Position') || !properties.Position.isVector2) return false;
 		if(!properties.hasOwnProperty('Size') || !properties.Size.isVector2) return false;
 		var drawToGUI = properties.GUI || false;
-		c.fillStyle = properties.fillStyle || 'red';
-		c.strokeStyle = properties.strokeStyle || 'red';
+
 		c.save();
 		if(!drawToGUI) Nova.Viewport.Apply();
+		c.fillStyle = properties.fillStyle || 'red';
+		c.strokeStyle = properties.strokeStyle || 'red';
 		c.globalAlpha = properties.StrokeAlpha || 1;
 		c.strokeRect(properties.Position.X, properties.Position.Y, properties.Size.X, properties.Size.Y);
 		if(properties.Fill) {
@@ -138,12 +139,11 @@ Nova.Render = new function() {
 		if(!properties.hasOwnProperty('Path') || !Array.isArray(properties.Path)) return false;
 		var drawToGUI = properties.GUI || false;
 
+		c.save();
+		if(!drawToGUI) Nova.Viewport.Apply();
 		c.strokeStyle = properties.StrokeColour || 'red';
 		c.strokeWidth = properties.strokeWidth || 1;
 		c.fillStyle = properties.fillStyle || 'red';
-
-		c.save();
-		if(!drawToGUI) Nova.Viewport.Apply();
 		c.beginPath();
 		c.moveTo(properties.Path[0].X, properties.Path[0].Y);
 		for(var i = 1; i < properties.Path.length; i++) {
@@ -155,10 +155,27 @@ Nova.Render = new function() {
 					c.globalAlpha = properties.FillAlpha || .3;
 					c.fill();
 				}
-				c.globalAlpha = properties.strokeAlpha || 1;
+				c.globalAlpha = properties.StrokeAlpha || 1;
 				c.stroke();
 			}
 		}
+		c.restore();
+	}
+	this.Text = function(properties) {
+		if(!properties.hasOwnProperty('Position') || !properties.Position.isVector2) return false;
+		if(!properties.hasOwnProperty('Text')) return false;
+		var drawToGUI = properties.GUI || false;
+		if(properties.hasOwnProperty('Size')) var fontSize = properties.Size.toString();
+		else fontSize = '16'
+		if(fontSize.substr(fontSize.length - 2) != 'px') fontSize = fontSize.concat('px ');
+		var Font = fontSize.concat(properties.Font || 'Comic Sans MS');
+
+		c.save();
+		if(!drawToGUI) Nova.Viewport.Apply();
+		c.font = Font;
+		c.textBaseline = 'top';
+		c.fillStyle = properties.Colour || 'red';
+		c.fillText(properties.Text.toString(), properties.Position.X, properties.Position.Y);
 		c.restore();
 	}
 }
