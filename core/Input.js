@@ -87,14 +87,20 @@ Nova.Input = new function() {
 
 	this.UpdatePositions = function() {
 		var Position = Nova.Viewport.Position;
+		var Size = Nova.Viewport.Size;
 		var Scale = Nova.Viewport.Scale;
+		// Scale = new Nova.System.Vector2(Scale.X, Scale.Y);
+		// Size = new Nova.System.Vector2(Size.X * Scale.X, Size.Y * Scale.Y);
+		// Scale.Transform(-1, -1);
+		// Scale.Set(Scale.X * -1, Scale.Y * -1);
 		var Rotation = Nova.Viewport.Rotation;
-		console.log(Rotation);
 
-		self.Mouse.RotateAround(Position, Rotation);
-		self.Mouse.X = self.Mouse.X * Scale.X;
-		self.Mouse.Y = self.Mouse.Y * Scale.Y;
-		self.Mouse.Set(self.MouseGUI.X + Position.X, self.MouseGUI.Y + Position.Y);
+		// self.Mouse.RotateAround(Position, Rotation);
+		self.Mouse.Set(self.MouseGUI.X * Scale.X, self.MouseGUI.Y * Scale.Y);
+		self.Mouse.Transform(Position.X, Position.Y);
+		self.Mouse.Transform(-(Size.X * Scale.X), -(Size.Y * Scale.Y));
+		// self.Mouse.X = self.Mouse.X / Scale.X;
+		// self.Mouse.Y = self.Mouse.Y / Scale.Y;
 	}
 
 	this.UpdateInput = function() {
@@ -112,13 +118,13 @@ Nova.Input = new function() {
 		return false;
 	}
 
-	this.KeyPress = function(key) {
+	this.KeyPressed = function(key) {
 		if(typeof key === 'number') key = charCodes[key];
 		if(pressed[key]) return true;
 		return false;
 	}
 
-	this.KeyUp = function(key) {
+	this.KeyReleased = function(key) {
 		if(typeof key === 'number') key = charCodes[key];
 		if(released[key]) return true;
 		return false;

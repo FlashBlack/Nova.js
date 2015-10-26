@@ -33,6 +33,11 @@ Nova.CreateBlueprint('Topdown', function() {
 		if(Nova.Input.KeyDown("W")) Transform.Position.y -= this.speed * Nova.dt;
 		if(Nova.Input.KeyDown("S")) Transform.Position.y += this.speed * Nova.dt;
 
+		if(Nova.Input.KeyPressed("T")) {
+			Nova.Viewport.Scale.X = .5;
+			Nova.Viewport.Scale.Y = .5;
+		}
+
 		var mouseAngle = Nova.System.angleTowards(Position.x, Position.y, Nova.Input.Mouse.X, Nova.Input.Mouse.Y);
 		Nova.Render.Arc({
 			Position: Nova.Input.Mouse,
