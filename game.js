@@ -33,10 +33,10 @@ Nova.Ready = function() {
 	player = Nova.CreateEntity('Topdown', {
 		Transform: {
 			Position: new Nova.System.Vector2(400, 300),
-			Origin: new Nova.System.Vector2(16.5, 16.5)
+			Origin: new Nova.System.Vector2(7.5, 13)
 		},
 		SpriteRenderer: {
-			sprite: 'Topdown',
+			sprite: 'Marine',
 		},
 		EightDirection: {
 			rotateTowards: false
@@ -44,9 +44,9 @@ Nova.Ready = function() {
 		Collider: {
 			polygon: [
 			[0, 0],
-			[32, 0],
-			[32, 32],
-			[0, 32]],
+			[37, 0],
+			[37, 26],
+			[0, 26]],
 			draw: true
 		}
 	})
@@ -56,7 +56,7 @@ Nova.Start({
 	canvas: 'game',
 	fillKeepAspectRatio: false,
 	pointFiltering: true,
-	sprites: ['topdown', 'wall', 'test'],
+	sprites: ['marine', 'wall', 'test'],
 	entities: ['Topdown', 'Wall', 'Map'],
 	maps: ['Level001'],
 	sounds: ['laser9.mp3'],
