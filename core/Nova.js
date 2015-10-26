@@ -128,7 +128,7 @@ var Nova = new function() {
 			}
 		}
 
-		this.Viewport.Size.Set(this.canvas.width, this.canvas.height);
+		this.Viewport.SetSize(this.canvas.width, this.canvas.height);
 		this.Render.SetContext(this.ctx);
 
 		this.Loader.LoadSprites(parameters.sprites);

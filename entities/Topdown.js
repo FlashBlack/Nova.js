@@ -9,6 +9,8 @@ Nova.CreateBlueprint('Topdown', function() {
 	this.speed = 150;
 
 	this.Create = function(parameters) {
+		var Position = this.GetComponent('Transform').Position;
+		Nova.Viewport.SetPosition(Position.x, Position.y);
 	}
 
 	this.Update = function() {
@@ -22,11 +24,13 @@ Nova.CreateBlueprint('Topdown', function() {
 		if (Nova.Input.KeyDown('L')) Nova.Viewport.Position.X += 100 * Nova.dt;*/
 
 		//Move Viewport To Topdown
-		Nova.Viewport.Position.Set(Nova.System.lerp(Nova.Viewport.Position.X ,Transform.Position.x - Nova.Viewport.Size.X/2, 2 * Nova.dt), Nova.System.lerp(Nova.Viewport.Position.Y, Transform.Position.y - Nova.Viewport.Size.Y/2, 2 * Nova.dt))
+		var viewportPosition = Nova.Viewport.GetPosition();
+		Nova.Viewport.SetPosition(Nova.System.lerp(viewportPosition.X ,Transform.Position.x, 2 * Nova.dt), Nova.System.lerp(viewportPosition.Y, Transform.Position.y, 2 * Nova.dt))
 
 		//Rotate Viewport
-		if (Nova.Input.KeyDown('U')) Nova.Viewport.Rotation += 50 * Nova.dt;
-		if (Nova.Input.KeyDown('O')) Nova.Viewport.Rotation -= 50 * Nova.dt;
+		var viewportAngle = Nova.Viewport.GetAngle();
+		if (Nova.Input.KeyDown('U')) Nova.Viewport.SetAngle(viewportAngle + 50 * Nova.dt);
+		if (Nova.Input.KeyDown('O')) Nova.Viewport.SetAngle(viewportAngle - 50 * Nova.dt);
 
 		if(Nova.Input.KeyDown("D")) Transform.Position.x += this.speed * Nova.dt;
 		if(Nova.Input.KeyDown("A")) Transform.Position.x -= this.speed * Nova.dt;
@@ -34,9 +38,10 @@ Nova.CreateBlueprint('Topdown', function() {
 		if(Nova.Input.KeyDown("S")) Transform.Position.y += this.speed * Nova.dt;
 
 		if(Nova.Input.KeyPressed("T")) {
-			Nova.Viewport.Scale.X = .5;
-			Nova.Viewport.Scale.Y = .5;
+			Nova.Viewport.SetScale(.5, .5);
 		}
+
+		Nova.Input.UpdatePositions();
 
 		var mouseAngle = Nova.System.angleTowards(Position.x, Position.y, Nova.Input.Mouse.X, Nova.Input.Mouse.Y);
 		Nova.Render.Arc({
@@ -58,12 +63,12 @@ Nova.CreateBlueprint('Topdown', function() {
 
 		//Zoom Viewport
 		if (Nova.Input.KeyDown('OPENBRACKET')) {
-			Nova.Viewport.Scale.X -= 1 * Nova.dt
-			Nova.Viewport.Scale.Y -= 1 * Nova.dt
+			var currentScale = Nova.Viewport.GetScale();
+			Nova.Viewport.SetScale(currentScale.X - Nova.dt, currentScale.Y - Nova.dt);
 		}
 		if (Nova.Input.KeyDown('CLOSEBRACKET')){
-			Nova.Viewport.Scale.X += 1 * Nova.dt
-			Nova.Viewport.Scale.Y += 1 * Nova.dt
+			var currentScale = Nova.Viewport.GetScale();
+			Nova.Viewport.SetScale(currentScale.X + Nova.dt, currentScale.Y + Nova.dt);
 		}
 		Nova.Render.Sprite({
 			Position: new Nova.System.Vector2(-32, 0),

@@ -86,21 +86,18 @@ Nova.Input = new function() {
 	}
 
 	this.UpdatePositions = function() {
-		var Position = Nova.Viewport.Position;
-		var Size = Nova.Viewport.Size;
-		var Scale = Nova.Viewport.Scale;
-		// Scale = new Nova.System.Vector2(Scale.X, Scale.Y);
-		// Size = new Nova.System.Vector2(Size.X * Scale.X, Size.Y * Scale.Y);
-		// Scale.Transform(-1, -1);
-		// Scale.Set(Scale.X * -1, Scale.Y * -1);
-		var Rotation = Nova.Viewport.Rotation;
+		var Position = Nova.Viewport.GetPosition();
+		var Size = Nova.Viewport.GetSize();
+		var SizeReal = Nova.Viewport.GetSizeReal();
+		var Scale = Nova.Viewport.GetScale();
+		Position.Translate(-(Size.X / 2), -(Size.Y / 2));
+		var Rotation = Nova.Viewport.GetAngle();
 
-		// self.Mouse.RotateAround(Position, Rotation);
-		self.Mouse.Set(self.MouseGUI.X * Scale.X, self.MouseGUI.Y * Scale.Y);
-		self.Mouse.Transform(Position.X, Position.Y);
-		self.Mouse.Transform(-(Size.X * Scale.X), -(Size.Y * Scale.Y));
-		// self.Mouse.X = self.Mouse.X / Scale.X;
-		// self.Mouse.Y = self.Mouse.Y / Scale.Y;
+		var newPosition = new Nova.System.Vector2(((self.MouseGUI.X / SizeReal.X) * Size.X) + Position.X, ((self.MouseGUI.Y / SizeReal.Y) * Size.Y) + Position.Y);
+		Position.Translate(Size.X / 2, Size.Y / 2);
+		newPosition.RotateAround(Position, -Rotation)
+
+		self.Mouse.Set(newPosition.X, newPosition.Y);
 	}
 
 	this.UpdateInput = function() {

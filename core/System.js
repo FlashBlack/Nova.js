@@ -81,7 +81,7 @@ Nova.System = new function() {
 		this.Y = parseFloat(y) || 0;
 		this.isVector2 = true;
 
-		this.Transform = function(x, y) {
+		this.Translate = function(x, y) {
 			this.X += parseFloat(x);
 			this.Y += parseFloat(y);
 		}
