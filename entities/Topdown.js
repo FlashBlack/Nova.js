@@ -1,5 +1,5 @@
 Nova.CreateBlueprint('Topdown', function() {
-	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['Collider', 'Pre']];
+	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['Collider', 'Pre'], ['EightDirection', 'Pre']];
 
 	var Target = {
 		x: 0,
@@ -32,22 +32,20 @@ Nova.CreateBlueprint('Topdown', function() {
 		if (Nova.Input.KeyDown('U')) Nova.Viewport.SetAngle(viewportAngle + 50 * Nova.dt);
 		if (Nova.Input.KeyDown('O')) Nova.Viewport.SetAngle(viewportAngle - 50 * Nova.dt);
 
-		if(Nova.Input.KeyDown("D")) Transform.Position.x += this.speed * Nova.dt;
+		/*if(Nova.Input.KeyDown("D")) Transform.Position.x += this.speed * Nova.dt;
 		if(Nova.Input.KeyDown("A")) Transform.Position.x -= this.speed * Nova.dt;
 		if(Nova.Input.KeyDown("W")) Transform.Position.y -= this.speed * Nova.dt;
-		if(Nova.Input.KeyDown("S")) Transform.Position.y += this.speed * Nova.dt;
+		if(Nova.Input.KeyDown("S")) Transform.Position.y += this.speed * Nova.dt;*/
 
-		if(Nova.Input.KeyPressed("T")) {
-			Nova.Viewport.SetScale(.5, .5);
-		}
-
-		Nova.Input.UpdatePositions();
+		if(Nova.Input.KeyPressed("T")) Nova.Viewport.SetScale(.5, .5);
 
 		var mouseAngle = Nova.System.angleTowards(Position.x, Position.y, Nova.Input.Mouse.X, Nova.Input.Mouse.Y);
 		Nova.Render.Arc({
-			Position: Nova.Input.Mouse,
+			Position: Nova.Viewport.GetWorldPosition(Nova.Input.MouseGUI),
 			Radius: 6,
-			Fill: true
+			Fill: true,
+			FillColour: 'blue',
+			StrokeColour: 'blue'
 		})
 		Transform.SetAngle(Nova.System.angleLerp(Transform.GetAngle(), mouseAngle, 15 * Nova.dt));
 

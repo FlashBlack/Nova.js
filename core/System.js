@@ -91,6 +91,10 @@ Nova.System = new function() {
 			this.Y = parseFloat(y);
 		}
 
+		this.Copy = function() {
+			return new Nova.System.Vector2(this.X, this.Y);
+		}
+
 		this.RotateAround = function(vector, angle) {
 			var radians = Nova.System.toRadians(angle) * -1;
 			var newX;

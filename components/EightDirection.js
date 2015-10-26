@@ -5,6 +5,7 @@ Nova.NewComponent('EightDirection', function() {
 		'left': ['A', 'LEFT'],
 		'right': ['D', 'RIGHT'],
 	}
+	var moveRelative = true;
 	this.moveSpeed = 200;
 	this.rotateSpeed = 15;
 	this.rotateTowards = true;
@@ -19,6 +20,7 @@ Nova.NewComponent('EightDirection', function() {
 		if(properties.hasOwnProperty('moveSpeed')) this.moveSpeed = properties.moveSpeed;
 		if(properties.hasOwnProperty('rotateSpeed')) this.moveSpeed = properties.rotateSpeed;
 		if(properties.hasOwnProperty('rotateTowards')) this.rotateTowards = properties.rotateTowards;
+		moveRelative = properties.moveRelative || true;
 
 		return true;
 	}
@@ -57,34 +59,12 @@ Nova.NewComponent('EightDirection', function() {
 				Transform.SetAngle(moveAngle);
 			}
 			var solids = Nova.getSolids();
-			var offset = {
-				x: (this.moveSpeed * Nova.dt) * Math.cos(Nova.System.toRadians(moveAngle)),
-				y: (this.moveSpeed * Nova.dt) * Math.sin(Nova.System.toRadians(moveAngle))
-			}
-			var hitHorizontal = false;
-			var hitVertical = false;
-			var Collider = this.Owner.GetComponent('Collider');
-			for(var i in solids) {
-				var otherCollider = Nova.GetEntityByID(solids[i][0]).GetComponent(solids[i][1]);
-				if(horizontal != 0) {
-					var horizontalCollision = Nova.Collides(Collider, otherCollider, {x: offset.x, y: 0});
-					if(horizontalCollision) {
-						hitHorizontal = true;
-						var overlaps = false;
-						// Transform.Position.y += 
-					}
-				}
-				if(vertical != 0) {
-					var verticalCollision = Nova.Collides(Collider, otherCollider, {x: 0, y: offset.y});
-					if(verticalCollision) {
-						hitVertical = true;
-						var overlaps = false;
-						// Transform.Position.y += Math.sign(vertical);
-					}
-				}
-			}
-			if(!hitVertical) Transform.Position.y += offset.y;
-			if(!hitHorizontal) Transform.Position.x += offset.x;
+			var offset = new Nova.System.Vector2((this.moveSpeed * Nova.dt) * Math.cos(Nova.System.toRadians(moveAngle)), 
+												(this.moveSpeed * Nova.dt) * Math.sin(Nova.System.toRadians(moveAngle)));
+			if(moveRelative) offset.RotateAround(new Nova.System.Vector2(), -Nova.Viewport.GetAngle());
+
+			Transform.Position.y += offset.Y;
+			Transform.Position.x += offset.X;
 		}
 	}
 }, true)

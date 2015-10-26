@@ -48,6 +48,7 @@ var Nova = new function() {
 		this.Ready();
 		lastUpdate = performance.now();
 		requestAnimationFrame(gameLoop);
+		// overwrite init function so it cant be used again
 		this.init = function() { console.warn('The game has already been initialized!') }
 	}
 	
