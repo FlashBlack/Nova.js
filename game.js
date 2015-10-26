@@ -1,9 +1,9 @@
 Nova.Ready = function() {
 	walls = [];
-	Nova.CreateEntity('Level', {
+	level = Nova.CreateEntity('Level', {
 		Transform: {
-			Position: new Nova.System.Vector2(0, 0),
-			Origin: new Nova.System.Vector2(0, 0)
+			Position: new Nova.System.Vector2(),
+			Origin: new Nova.System.Vector2()
 		},
 		TileRenderer: {
 			Tilemap: 'Level001'

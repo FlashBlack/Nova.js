@@ -1,3 +1,5 @@
+"use strict";
+
 Nova.Debug = new function() {
 	var drawColliders = true;
 	var debugText = true;

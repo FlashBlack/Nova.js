@@ -1,3 +1,5 @@
+"use strict";
+
 Nova.NewComponent('EightDirection', function() {
 	var keys = {
 		'up': ['W', 'UP'],

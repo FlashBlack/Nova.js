@@ -1,3 +1,5 @@
+"use strict";
+
 Nova.Render = new function() {
 	var c;
 	this.SetContext = function(ctx) {

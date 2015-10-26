@@ -1,3 +1,5 @@
+"use strict";
+
 Nova.NewComponent('TileRenderer', function() {
 	this.canvas = document.createElement('canvas');
 	this.ctx = this.canvas.getContext('2d');
@@ -43,9 +45,13 @@ Nova.NewComponent('TileRenderer', function() {
 
 		var DrawPosition = Transform.GetWorldOrigin();
 		if(this.drawAtInteger) DrawPosition.Set(Math.round(DrawPosition.X), Math.round(DrawPosition.Y));
+		// console.log(DrawPosition);
 
 		Nova.ctx.save();
 		Nova.Viewport.Apply();
+		Nova.ctx.translate(Transform.Position.X, Transform.Position.Y);
+		Nova.ctx.rotate(Transform.GetAngle());
+		Nova.ctx.translate(-Transform.Position.X, -Transform.Position.Y);
 		Nova.ctx.globalAlpha = this.Alpha;
 		Nova.ctx.drawImage(render, DrawPosition.X, DrawPosition.Y, this.canvas.width * Transform.GetScale(), this.canvas.height * Transform.GetScale());
 		Nova.ctx.restore();

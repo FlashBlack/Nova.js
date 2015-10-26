@@ -1,3 +1,5 @@
+"use strict";
+
 Nova.Viewport = new function(){
 	var actualPosition = new Nova.System.Vector2();
 	var Position = new Nova.System.Vector2();
@@ -5,6 +7,7 @@ Nova.Viewport = new function(){
 	var Size = new Nova.System.Vector2();
 	var Scale = new Nova.System.Vector2(1, 1);
 	var Rotation = 0;
+
 
 	this.Apply = function(){
 		Nova.ctx.translate((+Size.X/2)*Scale.X, (+Size.Y/2)*Scale.Y);
@@ -21,6 +24,9 @@ Nova.Viewport = new function(){
 	}
 
 	this.SetSize = function(width, height) {
+		Nova.canvas.addEventListener('optimizedResize', function(e) {
+			console.log('butts', e);
+		})
 		canvasSize.Set(width, height);
 		Size.Set(width, height);
 		this.SetPosition(canvasSize.X / 2, canvasSize.Y / 2)

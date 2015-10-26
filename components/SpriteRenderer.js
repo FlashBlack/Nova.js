@@ -1,3 +1,5 @@
+"use strict";
+
 Nova.NewComponent('SpriteRenderer', function() {
 	this.drawAtInteger = false;
 	this.Alpha = 1;
@@ -36,7 +38,7 @@ Nova.NewComponent('SpriteRenderer', function() {
 		Nova.ctx.translate(Origin.X, Origin.Y);
 		Nova.ctx.rotate(Nova.System.toRadians(Transform.GetAngle()));
 		Nova.ctx.translate(-Origin.X, -Origin.Y);
-		Nova.ctx.globalAlpha = .5;
+		Nova.ctx.globalAlpha = this.Alpha;
 		Nova.ctx.drawImage(this.img, frame.x, frame.y, frame.width, frame.height, Origin.X, Origin.Y, frame.width * Transform.GetScale(), frame.height * Transform.GetScale());
 		Nova.ctx.globalAlpha = 1;
 		Nova.ctx.restore();

@@ -1,14 +1,20 @@
+"use strict";
+
 Nova.NewComponent('Transform', function() {
 	// default values
 	this.Position = new Nova.System.Vector2();
 	// var localOrigin
 	this.Anchor = new Nova.System.Vector2();
+	var localOrigin;
+	var worldOrigin;
 
 	var Scale = 1;
 	var Angle = 0;
 
 	this.Create = function(properties) {
 		// dont do anything if no properties were passed
+		console.log(properties);
+
 		if(!properties.hasOwnProperty("Position") || !properties.Position.isVector2) return false;
 		if(!properties.hasOwnProperty('Origin') || !properties.Origin.isVector2) return false;
 		this.Position = properties.Position.Copy();
@@ -19,21 +25,10 @@ Nova.NewComponent('Transform', function() {
 	}
 
 	this.UpdateOrigin = function() {
+		// console.log(localOrigin);
 		worldOrigin = new Nova.System.Vector2(localOrigin.X*-1, localOrigin.Y*-1);
 		worldOrigin.Translate(this.Position.X, this.Position.Y);
 		worldOrigin.RotateAround(this.Position, -Angle);
-		// worldOrigin.Translate(-localOrigin.X, -localOrigin.Y);
-		// console.log(this.Position);
-		Nova.Render.Arc({
-			Position: worldOrigin,
-			Radius: 1,
-		})
-		Nova.Render.Arc({
-			Position: this.Position,
-			Radius: 1,
-			StrokeColour: 'lime',
-			FillColour: 'lime'
-		})
 	}
 
 	this.SetPosition = function(x, y) {
@@ -60,7 +55,12 @@ Nova.NewComponent('Transform', function() {
 		return Scale;
 	}
 
+	this.GetLocalOrigin = function() {
+		return localOrigin;
+	}
+
 	this.GetWorldOrigin = function() {
+		this.UpdateOrigin();
 		return worldOrigin;
 	}
 

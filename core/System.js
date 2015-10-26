@@ -1,3 +1,5 @@
+"use strict";
+
 Nova.System = new function() {
 	var UserAgent = (function() {
 		var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;

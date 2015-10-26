@@ -1,3 +1,5 @@
+"use strict";
+
 Nova.Loader = new function() {
 	var loaded = 0;
 	var toLoad = 0;

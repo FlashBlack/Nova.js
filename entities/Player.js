@@ -1,3 +1,5 @@
+"use strict";
+
 Nova.CreateBlueprint('Player', function() {
 	this.requiredComponents = ['Transform', 'SpriteRenderer'];
 	

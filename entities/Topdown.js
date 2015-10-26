@@ -1,3 +1,5 @@
+"use strict";
+
 Nova.CreateBlueprint('Topdown', function() {
 	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['EightDirection', 'Pre']];
 
@@ -12,8 +14,7 @@ Nova.CreateBlueprint('Topdown', function() {
 
 		//Move Viewport To Topdown
 		var viewportPosition = Nova.Viewport.GetPosition();
-		// console.log(viewportPosition);
-		Nova.Viewport.SetPosition(Nova.System.lerp(viewportPosition.X ,Transform.Position.X, 2 * Nova.dt), Nova.System.lerp(viewportPosition.Y, Transform.Position.Y, 2 * Nova.dt))
+		Nova.Viewport.SetPosition(Nova.System.lerp(viewportPosition.X , Position.X, 2 * Nova.dt), Nova.System.lerp(viewportPosition.Y, Position.Y, 2 * Nova.dt))
 
 		//Rotate Viewport
 		var viewportAngle = Nova.Viewport.GetAngle();
@@ -24,7 +25,12 @@ Nova.CreateBlueprint('Topdown', function() {
 
 		var mouseAngle = Nova.System.angleTowards(Position.X, Position.Y, Nova.Input.Mouse.X, Nova.Input.Mouse.Y);
 		Transform.SetAngle(Nova.System.angleLerp(Transform.GetAngle(), mouseAngle, 15 * Nova.dt));
-		// console.log(Math.round(Transform.GetAngle()));
+
+		Nova.Render.Arc({
+			Position: Nova.Input.Mouse,
+			Radius: 6,
+			Fill: true
+		})
 
 		var solids = Nova.getSolids();
 		for(var i = 0; i < solids.length; i++) {

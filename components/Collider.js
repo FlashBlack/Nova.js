@@ -1,3 +1,5 @@
+"use strict";
+
 Nova.NewComponent('Collider', function() {
 	this.draw = false;
 	this.bboxleft = 0;

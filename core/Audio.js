@@ -1,3 +1,5 @@
+"use strict";
+
 Nova.Audio = new function() {
     var context = new AudioContext();
     var Sounds = {};

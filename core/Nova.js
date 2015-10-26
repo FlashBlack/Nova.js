@@ -1,3 +1,5 @@
+"use strict";
+
 var Nova = new function() {
 	this.VERSION = '0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.2';
 
