@@ -39,12 +39,12 @@ Nova.Ready = function() {
 				y: 300
 			},
 			Anchor: {
-				x: 16.5,
-				y: 16.5
+				x: 7.5,
+				y: 13.5
 			}
 		},
 		SpriteRenderer: {
-			sprite: 'Topdown',
+			sprite: 'Marine',
 		},
 		EightDirection: {
 			rotateTowards: false
@@ -52,9 +52,9 @@ Nova.Ready = function() {
 		Collider: {
 			polygon: [
 			[0, 0],
-			[32, 0],
-			[32, 32],
-			[0, 32]],
+			[37, 0],
+			[37, 26],
+			[0, 26]],
 			draw: true
 		}
 	})
@@ -64,7 +64,7 @@ Nova.Start({
 	canvas: 'game',
 	fillKeepAspectRatio: false,
 	pointFiltering: true,
-	sprites: ['topdown', 'wall', 'test'],
+	sprites: ['marine', 'wall', 'test'],
 	entities: ['Topdown', 'Wall', 'Map'],
 	maps: ['Level001'],
 	sounds: ['laser9.mp3'],
