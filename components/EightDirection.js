@@ -63,8 +63,8 @@ Nova.NewComponent('EightDirection', function() {
 												(this.moveSpeed * Nova.dt) * Math.sin(Nova.System.toRadians(moveAngle)));
 			if(moveRelative) offset.RotateAround(new Nova.System.Vector2(), -Nova.Viewport.GetAngle());
 
-			Transform.Position.y += offset.Y;
-			Transform.Position.x += offset.X;
+			Transform.Position.Y += offset.Y;
+			Transform.Position.X += offset.X;
 		}
 	}
 }, true)

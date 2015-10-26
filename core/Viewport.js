@@ -23,6 +23,7 @@ Nova.Viewport = new function(){
 	this.SetSize = function(width, height) {
 		canvasSize.Set(width, height);
 		Size.Set(width, height);
+		this.SetPosition(canvasSize.X / 2, canvasSize.Y / 2)
 		delete this.SetSize;
 	}
 
@@ -63,12 +64,12 @@ Nova.Viewport = new function(){
 	}
 
 	this.GetWorldPosition = function(vector) {
-		var Position = this.GetPosition();
-		Position.Translate(-(Size.X / 2), -(Size.Y / 2));
+		var positionCopy = Position.Copy();
+		positionCopy.Translate(-(Size.X / 2), -(Size.Y / 2));
 
-		var newPosition = new Nova.System.Vector2(((vector.X / canvasSize.X) * Size.X) + Position.X, ((vector.Y / canvasSize.Y) * Size.Y) + Position.Y);
-		Position.Translate(Size.X / 2, Size.Y / 2);
-		newPosition.RotateAround(Position, -Rotation)
+		var newPosition = new Nova.System.Vector2(((vector.X / canvasSize.X) * Size.X) + positionCopy.X, ((vector.Y / canvasSize.Y) * Size.Y) + positionCopy.Y);
+		positionCopy.Translate(Size.X / 2, Size.Y / 2);
+		newPosition.RotateAround(positionCopy, -Rotation)
 
 		return newPosition;
 	}

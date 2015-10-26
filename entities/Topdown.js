@@ -1,53 +1,30 @@
 Nova.CreateBlueprint('Topdown', function() {
-	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['Collider', 'Pre'], ['EightDirection', 'Pre']];
-
-	var Target = {
-		x: 0,
-		y: 0
-	}
-	var moving = false;
-	this.speed = 150;
+	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['EightDirection', 'Pre']];
 
 	this.Create = function(parameters) {
 		var Position = this.GetComponent('Transform').Position;
-		Nova.Viewport.SetPosition(Position.x, Position.y);
+		Nova.Viewport.SetPosition(Position.X, Position.Y);
 	}
 
 	this.Update = function() {
 		var Transform = this.GetComponent('Transform');
 		var Position = Transform.Position;
 
-		//Move Viewport
-		/*if (Nova.Input.KeyDown('I')) Nova.Viewport.Position.Y -= 100 * Nova.dt;
-		if (Nova.Input.KeyDown('J')) Nova.Viewport.Position.X -= 100 * Nova.dt;
-		if (Nova.Input.KeyDown('K')) Nova.Viewport.Position.Y += 100 * Nova.dt;
-		if (Nova.Input.KeyDown('L')) Nova.Viewport.Position.X += 100 * Nova.dt;*/
-
 		//Move Viewport To Topdown
 		var viewportPosition = Nova.Viewport.GetPosition();
-		Nova.Viewport.SetPosition(Nova.System.lerp(viewportPosition.X ,Transform.Position.x, 2 * Nova.dt), Nova.System.lerp(viewportPosition.Y, Transform.Position.y, 2 * Nova.dt))
+		// console.log(viewportPosition);
+		Nova.Viewport.SetPosition(Nova.System.lerp(viewportPosition.X ,Transform.Position.X, 2 * Nova.dt), Nova.System.lerp(viewportPosition.Y, Transform.Position.Y, 2 * Nova.dt))
 
 		//Rotate Viewport
 		var viewportAngle = Nova.Viewport.GetAngle();
 		if (Nova.Input.KeyDown('U')) Nova.Viewport.SetAngle(viewportAngle + 50 * Nova.dt);
 		if (Nova.Input.KeyDown('O')) Nova.Viewport.SetAngle(viewportAngle - 50 * Nova.dt);
 
-		/*if(Nova.Input.KeyDown("D")) Transform.Position.x += this.speed * Nova.dt;
-		if(Nova.Input.KeyDown("A")) Transform.Position.x -= this.speed * Nova.dt;
-		if(Nova.Input.KeyDown("W")) Transform.Position.y -= this.speed * Nova.dt;
-		if(Nova.Input.KeyDown("S")) Transform.Position.y += this.speed * Nova.dt;*/
-
 		if(Nova.Input.KeyPressed("T")) Nova.Viewport.SetScale(.5, .5);
 
-		var mouseAngle = Nova.System.angleTowards(Position.x, Position.y, Nova.Input.Mouse.X, Nova.Input.Mouse.Y);
-		Nova.Render.Arc({
-			Position: Nova.Viewport.GetWorldPosition(Nova.Input.MouseGUI),
-			Radius: 6,
-			Fill: true,
-			FillColour: 'blue',
-			StrokeColour: 'blue'
-		})
+		var mouseAngle = Nova.System.angleTowards(Position.X, Position.Y, Nova.Input.Mouse.X, Nova.Input.Mouse.Y);
 		Transform.SetAngle(Nova.System.angleLerp(Transform.GetAngle(), mouseAngle, 15 * Nova.dt));
+		// console.log(Math.round(Transform.GetAngle()));
 
 		var solids = Nova.getSolids();
 		for(var i = 0; i < solids.length; i++) {
@@ -108,15 +85,5 @@ Nova.CreateBlueprint('Topdown', function() {
 			Position: new Nova.System.Vector2(-32, 224),
 			Text: 'butts'
 		})
-	}
-
-	this.SetTarget = function(x, y) {
-		Target.x = x;
-		Target.y = y;
-		moving = true;
-	}
-
-	this.SetSpeed = function(newSpeed) {
-		this.speed = newSpeed;
 	}
 })

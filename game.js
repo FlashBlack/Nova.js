@@ -2,20 +2,18 @@ Nova.Ready = function() {
 	walls = [];
 	Nova.CreateEntity('Level', {
 		Transform: {
-			x: 0,
-			y: 0
+			Position: new Nova.System.Vector2(0, 0),
+			Origin: new Nova.System.Vector2(0, 0)
 		},
 		TileRenderer: {
 			Tilemap: 'Level001'
 		},
 	})
-	for(var i = 0; i < 1; i++) {
+	/*for(var i = 0; i < 1; i++) {
 		walls.push(Nova.CreateEntity('Wall', {
 			Transform: {
-				Position: {
-					x: 100 + i*32,
-					y: 100
-				}
+				Position: new Nova.System.Vector2(100+i*32, 100),
+				Origin: new Nova.System.Vector2(0, 0)
 			},
 			SpriteRenderer: {
 				sprite: 'Wall'
@@ -30,18 +28,12 @@ Nova.Ready = function() {
 				draw: true
 			}
 		}))
-	}
+	}*/
 
 	player = Nova.CreateEntity('Topdown', {
 		Transform: {
-			Position: {
-				x: 400,
-				y: 300
-			},
-			Anchor: {
-				x: 16.5,
-				y: 16.5
-			}
+			Position: new Nova.System.Vector2(400, 300),
+			Origin: new Nova.System.Vector2(16.5, 16.5)
 		},
 		SpriteRenderer: {
 			sprite: 'Topdown',

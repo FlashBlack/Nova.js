@@ -41,17 +41,13 @@ Nova.NewComponent('TileRenderer', function() {
 	this.Update = function() {
 		var Transform = this.Owner.GetComponent('Transform');
 
-		var drawX = Transform.Position.x - Transform.Anchor.x;
-		var drawY = Transform.Position.y - Transform.Anchor.y;
-		if(this.drawAtInteger) {
-			drawX = Math.round(drawX);
-			drawY = Math.round(drawY);
-		}
+		var DrawPosition = Transform.GetWorldOrigin();
+		if(this.drawAtInteger) DrawPosition.Set(Math.round(DrawPosition.X), Math.round(DrawPosition.Y));
 
 		Nova.ctx.save();
 		Nova.Viewport.Apply();
 		Nova.ctx.globalAlpha = this.Alpha;
-		Nova.ctx.drawImage(render, drawX, drawY, this.canvas.width * Transform.GetScale(), this.canvas.height * Transform.GetScale());
+		Nova.ctx.drawImage(render, DrawPosition.X, DrawPosition.Y, this.canvas.width * Transform.GetScale(), this.canvas.height * Transform.GetScale());
 		Nova.ctx.restore();
 	}
 
