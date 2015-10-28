@@ -79,4 +79,21 @@ Nova.Viewport = new function(){
 
 		return newPosition;
 	}
+
+	this.GetScreenCollider = function() {
+		var worldPos = this.GetPositionReal();
+		var center = this.GetPosition();
+		var viewSize = this.GetSize();
+
+		var tr = new Nova.System.Vector2(worldPos.X + viewSize.X, worldPos.Y);
+		tr.RotateAround(worldPos, -this.GetAngle());
+
+		var br = new Nova.System.Vector2(worldPos.X + viewSize.X, worldPos.Y + viewSize.Y);
+		br.RotateAround(worldPos, -this.GetAngle());
+
+		var bl = new Nova.System.Vector2(worldPos.X, worldPos.Y + viewSize.Y);
+		bl.RotateAround(worldPos, -this.GetAngle());
+
+		return [worldPos, tr, br, bl];
+	}
 }

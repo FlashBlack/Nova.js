@@ -46,6 +46,7 @@ Nova.CreateBlueprint('Player', function() {
 					draw: true
 				},
 				Bullet: {
+					Speed: 500,
 					AngleOfMotion: Transform.GetAngle()
 				}
 			}));
