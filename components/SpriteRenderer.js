@@ -22,18 +22,18 @@ Nova.NewComponent('SpriteRenderer', function() {
 		var Transform = this.Owner.GetComponent('Transform');
 		// figure out where to draw it based on Transform.Position and Transform.Anchor
 		var Origin = Transform.GetWorldOrigin();
-		var drawX = Origin.X;
-		var drawY = Origin.Y;
 		if(this.drawAtInteger) {
-			drawX = Math.round(drawX);
-			drawY = Math.round(drawY);
+			Origin.X = Math.floor(Origin.X);
+			Origin.Y = Math.floor(Origin.Y);
 		}
 		var frame = this.GetFrame();
 		// draw the image
-		// Nova.Render.Sprite({
-		// 	Sprite: 
-		// })
-		Nova.ctx.save();
+		Nova.Render.Sprite({
+			Position: Origin,
+			Sprite: this.sprite,
+			Frame: this.GetFrame()
+		})
+		/*Nova.ctx.save();
 		Nova.Viewport.Apply();
 		Nova.ctx.translate(Origin.X, Origin.Y);
 		Nova.ctx.rotate(Nova.System.toRadians(Transform.GetAngle()));
@@ -41,7 +41,7 @@ Nova.NewComponent('SpriteRenderer', function() {
 		Nova.ctx.globalAlpha = this.Alpha;
 		Nova.ctx.drawImage(this.img, frame.x, frame.y, frame.width, frame.height, Origin.X, Origin.Y, frame.width * Transform.GetScale(), frame.height * Transform.GetScale());
 		Nova.ctx.globalAlpha = 1;
-		Nova.ctx.restore();
+		Nova.ctx.restore();*/
 		
 	}
 

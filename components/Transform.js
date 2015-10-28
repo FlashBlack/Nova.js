@@ -13,7 +13,6 @@ Nova.NewComponent('Transform', function() {
 
 	this.Create = function(properties) {
 		// dont do anything if no properties were passed
-		console.log(properties);
 
 		if(!properties.hasOwnProperty("Position") || !properties.Position.isVector2) return false;
 		if(!properties.hasOwnProperty('Origin') || !properties.Origin.isVector2) return false;
@@ -61,7 +60,7 @@ Nova.NewComponent('Transform', function() {
 
 	this.GetWorldOrigin = function() {
 		this.UpdateOrigin();
-		return worldOrigin;
+		return worldOrigin.Copy();
 	}
 
 	this.MoveAtAngle = function(distance, direction) {

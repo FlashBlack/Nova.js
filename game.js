@@ -30,7 +30,7 @@ Nova.Ready = function() {
 		}))
 	}*/
 
-	player = Nova.CreateEntity('Topdown', {
+	player = Nova.CreateEntity('Player', {
 		Transform: {
 			Position: new Nova.System.Vector2(400, 300),
 			Origin: new Nova.System.Vector2(7.5, 13)
@@ -56,8 +56,8 @@ Nova.Start({
 	canvas: 'game',
 	fillKeepAspectRatio: false,
 	pointFiltering: true,
-	sprites: ['marine', 'wall', 'test'],
-	entities: ['Topdown', 'Wall', 'Map'],
+	sprites: ['Marine', 'Wall'],
+	entities: ['Player', 'Wall', 'Map'],
 	maps: ['Level001'],
 	sounds: ['laser9.mp3'],
 	/*directories: {
