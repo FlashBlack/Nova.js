@@ -15,6 +15,8 @@ Nova.Render = new function() {
 
 		var drawToGUI = properties.GUI || false;
 
+		if (!isWithinScreen(properties.Position.X, properties.Position.Y, properties.Size.X, properties.Size.Y)) return false;
+
 		c.save();
 		if(!drawToGUI) Nova.Viewport.Apply();
 		c.translate(properties.Position.X, properties.Position.Y);
@@ -109,6 +111,8 @@ Nova.Render = new function() {
 		if(properties.hasOwnProperty('Width')) Size.X = parseFloat(properties.Width);
 		if(properties.hasOwnProperty('Height')) Size.X = parseFloat(properties.Height);
 
+		if (!isWithinScreen(properties.Position.X, properties.Position.Y, Size.X, Size.Y)) return false;
+
 		c.save();
 		if(!drawToGUI) Nova.Viewport.Apply();
 		c.globalAlpha = properties.Alpha || 1;
@@ -134,6 +138,7 @@ Nova.Render = new function() {
 		if(properties.hasOwnProperty('Width')) Size.X = parseFloat(properties.Width);
 		if(properties.hasOwnProperty('Height')) Size.X = parseFloat(properties.Height);
 
+		if (!isWithinScreen(properties.Position.X, properties.Position.Y, Size.X, Size.Y)) return false;
 
 		c.save();
 		if(!drawToGUI) Nova.Viewport.Apply();
@@ -209,5 +214,20 @@ Nova.Render = new function() {
 		c.fillStyle = properties.Colour || 'red';
 		c.fillText(properties.Text.toString(), properties.Position.X, properties.Position.Y);
 		c.restore();
+	}
+	function isWithinScreen(x, y, w, h){
+		var Screen = {};
+		Screen.Position = Nova.Viewport.GetPositionReal();
+		Screen.Size = Nova.Viewport.GetSize();
+
+		var Element = {};
+		Element.Position = { X: x, Y: y };
+		Element.Size = { X: w, Y: h };
+
+		if (Element.Position.X < Screen.Position.X + Screen.Size.X  && Element.Position.X + Element.Size.X  > Screen.Position.X &&
+		Element.Position.Y < Screen.Position.Y + Screen.Size.Y && Element.Position.Y + Element.Size.Y > Screen.Position.Y) {
+			return true;
+		}
+		return false;
 	}
 }
