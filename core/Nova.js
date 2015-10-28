@@ -234,9 +234,21 @@ var Nova = new function() {
 			}
 			// return the entities GUID
 			if(typeof newEntity.Create === 'function') newEntity.Create(properties);
+			newEntity.isDead = false;
 			return newEntity.GUID;
 		}
 		return false;
+	}
+
+	this.DestroyEntity = function(entityGUID) {
+		var entity = this.GetEntityByID(entityGUID);
+		if(entity) {
+			entity.isDead = true;
+			if(typeof entity.Destroy === 'function') entity.Destroy();
+			delete Entities[entityGUID];
+			var i = zOrder.indexOf(entityGUID);
+			if(i > -1) zOrder.splice(i, 1);
+		}
 	}
 
 	// used to create a new blueprint for a component
@@ -344,6 +356,10 @@ var Nova = new function() {
 	// REMOVE LATER these are for debug purposes
 	this.GetEntities = function(entityType, callback) {
 		return Entities;
+	}
+
+	this.EntityCount = function() {
+		return Object.keys(Entities).length;
 	}
 
 	this.GetBlueprints = function() {
