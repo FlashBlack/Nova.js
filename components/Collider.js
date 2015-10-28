@@ -1,6 +1,6 @@
 "use strict";
 
-Nova.NewComponent('Collider', function() {
+/*Nova.NewComponent('Collider', function() {
 	this.draw = false;
 	this.bboxleft = 0;
 	this.bboxright = 0;
@@ -154,4 +154,86 @@ Nova.NewComponent('Collider', function() {
 		if(properties.hasOwnProperty(propertyName)) return properties[propertyName];
 		return false;
 	}
-})
+})*/
+
+Nova.NewComponent('Collider', function() {
+	var subCollidersLocal = [];
+	var subCollidersWorld = [];
+
+	this.Create = function(properties) {
+		if(properties.hasOwnProperty('SubColliders') && Array.isArray(properties.SubColliders)) {
+			for(var i = 0; i < properties.SubColliders.length; i++) {
+				var currentSubCollider = properties.SubColliders[i];
+				var newCollider = [];
+				for(var j = 0; j < currentSubCollider.length; j++) {
+					var currentPoint = currentSubCollider[j];
+					var newPoint = null;
+					
+					if(Array.isArray(currentPoint) && currentPoint.length >= 2) {
+						newPoint = new Nova.System.Vector2(currentPoint[0], currentPoint[1]);
+					} else if(currentPoint.isVector2) {
+						newPoint = currentPoint.Copy();
+					} else {
+						console.log("Unable to add point #" + j + " to subcollider. ", "Passed data: " + currentPoint);
+					}
+					if(newPoint != null) newCollider.push(newPoint);
+
+				}
+				/*if(Array.isArray(currentSubCollider)) {
+					if(currentSubCollider.length < 2) return false;
+					var currentSubCollider = new Nova.System.Vector2(currentSubCollider[0], currentSubCollider[1]);
+					var currentSubCollider = new Nova.Collision.SubCollider(new Nova.System.Vector2(currentSubCollider[0], currentSubCollider[1]),
+																			new Nova.System.Vector2(currentSubCollider[2], currentSubCollider[3]),
+																			new Nova.System.Vector2(currentSubCollider[4], currentSubCollider[5]),
+																			currentSubCollider[6]);
+				}*/
+				subCollidersLocal.push(newCollider);
+			}
+		} else {
+			return false;
+		}
+		this.UpdateColliders();
+		if(properties.hasOwnProperty('isSolid')) Nova.addSolid([this.Owner.GUID, this.componentName]);
+		return true;
+	}
+
+	this.UpdateColliders = function() {
+		var Transform = this.Owner.GetComponent("Transform");
+		var Offset = Transform.GetLocalOrigin();
+		subCollidersWorld = [];
+		for(var i = 0; i < subCollidersLocal.length; i++) {
+			var currentSubCollider = subCollidersLocal[i];
+			var newSubCollider = [];
+			for(var j = 0; j < currentSubCollider.length; j++) {
+				var currentPoint = currentSubCollider[j].Copy();
+				currentPoint.Translate(-Offset.X, -Offset.Y);
+				currentPoint.RotateAround(new Nova.System.Vector2(), -Transform.GetAngle());
+				currentPoint.Translate(Transform.Position.X, Transform.Position.Y);
+				newSubCollider.push(currentPoint);
+			}
+			subCollidersWorld.push(newSubCollider);
+		}
+		// console.log(subCollidersWorld);
+		// debugger;
+	}
+
+	this.Update = function() {
+		this.UpdateColliders();
+
+		var Transform = this.Owner.GetComponent("Transform");
+		for(var i = 0; i < subCollidersWorld.length; i++) {
+			var currentSubCollider = subCollidersWorld[i];
+			Nova.Render.Path({
+				Path: currentSubCollider,
+				Fill: true,
+				Complete: true,
+				FillColour: 'lime',
+				StrokeColour: 'lime'
+			})
+		}
+	}
+
+	this.GetSubColliders = function() {
+		return subCollidersWorld;
+	}
+});
