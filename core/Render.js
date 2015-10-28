@@ -117,6 +117,8 @@ Nova.Render = new function() {
 	}
 	this.Sprite = function(properties) {
 		if(!properties.hasOwnProperty('Position') || !properties.Position.isVector2) return false;
+		if(properties.hasOwnProperty('Angle')) var Rotation = Nova.System.toRadians(properties.Angle);
+		else var Rotation = 0;
 		if(!properties.hasOwnProperty('Sprite')) return false;
 		if(typeof properties.Sprite === 'string') var Sprite = Nova.Loader.GetSprite(properties.Sprite);
 		else if(properties.Sprite.isSprite) var Sprite = properties.Sprite;
@@ -134,8 +136,11 @@ Nova.Render = new function() {
 
 
 		c.save();
-		
 		if(!drawToGUI) Nova.Viewport.Apply();
+		c.translate(properties.Position.X, properties.Position.Y);
+		c.rotate(Rotation);
+		c.translate(-properties.Position.X, -properties.Position.Y);
+		
 		c.globalAlpha = properties.Alpha || 1;
 		c.drawImage(Image, Frame.x, Frame.y, Frame.width, Frame.height, properties.Position.X, properties.Position.Y, Size.X, Size.Y);
 		c.restore();

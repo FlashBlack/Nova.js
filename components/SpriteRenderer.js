@@ -30,19 +30,10 @@ Nova.NewComponent('SpriteRenderer', function() {
 		// draw the image
 		Nova.Render.Sprite({
 			Position: Origin,
+			Angle: Transform.GetAngle(),
 			Sprite: this.sprite,
 			Frame: this.GetFrame()
-		})
-		/*Nova.ctx.save();
-		Nova.Viewport.Apply();
-		Nova.ctx.translate(Origin.X, Origin.Y);
-		Nova.ctx.rotate(Nova.System.toRadians(Transform.GetAngle()));
-		Nova.ctx.translate(-Origin.X, -Origin.Y);
-		Nova.ctx.globalAlpha = this.Alpha;
-		Nova.ctx.drawImage(this.img, frame.x, frame.y, frame.width, frame.height, Origin.X, Origin.Y, frame.width * Transform.GetScale(), frame.height * Transform.GetScale());
-		Nova.ctx.globalAlpha = 1;
-		Nova.ctx.restore();*/
-		
+		})		
 	}
 
 	this.GetFrame = function(id) {
