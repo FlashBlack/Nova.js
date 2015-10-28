@@ -38,6 +38,12 @@ Nova.Debug = new function() {
 				Colour: 'lime',
 				GUI: true
 			})
+			Nova.Render.Text({
+				Position: new Nova.System.Vector2(5, 37),
+				Text: Nova.EntityCount(),
+				Colour: 'lime',
+				GUI: true
+			})
 		}
 	}
 }
