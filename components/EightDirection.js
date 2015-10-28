@@ -56,7 +56,7 @@ Nova.NewComponent('EightDirection', function() {
 			}
 		}
 		if(horizontal != 0 || vertical != 0) {
-			var moveAngle = Nova.System.angleTowards(0, 0, horizontal, vertical);
+			var moveAngle = Nova.System.AngleTowards(0, 0, horizontal, vertical);
 			if(this.rotateTowards) {
 				Transform.SetAngle(moveAngle);
 			}

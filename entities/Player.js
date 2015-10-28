@@ -1,7 +1,7 @@
 "use strict";
 
 Nova.CreateBlueprint('Player', function() {
-	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['EightDirection', 'Pre']];
+	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['EightDirection', 'Pre'], ['Collider', 'Post']];
 
 	this.Create = function(parameters) {
 		var Position = this.GetComponent('Transform').Position;
@@ -23,7 +23,7 @@ Nova.CreateBlueprint('Player', function() {
 
 		if(Nova.Input.KeyPressed("T")) Nova.Viewport.SetScale(.5, .5);
 
-		var mouseAngle = Nova.System.angleTowards(Position.X, Position.Y, Nova.Input.Mouse.X, Nova.Input.Mouse.Y);
+		var mouseAngle = Nova.System.AngleTowards(Position.X, Position.Y, Nova.Input.Mouse.X, Nova.Input.Mouse.Y);
 		Transform.SetAngle(Nova.System.angleLerp(Transform.GetAngle(), mouseAngle, 15 * Nova.dt));
 
 		Nova.Render.Arc({
@@ -32,14 +32,24 @@ Nova.CreateBlueprint('Player', function() {
 			Fill: true
 		})
 
-		var solids = Nova.getSolids();
-		for(var i = 0; i < solids.length; i++) {
-			if(Nova.Collision.Overlaps(this.GetComponent("Collider"), solids[i])) {
-				console.log('overlaps');
-			}
-		}
 		if(Nova.Input.Mouse.Pressed) {
-			Nova.Audio.Play('laser9');
+			var bullet = Nova.GetEntityByID(Nova.CreateEntity('Bullet', {
+				Transform: {
+					Position: Position,
+					Origin: new Nova.System.Vector2(0, 2.5),
+				},
+				SpriteRenderer: {
+					sprite: 'Bullet'
+				},
+				Collider: {
+					SubColliders: [[[0, 0], [10, 0], [10, 5], [0, 5]]],
+					draw: true
+				},
+				Bullet: {
+					AngleOfMotion: Transform.GetAngle()
+				}
+			}));
+			bullet.GetComponent("Transform").SetAngle(Transform.GetAngle());
 		}
 
 		//Zoom Viewport
@@ -51,32 +61,5 @@ Nova.CreateBlueprint('Player', function() {
 			var currentScale = Nova.Viewport.GetScale();
 			Nova.Viewport.SetScale(currentScale.X + Nova.dt, currentScale.Y + Nova.dt);
 		}
-		Nova.Render.Line({
-			Start: new Nova.System.Vector2(-32, 96),
-			End: new Nova.System.Vector2(0, 128)
-		})
-		Nova.Render.Path({
-			Path: [
-			new Nova.System.Vector2(-32, 160),
-			new Nova.System.Vector2(-16, 128),
-			new Nova.System.Vector2(0, 160)
-			],
-			Complete: true,
-			Fill: true
-		})
-		Nova.Render.Arc({
-			Position: new Nova.System.Vector2(-16, 176),
-			Radius: 16,
-			Fill: true
-		})
-		/*Nova.Render.Ellipse({
-			Position: new Nova.System.Vector2(-16, 208),
-			Radius: new Nova.System.Vector2(16, 8),
-			Fill: true,
-		})*/
-		Nova.Render.Text({
-			Position: new Nova.System.Vector2(-32, 224),
-			Text: 'butts'
-		})
 	}
 })

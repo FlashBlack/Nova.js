@@ -178,9 +178,11 @@ Nova.Render = new function() {
 
 		c.save();
 		if(!drawToGUI) Nova.Viewport.Apply();
+		
 		c.strokeStyle = properties.StrokeColour || 'red';
-		c.strokeWidth = properties.strokeWidth || 1;
-		c.fillStyle = properties.fillStyle || 'red';
+		c.strokeWidth = properties.StrokeWidth || 1;
+		c.fillStyle = properties.FillColour || 'red';
+		
 		c.beginPath();
 		c.moveTo(properties.Path[0].X, properties.Path[0].Y);
 		for(var i = 1; i < properties.Path.length; i++) {

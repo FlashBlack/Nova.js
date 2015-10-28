@@ -29,7 +29,7 @@ Nova.System = new function() {
     	}
     	return _p8() + _p8(true) + _p8(true) + _p8();
 	}
-	this.angleTowards = function(x1, y1, x2, y2) {
+	this.AngleTowards = function(x1, y1, x2, y2) {
 		var dx = x2 - x1;
 		var dy = y2 - y1;
 		return this.toDegrees(Math.atan2(dy, dx));
@@ -91,6 +91,11 @@ Nova.System = new function() {
 		this.Set = function(x, y) {
 			this.X = parseFloat(x);
 			this.Y = parseFloat(y);
+		}
+
+		this.Subtract = function(x, y) {
+			this.X -= parseFloat(x);
+			this.Y -= parseFloat(y);
 		}
 
 		this.Copy = function() {
