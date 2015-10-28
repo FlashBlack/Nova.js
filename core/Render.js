@@ -8,22 +8,33 @@ Nova.Render = new function() {
 	this.Rectangle = function(properties) {
 		if(!properties.hasOwnProperty('Position') || !properties.Position.isVector2) return false;
 		if(!properties.hasOwnProperty('Size') || !properties.Size.isVector2) return false;
+		if(properties.hasOwnProperty('Angle')) var Rotation = Nova.System.toRadians(properties.Angle);
+		else var Rotation = 0;
+		if(properties.hasOwnProperty('Offset') && properties.Offset.isVector2) var Offset = properties.Offset.Copy();
+		else var Offset = new Nova.System.Vector2();
+
 		var drawToGUI = properties.GUI || false;
 
 		c.save();
 		if(!drawToGUI) Nova.Viewport.Apply();
+		c.translate(properties.Position.X, properties.Position.Y);
+		c.rotate(Rotation);
+		c.translate(-(properties.Position.X), -(properties.Position.Y));
+
 		c.fillStyle = properties.FillColour || 'red';
 		c.strokeStyle = properties.StrokeColour || 'red';
 		c.globalAlpha = properties.StrokeAlpha || 1;
-		c.strokeRect(properties.Position.X, properties.Position.Y, properties.Size.X, properties.Size.Y);
+		c.strokeRect(properties.Position.X - Offset.X, properties.Position.Y - Offset.Y, properties.Size.X, properties.Size.Y);
 		if(properties.Fill) {
 			c.globalAlpha = properties.FillAlpha || .3;
-			c.fillRect(properties.Position.X, properties.Position.Y, properties.Size.X, properties.Size.Y);
+			c.fillRect(properties.Position.X - Offset.X, properties.Position.Y - Offset.Y, properties.Size.X, properties.Size.Y);
 		}
 		c.restore();
 	}
 	this.Arc = function(properties) {
 		if(!properties.hasOwnProperty('Position') || !properties.Position.isVector2) return false;
+		if(properties.hasOwnProperty('Offset') && properties.Offset.isVector2) var Offset = properties.Offset.Copy();
+		else var Offset = new Nova.System.Vector2();
 		var angle = properties.Angle || 0;
 		if(!properties.hasOwnProperty('Radius')) return false;
 		var drawToGUI = properties.GUI || false;
@@ -40,6 +51,7 @@ Nova.Render = new function() {
 		c.translate(properties.Position.X, properties.Position.Y);
 		c.rotate(angle);
 		c.translate(-properties.Position.X, -properties.Position.Y);
+		
 		c.globalAlpha = properties.StrokeAlpha || 1;
 		c.beginPath();
 		c.arc(properties.Position.X, properties.Position.Y, Radius, startAngle, endAngle);
@@ -107,6 +119,7 @@ Nova.Render = new function() {
 		if(!properties.hasOwnProperty('Position') || !properties.Position.isVector2) return false;
 		if(!properties.hasOwnProperty('Sprite')) return false;
 		if(typeof properties.Sprite === 'string') var Sprite = Nova.Loader.GetSprite(properties.Sprite);
+		else if(properties.Sprite.isSprite) var Sprite = properties.Sprite;
 		else var Sprite = Nova.Loader.GetSprite(properties.Sprite);
 		if(Sprite == false) return false;
 		var drawToGUI = properties.GUI || false;
@@ -119,6 +132,7 @@ Nova.Render = new function() {
 		if(properties.hasOwnProperty('Width')) Size.X = parseFloat(properties.Width);
 		if(properties.hasOwnProperty('Height')) Size.X = parseFloat(properties.Height);
 
+
 		c.save();
 		
 		if(!drawToGUI) Nova.Viewport.Apply();
@@ -129,16 +143,22 @@ Nova.Render = new function() {
 	this.Line = function(properties) {
 		if(!properties.hasOwnProperty('Start') || !properties.Start.isVector2) return false;
 		if(!properties.hasOwnProperty('End') || !properties.End.isVector2) return false;
+		if(properties.hasOwnProperty('Offset') && properties.Offset.isVector2) var Offset = properties.Offset.Copy();
+		else var Offset = new Nova.System.Vector2();
+		if(properties.hasOwnProperty('Angle')) var Rotation = Nova.System.toRadians(properties.Angle);
+		else var Rotation = 0;
 		var drawToGUI = properties.GUI || false;
+
+		c.save();
+		if(!drawToGUI) Nova.Viewport.Apply();
 
 		c.strokeStyle = properties.Colour || 'red';
 		c.lineWidth = properties.Width || 1;
-		c.save();
-		if(!drawToGUI) Nova.Viewport.Apply();
 		c.globalAlpha = properties.Alpha || 1;
+		
 		c.beginPath();
-		c.moveTo(properties.Start.X, properties.Start.Y);
-		c.lineTo(properties.End.X, properties.End.Y);
+		c.moveTo(properties.Start.X - Offset.X, properties.Start.Y - Offset.Y);
+		c.lineTo(properties.End.X - Offset.X, properties.End.Y - Offset.Y);
 		c.stroke();
 		c.restore();
 	}
