@@ -12,7 +12,7 @@ Nova.Loader = new function() {
 	var LoadedSounds = {};
 
 	var entitiesToLoad = [];
-	var componentsToLoad = ["Collider", "EightDirection", "SpriteRenderer", "Transform", "TileRenderer", "Bullet"];
+	var componentsToLoad = ["Collider", "EightDirection", "SpriteRenderer", "Transform", "TileRenderer", "Bullet", "ParticleEmitter"];
 	var spritesToLoad = [];
 	var soundsToLoad = [];
 	var tilemapsToLoad = [];

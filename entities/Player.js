@@ -1,11 +1,16 @@
 "use strict";
 
 Nova.CreateBlueprint('Player', function() {
-	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['EightDirection', 'Pre'], ['Collider', 'Post']];
+	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['EightDirection', 'Pre'], ['Collider', 'Post'], ['ParticleEmitter', 'Post']];
 
 	this.Create = function(parameters) {
 		var Position = this.GetComponent('Transform').Position;
 		Nova.Viewport.SetPosition(Position.X, Position.Y);
+
+		var ParticleEmitter = this.GetComponent('ParticleEmitter');
+		ParticleEmitter.AddParticles(100, {
+			Position: Position,
+		});
 	}
 
 	this.Update = function() {
@@ -52,6 +57,12 @@ Nova.CreateBlueprint('Player', function() {
 			}));
 			bullet.GetComponent("Transform").SetAngle(Transform.GetAngle());
 		}
+
+		Nova.Render.Text({
+			Position: new Nova.System.Vector2(),
+			Text: 'Test',
+			Colour: 'Blue',
+		})
 
 		//Zoom Viewport
 		if (Nova.Input.KeyDown('OPENBRACKET')) {

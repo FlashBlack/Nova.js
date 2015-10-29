@@ -214,6 +214,7 @@ Nova.Render = new function() {
 		c.font = Font;
 		c.textBaseline = 'top';
 		c.fillStyle = properties.Colour || 'red';
+		c.globalAlpha = properties.Alpha || 1;
 		c.fillText(properties.Text.toString(), properties.Position.X, properties.Position.Y);
 		c.restore();
 	}
