@@ -27,36 +27,33 @@ Nova.Ready = function() {
 	}
 
 	var MLGparticle = {
-		Particle: function(properties){
-			this.Position = properties.Position.Copy() || new Nova.System.Vector2();
-			this.StartPosition = this.Position.Copy();
-			this.Velocity = new Nova.System.Vector2(75*Math.random()-37.5, 75*Math.random()-37.5);
+		Particle: function(properties){ //This is the constructor for each individual particle
+			this.StartPosition = properties.Position.Copy() || new Nova.System.Vector2();
 			this.Alpha = 0.1+Math.random()*2;
-			this.Colour = "#"+((1<<24)*Math.random()|0).toString(16);
-
 			var words = ['Wow', 'Rekt', 'M8', 'Weed', 'MLG', 'Comic Sans'];
-			words.random = Math.floor(Math.random()*words.length);
-			this.Text = words[words.random];
+			words.random = function(){ return Math.floor(Math.random()*words.length); };
 
 			this.Reset = function(){
 				this.Position = this.StartPosition.Copy();
+				this.Velocity = new Nova.System.Vector2(75*Math.random()-37.5, 75*Math.random()-37.5);
 				this.Alpha = 1+Math.random()*2;
 				this.Colour = "#"+((1<<24)*Math.random()|0).toString(16);
-				words.random = Math.floor(Math.random()*words.length);
-				this.Text = words[words.random];
+				this.Text = words[words.random()];
 			}
+
+			this.Reset();
+			this.Alpha = 0.1+Math.random()*2; //to make the start smoother
 		},
-		ParticleUpdate: function(Particle){
+		ParticleUpdate: function(Particle){ //this is run once for every particle per game loop
+			if (Particle.Alpha < 0) Particle.Reset();
 			Particle.Position.Translate(Particle.Velocity.X * Nova.dt, Particle.Velocity.Y * Nova.dt),
 			Particle.Alpha -= 0.005;
-			Particle.Angle += 1;
-			if (Particle.Alpha < 0) Particle.Reset();
 			Nova.Render.Text({
 				Position: Particle.Position,
 				Text: Particle.Text,
 				Colour: Particle.Colour,
-				Size: 12,
 				Alpha: Particle.Alpha,
+				Size: 10,
 			})
 		},
 	},

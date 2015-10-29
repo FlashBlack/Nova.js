@@ -58,12 +58,6 @@ Nova.CreateBlueprint('Player', function() {
 			bullet.GetComponent("Transform").SetAngle(Transform.GetAngle());
 		}
 
-		Nova.Render.Text({
-			Position: new Nova.System.Vector2(),
-			Text: 'Test',
-			Colour: 'Blue',
-		})
-
 		//Zoom Viewport
 		if (Nova.Input.KeyDown('OPENBRACKET')) {
 			var currentScale = Nova.Viewport.GetScale();
