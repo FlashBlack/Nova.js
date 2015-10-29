@@ -45,9 +45,9 @@ Nova.Ready = function() {
 			this.Alpha = 0.1+Math.random()*2; //to make the start smoother
 		},
 		ParticleUpdate: function(Particle){ //this is run once for every particle per game loop
-			if (Particle.Alpha < 0) Particle.Reset();
 			Particle.Position.Translate(Particle.Velocity.X * Nova.dt, Particle.Velocity.Y * Nova.dt),
-			Particle.Alpha -= 0.005;
+			Particle.Alpha -= 0.5 * Nova.dt;
+			if (Particle.Alpha < 0) Particle.Reset();
 			Nova.Render.Text({
 				Position: Particle.Position,
 				Text: Particle.Text,
