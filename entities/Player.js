@@ -9,7 +9,7 @@ Nova.CreateBlueprint('Player', function() {
 
 		var ParticleEmitter = this.GetComponent('ParticleEmitter');
 		ParticleEmitter.AddParticles(100, {
-			Position: Position,
+			Position: new Nova.System.Vector2(400, 250),
 		});
 	}
 
