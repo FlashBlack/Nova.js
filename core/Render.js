@@ -48,6 +48,8 @@ Nova.Render = new function() {
 		if(properties.Radius.isVector2) var Radius = properties.Radius.X;
 		else var Radius = parseFloat(properties.Radius);
 
+		if (!isWithinScreen(properties.Position.X - Radius, properties.Position.Y - Radius, Radius*2, Radius*2)) return false;
+
 		c.save();
 		if(!drawToGUI) Nova.Viewport.Apply();
 		c.translate(properties.Position.X, properties.Position.Y);
@@ -209,6 +211,8 @@ Nova.Render = new function() {
 		if(fontSize.substr(fontSize.length - 2) != 'px') fontSize = fontSize.concat('px ');
 		var Font = fontSize.concat(properties.Font || 'Comic Sans MS');
 
+		if (!isWithinScreen(properties.Position.X, properties.Position.Y, properties.Text.length * parseFloat(fontSize), parseFloat(fontSize))) return false;
+
 		c.save();
 		if(!drawToGUI) Nova.Viewport.Apply();
 		c.font = Font;
@@ -220,17 +224,22 @@ Nova.Render = new function() {
 	}
 	function isWithinScreen(x, y, w, h){
 		var Screen = {};
-		Screen.Position = Nova.Viewport.GetPositionReal();
-		Screen.Size = Nova.Viewport.GetSize();
+		Screen.Position = Nova.Viewport.GetPosition();
+		Screen.Radius =  Nova.System.distance(Nova.Viewport.GetPositionReal(), Nova.Viewport.GetPosition());
+
+		/*c.save();
+		Nova.Viewport.Apply();
+		c.strokeStyle = 'red';
+		c.strokeRect(x, y, w, h);
+		c.restore();*/
 
 		var Element = {};
 		Element.Position = { X: x, Y: y };
-		Element.Size = { X: w, Y: h };
+		Element.Radius = Nova.System.distance(new Nova.System.Vector2(x, y), new Nova.System.Vector2(x+w/2, y+h/2));
 
-		if (Element.Position.X < Screen.Position.X + Screen.Size.X  && Element.Position.X + Element.Size.X  > Screen.Position.X &&
-		Element.Position.Y < Screen.Position.Y + Screen.Size.Y && Element.Position.Y + Element.Size.Y > Screen.Position.Y) {
-			return true;
-		}
+		var Distance = Nova.System.distance(Screen.Position, Element.Position)
+
+		if (Distance < Screen.Radius + Element.Radius) return true
 		return false;
 	}
 }
