@@ -19,6 +19,6 @@ Nova.NewComponent('Bullet', function() {
 			var Angle = Nova.System.AngleTowards(0, 0, Offset.X, Offset.Y);
 			Transform.SetAngle(Angle);
 		}
-		Transform.Position.Translate(Offset.X, Offset.Y);
+		// Transform.Position.Translate(Offset.X, Offset.Y);
 	}
 });

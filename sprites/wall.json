@@ -1,5 +1,5 @@
 {
-	"image": "wall.png",
+	"image": "Wall.png",
 	"spriteName": "Wall",
 	"animations": {
 		"default": [{

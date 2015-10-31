@@ -30,6 +30,7 @@ Nova.CreateBlueprint('Bullet', function() {
 		var solids = Nova.getSolids();
 		for(var i = 0; i < solids.length; i++) {
 			if(Nova.Collision.Overlaps(Collider, solids[i])) {
+				
 				Nova.DestroyEntity(this.GUID);
 			}
 		}

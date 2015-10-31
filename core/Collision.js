@@ -63,6 +63,8 @@ Nova.Collision = new function() {
 	}
 
 	this.Overlaps = function(c1, c2) {
+
+		if(!this.BBoxOverlaps(c1, c2)) return false;
 		
 		var c1Colliders = c1.GetSubColliders();
 		var c2Colliders = c2.GetSubColliders();
@@ -78,10 +80,12 @@ Nova.Collision = new function() {
 	}
 
 	this.BBoxOverlaps = function(c1, c2) {
-		return (c1.bboxleft < c2.bboxright &&
-				c1.bboxright > c2.bboxleft &&
-				c1.bboxtop < c2.bboxbottom &&
-				c1.bboxbottom > c2.bboxtop);
+		c1 = c1.GetBoundingBox();
+		c2 = c2.GetBoundingBox();
+		return (c1.left < c2.right &&
+				c1.right > c2.left &&
+				c1.top < c2.bottom &&
+				c1.bottom > c2.top);
 	}
 
 	this.SubCollider = function(position, offset, size, angle) {

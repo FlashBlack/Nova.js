@@ -160,7 +160,12 @@ Nova.NewComponent('Collider', function() {
 	var subCollidersLocal = [];
 	var subCollidersWorld = [];
 
+	var midpoint;
+	var boundingBoxLocal = {};
+	var boundingBoxWorld = {};
+
 	this.Create = function(properties) {
+		var edges = {};
 		if(properties.hasOwnProperty('SubColliders') && Array.isArray(properties.SubColliders)) {
 			for(var i = 0; i < properties.SubColliders.length; i++) {
 				var currentSubCollider = properties.SubColliders[i];
@@ -176,23 +181,57 @@ Nova.NewComponent('Collider', function() {
 					} else {
 						console.log("Unable to add point #" + j + " to subcollider. ", "Passed data: " + currentPoint);
 					}
-					if(newPoint != null) newCollider.push(newPoint);
+					if(newPoint != null) {
+						if(Object.keys(edges).length == 0) {
+							edges.top = newPoint.Y;
+							edges.bottom = newPoint.Y;
+							edges.left = newPoint.X;
+							edges.right = newPoint.X;
+						}
+						else {
+							if(newPoint.Y < edges.top) edges.top = newPoint.Y;
+							if(newPoint.Y > edges.bottom) edges.bottom = newPoint.Y;
+							if(newPoint.X < edges.left) edges.left = newPoint.X;
+							if(newPoint.X > edges.right) edges.right = newPoint.X;
 
+						}
+						newCollider.push(newPoint);
+					}
 				}
-				/*if(Array.isArray(currentSubCollider)) {
-					if(currentSubCollider.length < 2) return false;
-					var currentSubCollider = new Nova.System.Vector2(currentSubCollider[0], currentSubCollider[1]);
-					var currentSubCollider = new Nova.Collision.SubCollider(new Nova.System.Vector2(currentSubCollider[0], currentSubCollider[1]),
-																			new Nova.System.Vector2(currentSubCollider[2], currentSubCollider[3]),
-																			new Nova.System.Vector2(currentSubCollider[4], currentSubCollider[5]),
-																			currentSubCollider[6]);
-				}*/
 				subCollidersLocal.push(newCollider);
 			}
 		} else {
 			return false;
 		}
+
+		midpoint = new Nova.System.Vector2((edges.left + edges.right) / 2, (edges.top + edges.bottom) / 2);
+
+		boundingBoxLocal.top = midpoint.Y;
+		boundingBoxLocal.bottom = midpoint.Y;
+		boundingBoxLocal.left = midpoint.X;
+		boundingBoxLocal.right = midpoint.X;
+
+		for(var i = 0; i < subCollidersLocal.length; i++) {
+			var currentSubCollider = subCollidersLocal[i];
+			for(var j = 0; j < currentSubCollider.length; j++) {
+				var currentPoint = currentSubCollider[j];
+				
+				if(currentPoint.Y < boundingBoxLocal.top) boundingBoxLocal.top = currentPoint.Y;
+				if(currentPoint.Y > boundingBoxLocal.bottom) boundingBoxLocal.bottom = currentPoint.Y;
+				if(currentPoint.X < boundingBoxLocal.left) boundingBoxLocal.left = currentPoint.X;
+				if(currentPoint.X > boundingBoxLocal.right) boundingBoxLocal.right = currentPoint.X;
+			}
+		}
+
+		boundingBoxLocal = {
+			tl: new Nova.System.Vector2(boundingBoxLocal.left, boundingBoxLocal.top),
+			tr: new Nova.System.Vector2(boundingBoxLocal.right, boundingBoxLocal.top),
+			br: new Nova.System.Vector2(boundingBoxLocal.right, boundingBoxLocal.bottom),
+			bl: new Nova.System.Vector2(boundingBoxLocal.left, boundingBoxLocal.bottom),
+		}
+
 		this.UpdateColliders();
+
 		if(properties.hasOwnProperty('isSolid')) Nova.addSolid([this.Owner.GUID, this.componentName]);
 		return true;
 	}
@@ -213,8 +252,46 @@ Nova.NewComponent('Collider', function() {
 			}
 			subCollidersWorld.push(newSubCollider);
 		}
-		// console.log(subCollidersWorld);
-		// debugger;
+		this.UpdateBoundingBox();
+	}
+
+	this.UpdateBoundingBox = function() {
+		var Transform = this.Owner.GetComponent("Transform")
+		var Position = Transform.Position;
+
+		var newCorners = {
+			tl: boundingBoxLocal.tl.Copy(),
+			tr: boundingBoxLocal.tr.Copy(),
+			br: boundingBoxLocal.br.Copy(),
+			bl: boundingBoxLocal.bl.Copy()
+		}
+		newCorners.tl.RotateAround(midpoint, -Transform.GetAngle());
+		newCorners.tr.RotateAround(midpoint, -Transform.GetAngle());
+		newCorners.br.RotateAround(midpoint, -Transform.GetAngle());
+		newCorners.bl.RotateAround(midpoint, -Transform.GetAngle());
+
+		var newEdges = {
+			top: midpoint.Y,
+			bottom: midpoint.Y,
+			left: midpoint.X,
+			right: midpoint.X
+		}
+
+		for(var c in newCorners) {
+			var corner = newCorners[c];
+			if(corner.Y < newEdges.top) newEdges.top = corner.Y;
+			if(corner.Y > newEdges.bottom) newEdges.bottom = corner.Y;
+			if(corner.X < newEdges.left) newEdges.left = corner.X;
+			if(corner.X > newEdges.right) newEdges.right = corner.X;
+		}
+
+		var origin = Transform.GetLocalOrigin();
+		newEdges.top += Position.Y - origin.Y;
+		newEdges.bottom += Position.Y - origin.Y;
+		newEdges.left += Position.X - origin.X;
+		newEdges.right += Position.X - origin.X;
+
+		boundingBoxWorld = newEdges;
 	}
 
 	this.Update = function() {
@@ -227,13 +304,31 @@ Nova.NewComponent('Collider', function() {
 				Path: currentSubCollider,
 				Fill: true,
 				Complete: true,
-				FillColour: 'lime',
-				StrokeColour: 'lime'
+				FillColour: 'red',
+				StrokeColour: 'red'
 			})
 		}
+
+		// console.log(boundingBoxWorld);
+		// debugger;
+
+		Nova.Render.Rectangle({
+			Position: new Nova.System.Vector2(boundingBoxWorld.left, boundingBoxWorld.top),
+			Size: new Nova.System.Vector2(boundingBoxWorld.right - boundingBoxWorld.left, boundingBoxWorld.bottom - boundingBoxWorld.top),
+			StrokeColour: 'lime',
+			FillColour: 'lime',
+		})
 	}
 
 	this.GetSubColliders = function() {
 		return subCollidersWorld;
+	}
+
+	this.GetBoundingBox = function() {
+		return boundingBoxWorld;
+	}
+
+	this.GetBoundingBoxLocal = function() {
+		return boundingBoxLocal;
 	}
 });
