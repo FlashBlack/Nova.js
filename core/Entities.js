@@ -161,6 +161,10 @@ Nova.Entities = new function() {
 		}
 	}
 
+	this.GetEntities = function(entityType, callback) {
+		return Entities;
+	}
+
 	this.GetEntityByID = function(ID) {
 		if(Entities.hasOwnProperty(ID)) return Entities[ID];
 		return false;

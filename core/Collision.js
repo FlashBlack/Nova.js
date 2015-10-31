@@ -70,7 +70,7 @@ Nova.Collision = new function() {
 			delete this[Cell];
 		}.bind(this));
 
-		var Entities = Nova.GetEntities('');
+		var Entities = Nova.Entities.GetEntities('');
 		Nova.System.loopThroughObject(Entities, function(GUID, Entity){
 			if (Entity.GetComponent('Collider')){
 				var	BoundingBox = Entity.GetComponent('Collider').GetBoundingBox();
