@@ -62,6 +62,64 @@ Nova.Collision = new function() {
 		return true;
 	}
 
+	this.SpatialGrid = function(){}
+	this.SpatialGrid.prototype.CellSize = 128;
+	this.SpatialGrid.prototype.Update = function(){
+		//Empty the grid!
+		Nova.System.loopThroughObject(this, function(Cell, Entities){
+			delete this[Cell];
+		}.bind(this));
+
+		var Entities = Nova.GetEntities('');
+		Nova.System.loopThroughObject(Entities, function(GUID, Entity){
+			if (Entity.GetComponent('Collider')){
+				var	BoundingBox = Entity.GetComponent('Collider').GetBoundingBox();
+
+				//get the position of the cells that the entity is overlaping
+				var x = Math.floor(BoundingBox.left / this.CellSize),
+					y = Math.floor(BoundingBox.top / this.CellSize),
+					width = Math.floor(BoundingBox.right / this.CellSize),
+					height = Math.floor(BoundingBox.bottom / this.CellSize);
+
+				//add entity to all cells that it overlaps
+				for (var i=x;i<=width;i++){
+					for (var j=y;j<=height;j++){
+						if (!this.hasOwnProperty(i+','+j)) this[i+','+j] = [];
+						this[i+','+j].push(GUID);
+					} 
+				}
+			}
+		}.bind(this));
+	}
+	this.SpatialGrid.prototype.Render = function(){
+			var size = { x: 8, y: 8 }; //make changable or something
+
+			Nova.ctx.save();
+			Nova.Viewport.Apply();
+
+			Nova.ctx.fillStyle = '#000000';
+			Nova.ctx.strokeStyle = '#000000';
+			Nova.ctx.font = '24px Comic Sans MS';
+			Nova.ctx.lineWidth = 2;
+			Nova.ctx.beginPath();
+			for (var i=0;i<size.x+1;i++){
+				var x = i * this.CellSize;
+				if (i < size.x) Nova.ctx.fillText(i, x+5, 24);
+				Nova.ctx.moveTo(x, 0);
+				Nova.ctx.lineTo(x, size.y*this.CellSize);
+			}
+			for (var i=0;i<size.y+1;i++){
+				var y = i * this.CellSize;
+				if (i < size.y)Nova.ctx.fillText(i, 5, y+24);
+				Nova.ctx.moveTo(0, y);
+				Nova.ctx.lineTo(size.x*this.CellSize, y);
+			}
+			Nova.ctx.stroke();
+
+			Nova.ctx.restore();
+	}
+	this.SpatialGrid = new this.SpatialGrid();
+
 	this.Overlaps = function(c1, c2) {
 
 		if(!this.BBoxOverlaps(c1, c2)) return false;
