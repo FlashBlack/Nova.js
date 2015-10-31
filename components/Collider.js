@@ -256,8 +256,9 @@ Nova.NewComponent('Collider', function() {
 	}
 
 	this.UpdateBoundingBox = function() {
-		var Transform = this.Owner.GetComponent("Transform")
+		var Transform = this.Owner.GetComponent("Transform");
 		var Position = Transform.Position;
+		var origin = Transform.GetLocalOrigin();
 
 		var newCorners = {
 			tl: boundingBoxLocal.tl.Copy(),
@@ -265,39 +266,40 @@ Nova.NewComponent('Collider', function() {
 			br: boundingBoxLocal.br.Copy(),
 			bl: boundingBoxLocal.bl.Copy()
 		}
-		newCorners.tl.RotateAround(midpoint, -Transform.GetAngle());
-		newCorners.tr.RotateAround(midpoint, -Transform.GetAngle());
-		newCorners.br.RotateAround(midpoint, -Transform.GetAngle());
-		newCorners.bl.RotateAround(midpoint, -Transform.GetAngle());
+		newCorners.tl.RotateAround(origin, -Transform.GetAngle());
+		newCorners.tr.RotateAround(origin, -Transform.GetAngle());
+		newCorners.br.RotateAround(origin, -Transform.GetAngle());
+		newCorners.bl.RotateAround(origin, -Transform.GetAngle());
 
-		var newEdges = {
-			top: midpoint.Y,
-			bottom: midpoint.Y,
-			left: midpoint.X,
-			right: midpoint.X
-		}
+		var newEdges = {}
+
+		var xPositions = [];
+		var yPositions = [];
 
 		for(var c in newCorners) {
 			var corner = newCorners[c];
-			if(corner.Y < newEdges.top) newEdges.top = corner.Y;
-			if(corner.Y > newEdges.bottom) newEdges.bottom = corner.Y;
-			if(corner.X < newEdges.left) newEdges.left = corner.X;
-			if(corner.X > newEdges.right) newEdges.right = corner.X;
+			xPositions.push(corner.X);
+			yPositions.push(corner.Y);
 		}
 
-		var origin = Transform.GetLocalOrigin();
-		newEdges.top += Position.Y - origin.Y;
-		newEdges.bottom += Position.Y - origin.Y;
-		newEdges.left += Position.X - origin.X;
-		newEdges.right += Position.X - origin.X;
+		newEdges.top = Math.min.apply(null, yPositions) + (Position.Y - origin.Y);
+		newEdges.bottom = Math.max.apply(null, yPositions) + (Position.Y - origin.Y);
+		newEdges.left = Math.min.apply(null, xPositions) + (Position.X - origin.X);
+		newEdges.right = Math.max.apply(null, xPositions) + (Position.X - origin.X);
 
 		boundingBoxWorld = newEdges;
 	}
 
 	this.Update = function() {
 		this.UpdateColliders();
-
 		var Transform = this.Owner.GetComponent("Transform");
+
+		Nova.Render.Line({
+			Position: midpoint,
+			Radius: 2,
+			Fill: true
+		})
+
 		for(var i = 0; i < subCollidersWorld.length; i++) {
 			var currentSubCollider = subCollidersWorld[i];
 			Nova.Render.Path({
@@ -308,9 +310,6 @@ Nova.NewComponent('Collider', function() {
 				StrokeColour: 'red'
 			})
 		}
-
-		// console.log(boundingBoxWorld);
-		// debugger;
 
 		Nova.Render.Rectangle({
 			Position: new Nova.System.Vector2(boundingBoxWorld.left, boundingBoxWorld.top),
