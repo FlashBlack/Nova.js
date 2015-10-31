@@ -161,7 +161,11 @@ Nova.Entities = new function() {
 		}
 	}
 
-	this.GetEntities = function(entityType, callback) {
+	this.EntityCount = function() {
+		return Object.keys(Entities).length;
+	}
+
+	this.GetEntities = function() {
 		return Entities;
 	}
 

@@ -40,7 +40,7 @@ Nova.Debug = new function() {
 			})
 			Nova.Render.Text({
 				Position: new Nova.System.Vector2(5, 37),
-				Text: Nova.EntityCount(),
+				Text: Nova.Entities.EntityCount(),
 				Colour: 'lime',
 				GUI: true
 			})

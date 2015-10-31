@@ -8,14 +8,6 @@ var Nova = new function() {
 	var started = false;
 	this.isReady = function() { return isReady; };
 
-	// holds all the instances of entities
-	var Entities = {};
-	// order for entity component updates. these are updated after all entities are updated
-	var zOrder = [];
-	// holds blueprint for each entity
-	var EntityBlueprints = {};
-	// blueprints for components
-	var Components = {};
 	var Solids = [];
 
 	this.Ready = function() {};
@@ -186,19 +178,6 @@ var Nova = new function() {
 			if(object) allSolids.push(object);
 		}
 		return allSolids;
-	}
-
-	// REMOVE LATER these are for debug purposes
-	this.GetEntities = function(entityType, callback) {
-		return Entities;
-	}
-
-	this.EntityCount = function() {
-		return Object.keys(Entities).length;
-	}
-
-	this.GetBlueprints = function() {
-		return EntityBlueprints;
 	}
 }
 
