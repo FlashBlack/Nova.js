@@ -37,8 +37,8 @@ var Nova = new function() {
 		UpdateEntities();
 
 		// update spacial grid;
-		/*Nova.Collision.SpatialGrid.Update();
-		Nova.Collision.SpatialGrid.Render();*/
+		Nova.Collision.SpatialGrid.Update();
+		Nova.Collision.SpatialGrid.Render();
 
 		Nova.Debug.Update();
 
