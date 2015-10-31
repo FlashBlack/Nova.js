@@ -1,6 +1,6 @@
 "use strict";
 
-Nova.NewComponent('Transform', function() {
+Nova.Entities.NewComponent('Transform', function() {
 	// default values
 	this.Position = new Nova.System.Vector2();
 	// var localOrigin

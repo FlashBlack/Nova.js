@@ -1,6 +1,6 @@
 "use strict";
 
-Nova.NewComponent('EightDirection', function() {
+Nova.Entities.NewComponent('EightDirection', function() {
 	var keys = {
 		'up': ['W', 'UP'],
 		'down': ['S', 'DOWN'],

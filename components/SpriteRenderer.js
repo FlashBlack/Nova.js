@@ -1,6 +1,6 @@
 "use strict";
 
-Nova.NewComponent('SpriteRenderer', function() {
+Nova.Entities.NewComponent('SpriteRenderer', function() {
 	this.drawAtInteger = false;
 	this.Alpha = 1;
 

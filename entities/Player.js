@@ -1,6 +1,6 @@
 "use strict";
 
-Nova.CreateBlueprint('Player', function() {
+Nova.Entities.CreateBlueprint('Player', function() {
 	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['EightDirection', 'Pre'], ['Collider', 'Post'], ['ParticleEmitter', 'Post']];
 
 	this.Create = function(parameters) {
@@ -38,7 +38,7 @@ Nova.CreateBlueprint('Player', function() {
 		})
 
 		if(Nova.Input.Mouse.Pressed) {
-			var bullet = Nova.GetEntityByID(Nova.CreateEntity('Bullet', {
+			var bullet = Nova.Entities.GetEntityByID(Nova.Entities.CreateEntity('Bullet', {
 				Transform: {
 					Position: Position,
 					Origin: new Nova.System.Vector2(0, 2.5),

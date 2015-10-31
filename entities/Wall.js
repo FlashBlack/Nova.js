@@ -1,6 +1,6 @@
 "use strict";
 
-Nova.CreateBlueprint('Wall', function() {
+Nova.Entities.CreateBlueprint('Wall', function() {
 	this.requiredComponents = [['Transform', 'Post'], ['SpriteRenderer', 'Post'], ['Collider', 'Post']];
 
 	this.Create = function() { }

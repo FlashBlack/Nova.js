@@ -1,4 +1,4 @@
-Nova.NewComponent('Bullet', function() {
+Nova.Entities.NewComponent('Bullet', function() {
 	this.Speed = 300;
 	this.AngleOfMotion = 0;
 	this.RotateTowards = true;

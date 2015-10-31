@@ -1,6 +1,6 @@
 "use strict";
 
-Nova.NewComponent('ParticleEmitter', function() {
+Nova.Entities.NewComponent('ParticleEmitter', function() {
 
 	var Particles = [];
 

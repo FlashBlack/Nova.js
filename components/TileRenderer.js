@@ -1,6 +1,6 @@
 "use strict";
 
-Nova.NewComponent('TileRenderer', function() {
+Nova.Entities.NewComponent('TileRenderer', function() {
 	this.canvas = document.createElement('canvas');
 	this.ctx = this.canvas.getContext('2d');
 	var originalMap;

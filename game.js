@@ -1,6 +1,6 @@
 Nova.Ready = function() {
 	walls = [];
-	level = Nova.CreateEntity('Level', {
+	level = Nova.Entities.CreateEntity('Level', {
 		Transform: {
 			Position: new Nova.System.Vector2(),
 			Origin: new Nova.System.Vector2()
@@ -10,7 +10,7 @@ Nova.Ready = function() {
 		},
 	})
 	for(var i = 0; i < 1; i++) {
-		walls.push(Nova.CreateEntity('Wall', {
+		walls.push(Nova.Entities.CreateEntity('Wall', {
 			Transform: {
 				Position: new Nova.System.Vector2(100+i*32, 100),
 				Origin: new Nova.System.Vector2(0, 0)
@@ -58,7 +58,7 @@ Nova.Ready = function() {
 		},
 	},
 
-	player = Nova.CreateEntity('Player', {
+	player = Nova.Entities.CreateEntity('Player', {
 		Transform: {
 			Position: new Nova.System.Vector2(180, 180),
 			Origin: new Nova.System.Vector2(7.5, 13)
