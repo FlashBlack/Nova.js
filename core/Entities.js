@@ -189,8 +189,11 @@ Nova.Entities = new function() {
 		} else if(typeof callback === 'function') {
 			for(var i = 0; i < EntityTypes[type]; i++) {
 				var currentEntity = EntityTypes[type][i];
+				console.log(currentEntity);
 				callback(currentEntity);
 			}
+		} else {
+			return false;
 		}
 	}
 }
