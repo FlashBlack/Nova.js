@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+	<title>Nova Editor</title>
+	<link rel="stylesheet" type="text/css" href="css/makeitsexy.css">
+	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="js/jquery.easytree.min.js"></script>
+	<script type="text/javascript" src="js/Editor.js"></script>
+	<script type="text/javascript" src="js/Project.js"></script>
+</head>
+<body>
+	
+	<nav id="menu-bar">
+		<ul id="menu-options">
+			<li id="menu-new"><img src="images/new.svg" class="option"></li>
+			<li id="menu-save"><img src="images/save.svg" class="option"></li>
+			<li id="menu-load"><img src="images/load.svg" class="option"></img></li>
+			<li id="menu-preview"><img src="images/preview.svg" class="option"></li>
+			<li id="menu-export"><img src="images/export.svg" class="option"></li>
+			<li id="menu-help"><img src="images/help.svg" class="option"></img></li>
+		</ul>
+		<h1 id="head-text">Nova.js</h1>
+	</nav>
+	
+	<div id="left-panel" class="panel tree-nav">
+		<ul>
+			<!-- li folders will require a id of "projectFolder" and property "projectFolderName" --->
+            <li id="Sprites" class="isFolder projectFolder">
+               <img src="images/load.svg"/>Sprites
+               <ul>
+                    <li>Sprite1.png</li>
+                    <li>Sprite2.png</li>
+                    <li>Sprite3.png</li>
+                </ul>
+            </li>
+            <li id="Entities" class="isFolder projectFolder">
+               <img src="images/load.svg"/>Entities
+               <ul>
+                    <li>Entity1.js</li>
+                    <li>Entity2.js</li>
+                    <li>Entity3.js</li>
+                </ul>
+            </li>
+            <li id="Components" class="isFolder projectFolder">
+               <img src="images/load.svg"/>Components
+               <ul>
+                    <li>Component1.js</li>
+                    <li>Component2.js</li>
+                    <li>Component3.js</li>
+                </ul>
+            </li>
+            <li id="Sounds" class="isFolder projectFolder">
+                <img src="images/load.svg"/>Sounds
+                <ul>
+                    <li>Sound1.mp3</li>
+                    <li>Sound2.mp3</li>
+                    <li>Sound3.mp3</li>
+                </ul>
+            </li>
+            <li id="Tilemaps" class="isFolder projectFolder">
+               <img src="images/load.svg"/>Tilemaps
+               <ul>
+                    <li>Tilemap1.json</li>
+                    <li>Tilemap2.json</li>
+                    <li>Tilemap3.json</li>
+                </ul>
+            </li>
+            <li id="Scenes" class="isFolder projectFolder">
+               <img src="images/load.svg"/>Scenes
+               <ul>
+                    <li>Scene1.json</li>
+                    <li>Scene2.json</li>
+                    <li>Scene3.json</li>
+                </ul>
+            </li>
+        </ul>
+	</div>
+	<div id="center-panel" class="panel">
+		<canvas id="nova-editor"></canvas>
+	</div>
+	<div id="right-panel" class="panel"></div>
+
+	
+</body>
+</html>
