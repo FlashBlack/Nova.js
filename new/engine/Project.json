@@ -1,11 +1,13 @@
 {
-    Settings: {
+    "Settings": {
+        "GameElement": "game",
+        "WindowWidth": 800,
+        "WindowHeight": 600
+    },
+    "Sprites": {
         
     },
-    Sprites: {
-        
-    },
-    {
+    "Entities": {
         
     }
 }
