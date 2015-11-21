@@ -63,6 +63,10 @@ var Nova = (function() {
 	}
 
 	Global.Start = function(projectFile) {
+		if(typeof projectFile === "object") {
+			loadProperties(projectFile);
+			return;
+		}
 		// when Start is called, request the project json
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function() {
