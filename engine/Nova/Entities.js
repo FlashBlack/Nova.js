@@ -3,29 +3,17 @@ define(['Nova/System'], function(System) {
 	
 	var entities = {},
 		blueprints = {},
-		objects = {},
 		entityTypes = {},
-		components = {};
+		components = {},
 		requiredEntities = [];
-	
-	/*var requiredObjects = ['TestObject'];
-	this.loadObjects = function() {
-		// require the next object
-		require(['objects/' + requiredObjects[0]], function(object) {
-			objects[requiredObjects[0]] = object.init;
-			requiredObjects.shift();
-			// call this function again if there is another object to be loaded
-			if(requiredObjects.length > 0) loadObject();
-		})
-	}*/
 	
 	Global.updateEntities = function() {
 		for(var e in entities) {
 			var currentEntity = entities[e];
 			
-			currentEntity.update();
+			if(currentEntity.canUpdate) currentEntity.update();
 		}
-	}
+	};
 	
 	Global.getEntityBlueprints = function() {
 		requiredEntities = Nova.getProject().Entities;
@@ -42,15 +30,39 @@ define(['Nova/System'], function(System) {
 			}
 			Nova.initializeProcess();
 		});
+	};
+	
+	Global.getComponentBlueprints = function() {
+		requiredComponents = Nova.getProject().Components;
+		
+		for(var i = 0; i < requiredComponents.length; i++) {
+			requiredComponents[i] = "components/" + requiredComponents[i];
+		}
+		
+		require(requiredComponents, function() {
+			for(var i = 0; i < arguments.length; i++) {
+				// remove "components/" from the component name
+				var currentComponent = requiredComponents[i].substr(11, requiredComponents[i].length);
+				components[currentComponent] = arguments[i];
+			}
+			Nova.initializeProcess();
+		})
 	}
 	
 	Global.createBlueprint = function(blueprintName, blueprint) {
 		blueprints[blueprintName] = blueprint;
-	}
+	};
 	
 	Global.newComponent = function(componentName, component, cantOverwrite) {
-		
-	}
+		if(components.hasOwnProperty(componentName)) {
+			if(components[componentName].hasOwnProperty('_cantOverwrite')) {
+				console.error("Can't overwrite component '" + componentName + "'");
+				return false;
+			}
+		}
+		if(cantOverwrite) component._cantOverwrite = true;
+		components[componentName] = component;
+	};
 	
 	/*Global.createComponent = function(componentName, componentType, owner, properties) {
 		if(components.hasOwnProperty(componentType)) {
@@ -74,90 +86,34 @@ define(['Nova/System'], function(System) {
 	}*/
 	
 	Global.createEntity = function(entityType, properties) {
+		// instantiate properties if undefined
 		if(typeof properties === "undefined") properties = {};
 		
+		// ensure the blueprint exists
 		if(!blueprints.hasOwnProperty(entityType)) {
 			console.error("Unable to create entity of type '" + entityType + "' (type does not exist)");
 			return false;
 		}
+		// create the new entity
 		var newEntity = new blueprints[entityType](properties);
+		// add the entity reference 
 		entities[newEntity.ID] = newEntity;
+		
+		if(Array.isArray(newEntity.requiredComponents)) {
+			var comps = newEntity.requiredComponents;
+			for(var i = 0; i < comps.length; i++) {
+				if(!properties.hasOwnProperty(comps[i])) properties[comps[i]] = {};
+				newEntity.addComponent(comps[i], properties[comps[i]]);
+			}
+		}
 		
 		return newEntity.ID;
 	}
 	
-	/*Global.createEntity = function(entityType, properties) {
-		if(blueprints.hasOwnProperty(entityType)) {
-			
-			var newEntity = new blueprints[entityType];
-			
-			newEntity.UID = System.generateUID();
-			newEntity.TYPE = entityType;
-			
-			entities[newEntity.UID] = newEntity;
-			if(!Array.isArray(entityTypes[entityType])) entityTypes[entityType] = [];
-			entityTypes[entityType].push(newEntity.UID);
-			
-			if(!newEntity.hasOwnProperty('update')) newEntity.update = function() { };
-			
-			newEntity.components = {};
-			newEntity.preUpdate = [];
-			newEntity.postUpdate = [];
-			
-			newEntity.addComponent = function(componentName, componentType, updateType, properties) {
-				var newComponent = Nova.Entities.createComponent(componentName, componentType, newEntity.UID, properties);
-				if(!newComponent) return false;
-				
-				newComponent.NAME = componentName;
-				newComponent.owner = this.UID;
-				
-				updateType = updateType.toUpperCase();
-				if(updateType == 'PRE') {
-					this.preUpdate.push(componentName);
-				} else if(updateType == 'POST') {
-					this.preUpdate.push(componentName);
-				}
-				
-				this.components[componentName] = newComponent;
-				return true;
-			}
-			
-			newEntity.removeComponent = function(componentName) {
-				if(this.components.hasOwnProperty(componentName)) {
-					delete this.components[componentName];
-					return true;
-				}
-				return false;
-			}
-			
-			newEntity.getComponent = function(componentName) {
-				if(this.components.hasOwnProperty(componentName)) return this.components[componentName];
-				return false;
-			}
-			
-			if(newEntity.hasOwnProperty('requiredComponents')) {
-				var reqComponents = newEntity.requiredComponents;
-				for(var i = 0; i < reqComponents.length; i++) {
-					var currentComponent = reqComponents[i][0];
-					var componentUpdateType = reqComponents[i][1];
-					
-					var componentProperties = {};
-					if(properties.hasOwnProperty(currentComponent)) { componentProperties = properties[currentComponent]; }
-					
-					this.addComponent(currentComponent, currentComponent, componentUpdateType, componentProperties);
-				}
-			}
-			newEntity.isDead = false;
-			
-			if(typeof newEntity.create === "function") newEntity.create(properties);
-			delete newEntity.create;
-			return newEntity.UID;
-			
-		} else {
-			console.error("Unable to create entity of type '" + entityType + "' (entity type does not exist)");
-			return false;
-		}
-	}*/
+	Global.getComponent = function(component) {
+		if(!components[component]) return false;
+		return components[component];
+	}
 	
 	Global.destroyEntity = function(entityUID) {
 		var entity = Global.getEntityByUID(entityUID);
@@ -180,15 +136,6 @@ define(['Nova/System'], function(System) {
 			}
 		}
 		return Object.keys(entities).length;
-	}
-	
-	Global.getEntities = function() {
-		// TO DO: probably debug function? might keep it
-		console.log(entities);
-		return entities;
-	}
-	Global.getBlueprints = function() {
-		return blueprints;
 	}
 	
 	Global.getEntityByID = function(ID) {
@@ -218,21 +165,6 @@ define(['Nova/System'], function(System) {
 				}
 			}
 		}
-	}
-	
-	Global.objects = function() {
-		return objects;
-	}
-	
-	Global.newObject = function(objectType, properties) {
-		if(!objects.hasOwnProperty(objectType)) {
-			console.error("Object type '" + objectType + "' does not exist");
-			return false;
-		}
-		var newObject = new objects[objectType];
-		if(newObject.hasOwnProperty('create')) newObject.create(properties);
-		
-		return newObject;
 	}
 	
 	return Global;

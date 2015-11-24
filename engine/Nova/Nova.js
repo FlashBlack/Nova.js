@@ -27,8 +27,8 @@ var Nova = (function() {
 	var requiredComponents = ['Nova/System', 'Nova/Entities', 'Nova/Loader', 'Nova/Class'];
 	var isReady = false,
 		started = false,
-		toInitialize = 2,
-		renderer, stage, project, _entities;
+		toInitialize = 4,
+		gameDiv, renderer, stage, project, _entities, _input, loadText;
 		
 	Global.version = "0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.2";
 
@@ -43,17 +43,25 @@ var Nova = (function() {
 		lastUpdate = now;
 		Global.tickcount++;
 
+		// update entities
 		_entities.updateEntities();
 		
+		// render the stage
 		RenderStage();
+		
+		// update required modules
+		_input._update();
 
 		requestAnimationFrame(gameLoop);
 	}
 
 	Global.init = function() {
+		stage.removeChild(loadText);
+		loadText = undefined;
+		
 		isReady = true;
+		Nova.tickcount = 0;
 		this.Ready();
-		this.tickcount = 0;
 		lastUpdate = performance.now();
 		requestAnimationFrame(gameLoop);
 		delete Global.init;
@@ -66,17 +74,31 @@ var Nova = (function() {
 
 	var loadProject = function(proj) {
 		project = proj;
-		var gameElement = document.getElementById(project.Settings.GameElement);
-		if(gameElement) {
+		gameDiv = document.getElementById(project.Settings.GameElement);
+		if(gameDiv) {
 			renderer = new PIXI.autoDetectRenderer(project.Settings.WindowWidth, proj.Settings.WindowHeight);
-			gameElement.appendChild(renderer.view);
+			gameDiv.appendChild(renderer.view);
+			gameDiv.width = project.Settings.windowWidth;
+			gameDiv.height = project.Settings.windowHeight;
 
 			stage = new PIXI.Container();
+			
+			loadText = new PIXI.Text("Loading...", {font: "50px Arial", fill: "red"});
+			loadText.position.x = 400 - loadText.width / 2;
+			loadText.position.y = 300 - (loadText.height + 23);
+			stage.addChild(loadText);
+			
+			RenderStage();
 
-			require(['Nova/Entities'], function(Entities) {
+			require(['Nova/Entities', 'Nova/Loader', 'Nova/Input'], function(Entities, Loader, Input) {
 				Nova.initializeProcess();
 				_entities = Entities;
+				_input = Input;
+
+				Loader.loadImages();
+				Loader.loadAudio();
 				Entities.getEntityBlueprints();
+				Entities.getComponentBlueprints();
 			})
 			
 		} else {
@@ -84,7 +106,7 @@ var Nova = (function() {
 		}
 	}
 	
-	Global.Start = function(projectFile) {
+	Global.start = function(projectFile) {
 		
 		if(typeof projectFile === "object") {
 			loadProject(projectFile);
@@ -107,12 +129,20 @@ var Nova = (function() {
 		delete Global.Start;
 	}
 	
+	Global.getDiv = function() {
+		return gameDiv;
+	}
+	
 	Global.getStage = function() {
 		return stage;
 	}
 	
 	Global.getProject = function() {
 		return project;
+	}
+	
+	Global.graphics = function() {
+		return graphics;
 	}
 
 	var RenderStage = function() {

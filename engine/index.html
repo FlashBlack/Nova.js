@@ -18,9 +18,35 @@
 	</style>
 	<script type="text/javascript" src="Nova/Nova.js"></script>
 	<script type="text/javascript" src="game.js"></script>
+	<style type="text/css">
+		#game {
+			float: left;
+		}
+		#debug {
+			padding-left: 815px;
+			padding-top: 15px;
+		}
+	</style>
 </head>
 <body>
 	<div id='game' width="800" height="600"></div>
-
+	
+	<!-- DEBUG STUFF-->
+	<div id='debug'>
+		<textarea id="debugFunction" name="function" rows="30" cols="80"></textarea><br>
+		<button type="button" onclick="executeDebugFunction()">Execute</button>
+	</div>
+	
+	<script type="text/javascript">
+		document.getElementById('debugFunction').addEventListener('keydown', function(e) {
+			if(e.keyCode == 13 && e.ctrlKey) executeDebugFunction();
+		})
+		function executeDebugFunction() {
+			require(['Nova/Audio', 'Nova/Class', 'Nova/Entities', 'Nova/Input', 'Nova/Loader', 'Nova/System',], 
+			function(Audio, Class, Entities, Input, Loader, System) {
+				eval(document.getElementById('debugFunction').value);
+			})
+		}
+	</script>
 </body>
 </html>

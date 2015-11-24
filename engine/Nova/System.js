@@ -49,6 +49,16 @@ define(function() {
 	    return radian * (180 / Math.PI);
 	}
 	
+	Global.choose = function(choices) {
+		if(arguments.length == 1) {
+			if(Array.isArray(choices)) {
+				return choices[Math.floor(Math.random() * choices.length)];
+			}
+			return choices;
+		}
+		return arguments[Math.floor(Math.random() * arguments.length)];
+	}
+	
     Global.generateUID = function() {
         var time = new Date().getTime();
 		var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

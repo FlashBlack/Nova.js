@@ -1,9 +1,17 @@
-var test;
+var player;
 
 Nova.Ready = function() {
-    require(['Nova/Entities'], function(Entities) {
-        test = Entities.createEntity('testEntity', {})
+    require(['Nova/Entities', 'Nova/System'], function(Entities, System) {
+        player = Entities.getEntityByID(Entities.createEntity('testEntity', {
+            Sprite: {
+                DrawBounds: true
+            },
+            EightDirection: {
+                property: 7
+            },
+            Position: new System.vector2(400,300)
+        }));
     })
 }
 
-Nova.Start('Project.json');
+Nova.start('Project.json');
